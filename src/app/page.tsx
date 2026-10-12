@@ -1,69 +1,137 @@
-import Image from "next/image";
+// Temporary connection-check page (stage 1). Read-only: it proves the site can
+// reach Supabase. It will be replaced in a later stage.
+//
+// This is a "server component": it runs on the server only, so the Supabase
+// calls below happen there, not in the browser. Because the component is an
+// async function, Next.js lets us `await` the queries directly in it.
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+import { getSupabaseClient } from "@/lib/supabase";
+import type { Run } from "@/lib/types";
+
+// Render this page on every request instead of at build time, so the queries
+// run fresh each time you load it.
+export const dynamic = "force-dynamic";
+
+// Show timestamps in Melbourne time (Australia/Melbourne), per the display rules.
+function formatMelbourne(iso: string): string {
+  return new Date(iso).toLocaleString("en-AU", {
+    timeZone: "Australia/Melbourne",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+// What the page shows, once all queries have succeeded.
+type CheckData = {
+  predictionsCount: number | null;
+  teamStatsCount: number | null;
+  run: Run | null;
+  teamNames: string[];
+};
+
+// Runs the four queries and returns either the data or a list of error
+// messages. This is a plain function with no JSX, so query problems can be
+// caught here and reported on the page instead of crashing it.
+async function loadCheckData(): Promise<
+  { data: CheckData } | { errors: string[] }
+> {
+  try {
+    const supabase = getSupabaseClient();
+
+    // Row counts. The second argument asks Postgrest for the count only,
+    // without transferring the rows.
+    const predictions = await supabase
+      .from("predictions")
+      .select("*", { count: "exact", head: true });
+    const teamStats = await supabase
+      .from("team_stats")
+      .select("*", { count: "exact", head: true });
+
+    // Latest job run: newest first, then keep the first row.
+    const runs = await supabase
+      .from("runs")
+      .select("*")
+      .order("started_at", { ascending: false })
+      .limit(1);
+
+    // Team names, ordered alphabetically by Postgres.
+    const teams = await supabase.from("team_stats").select("team").order("team");
+
+    // supabase-js reports failures on `error` instead of throwing, so check each.
+    const errors: string[] = [];
+    if (predictions.error)
+      errors.push(`predictions count: ${predictions.error.message}`);
+    if (teamStats.error)
+      errors.push(`team_stats count: ${teamStats.error.message}`);
+    if (runs.error) errors.push(`runs: ${runs.error.message}`);
+    if (teams.error) errors.push(`team names: ${teams.error.message}`);
+    if (errors.length > 0) return { errors };
+
+    // Cast the rows to our own types. supabase-js cannot infer them here
+    // because we did not generate a Database type from the schema.
+    const run = (runs.data?.[0] ?? null) as Run | null;
+    const teamRows = (teams.data ?? []) as { team: string }[];
+
+    return {
+      data: {
+        predictionsCount: predictions.count,
+        teamStatsCount: teamStats.count,
+        run,
+        teamNames: teamRows.map((t) => t.team),
+      },
+    };
+  } catch (err) {
+    // Covers missing env vars (getSupabaseClient throws) and any other error.
+    return { errors: [err instanceof Error ? err.message : String(err)] };
+  }
+}
+
+export default async function Home() {
+  const result = await loadCheckData();
+
+  if ("errors" in result) {
+    return (
+      <main className="mx-auto max-w-2xl p-8">
+        <h1 className="text-2xl font-semibold">Supabase connection check</h1>
+        <p className="mt-4 font-semibold text-red-700">Query failed:</p>
+        <ul className="mt-2 list-disc pl-6">
+          {result.errors.map((message) => (
+            <li key={message}>{message}</li>
+          ))}
+        </ul>
       </main>
-    </div>
+    );
+  }
+
+  const { predictionsCount, teamStatsCount, run, teamNames } = result.data;
+
+  return (
+    <main className="mx-auto max-w-2xl p-8">
+      <h1 className="text-2xl font-semibold">Supabase connection check</h1>
+
+      <h2 className="mt-6 text-xl font-semibold">Row counts</h2>
+      <ul className="mt-2 list-disc pl-6">
+        <li>predictions: {predictionsCount} rows (expected 380)</li>
+        <li>team_stats: {teamStatsCount} rows (expected 20)</li>
+      </ul>
+
+      <h2 className="mt-6 text-xl font-semibold">Latest run</h2>
+      {run ? (
+        <ul className="mt-2 list-disc pl-6">
+          <li>data_as_of: {formatMelbourne(run.data_as_of)} (Melbourne time)</li>
+          <li>status: {run.status}</li>
+          <li>model_version: {run.model_version}</li>
+        </ul>
+      ) : (
+        <p className="mt-2">No rows found in runs.</p>
+      )}
+
+      <h2 className="mt-6 text-xl font-semibold">Teams ({teamNames.length})</h2>
+      <ul className="mt-2 list-disc pl-6">
+        {teamNames.map((name) => (
+          <li key={name}>{name}</li>
+        ))}
+      </ul>
+    </main>
   );
 }
