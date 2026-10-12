@@ -1,26 +1,40 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Design tokens (Tailwind v4 style: configured here, not in a config file).
+   Each --color-* below generates utilities like bg-primary / text-muted;
+   --font-* generates font-heading / font-body; --radius-card generates
+   rounded-card; --shadow-card generates shadow-card. */
+@theme {
+  /* Brand greens: deep pitch green + a lighter green for hovers/highlights */
+  --color-primary: #166534;
+  --color-primary-light: #1d7a42;
+
+  /* Surfaces, borders and text */
+  --color-surface: #ffffff;
+  --color-tint: #f4f8f5;
+  --color-border: #dde7e0;
+  --color-ink: #14201a;
+  --color-muted: #5b6b62;
+
+  /* Outcome colours: home win / draw / away win. Always shown together with a
+     text label, so colour is never the only signal. */
+  --color-home: #166534;
+  --color-draw: #64748b;
+  --color-away: #1e4e79;
+
+  /* Fonts. The font files load with next/font in layout.tsx, which defines
+     --font-space-grotesk and --font-inter on the <html> element. */
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, sans-serif;
+
+  /* Shape and depth */
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 2px rgba(20, 32, 26, 0.06), 0 6px 16px rgba(20, 32, 26, 0.05);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Light mode only: no prefers-color-scheme switch, so the site stays white. */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-body);
 }
