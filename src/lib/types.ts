@@ -17,6 +17,9 @@ export type Prediction = {
   predicted_at: string;
 };
 
+// A prediction row that is a real upcoming fixture (fixture_date is set).
+export type Fixture = Prediction & { fixture_date: string };
+
 // Table `team_stats`: one row per team, 20 rows. Primary key (team).
 // The "last5"/"last10" columns are per-match averages, not totals.
 export type TeamStats = {

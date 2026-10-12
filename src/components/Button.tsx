@@ -1,9 +1,9 @@
 import type { ButtonHTMLAttributes } from "react";
 
 // Styled button with two variants: primary (filled green) and secondary
-// (outlined). Supports the usual button attributes, including disabled.
-// Plain server component for now; add "use client" at the call site later if
-// it ever needs an onClick handler.
+// (outlined). Supports the usual button attributes, including onClick and
+// disabled. This file has no "use client" line on purpose: it uses no
+// server-only features, so it works inside both server and client components.
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary";
 };
