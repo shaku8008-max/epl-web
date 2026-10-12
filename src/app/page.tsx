@@ -1,11 +1,11 @@
-// Predict page (stage 3). The server loads the data once per request and picks
+// Predict page (stage 4). The server loads the data once per request and picks
 // the initial matchup; the interactive picker runs in the browser (MatchupTool).
 
 import Card from "@/components/Card";
 import MatchupTool from "@/components/MatchupTool";
-import { getPredictions, getTeamNames } from "@/lib/data";
+import { getPredictions, getTeamStats } from "@/lib/data";
 import { resolveInitialPair } from "@/lib/fixtures";
-import type { Prediction } from "@/lib/types";
+import type { Prediction, TeamStats } from "@/lib/types";
 
 // Request-time render: queries run fresh on every load, never at build time.
 export const dynamic = "force-dynamic";
@@ -13,20 +13,24 @@ export const dynamic = "force-dynamic";
 // Plain loader with no JSX, so query problems can be caught and reported
 // instead of crashing the page (the linter forbids JSX inside try/catch).
 async function loadPredictPage(): Promise<
-  { predictions: Prediction[]; teams: string[] } | { error: string }
+  | { predictions: Prediction[]; teamStats: TeamStats[]; teams: string[] }
+  | { error: string }
 > {
   try {
-    const [predictions, teams] = await Promise.all([
+    const [predictions, teamStats] = await Promise.all([
       getPredictions(),
-      getTeamNames(),
+      getTeamStats(),
     ]);
+    // Team names come from the same team_stats rows, so teams need no query
+    // of their own. Sorted here because the DB order is only a fallback.
+    const teams = teamStats.map((r) => r.team).sort((a, b) => a.localeCompare(b));
     if (teams.length < 2 || predictions.length === 0) {
       return {
         error:
           "The database returned no rows (expected 380 predictions and 20 teams).",
       };
     }
-    return { predictions, teams };
+    return { predictions, teamStats, teams };
   } catch (err) {
     return { error: err instanceof Error ? err.message : String(err) };
   }
@@ -69,6 +73,7 @@ export default async function PredictPage(props: PageProps<"/">) {
       <MatchupTool
         predictions={result.predictions}
         teams={result.teams}
+        teamStats={result.teamStats}
         initialHome={initialPair.home}
         initialAway={initialPair.away}
       />

@@ -2,18 +2,19 @@
 
 // Client component: owns the home/away selection so swapping teams updates
 // instantly in the browser with no extra network requests. The server passes
-// all 380 prediction rows and the 20 team names once when the page loads.
+// all 380 prediction rows and the 20 team_stats rows once when the page loads.
 
 import { useEffect, useMemo, useState } from "react";
-import Card from "@/components/Card";
 import NextRoundList from "@/components/NextRoundList";
 import PredictionCard from "@/components/PredictionCard";
 import TeamPicker from "@/components/TeamPicker";
-import type { Fixture, Prediction } from "@/lib/types";
+import TeamStatsCard from "@/components/TeamStatsCard";
+import type { Fixture, Prediction, TeamStats } from "@/lib/types";
 
 type MatchupToolProps = {
   predictions: Prediction[];
   teams: string[];
+  teamStats: TeamStats[];
   initialHome: string;
   initialAway: string;
 };
@@ -21,6 +22,7 @@ type MatchupToolProps = {
 export default function MatchupTool({
   predictions,
   teams,
+  teamStats,
   initialHome,
   initialAway,
 }: MatchupToolProps) {
@@ -83,13 +85,7 @@ export default function MatchupTool({
 
       <PredictionCard home={pair.home} away={pair.away} prediction={prediction} />
 
-      {/* Team stats arrive in stage 4. */}
-      <Card>
-        <p className="font-semibold">Team stats are coming next</p>
-        <p className="mt-1 text-sm text-muted">
-          Recent stats for both teams will appear here.
-        </p>
-      </Card>
+      <TeamStatsCard home={pair.home} away={pair.away} teamStats={teamStats} />
 
       <NextRoundList predictions={predictions} onSelect={selectFixture} />
     </div>

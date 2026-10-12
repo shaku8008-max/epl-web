@@ -22,19 +22,21 @@ export type Fixture = Prediction & { fixture_date: string };
 
 // Table `team_stats`: one row per team, 20 rows. Primary key (team).
 // The "last5"/"last10" columns are per-match averages, not totals.
+// Numeric columns are typed as number | null because a newly promoted team
+// (or any gap in history) can leave a value missing; the UI shows "–" then.
 export type TeamStats = {
   team: string;
-  elo: number;
-  points_last5: number;
-  goals_for_last5: number;
-  goals_against_last5: number;
-  xg_for_last5: number;
-  xg_against_last5: number;
-  xg_for_last10: number;
-  xg_against_last10: number;
-  xg_diff_ewm20: number;
-  xg_diff_ewm40: number;
-  updated_at: string;
+  elo: number | null;
+  points_last5: number | null;
+  goals_for_last5: number | null;
+  goals_against_last5: number | null;
+  xg_for_last5: number | null;
+  xg_against_last5: number | null;
+  xg_for_last10: number | null;
+  xg_against_last10: number | null;
+  xg_diff_ewm20: number | null;
+  xg_diff_ewm40: number | null;
+  updated_at: string | null;
 };
 
 // Table `prediction_history`: next-round fixtures with results filled in once

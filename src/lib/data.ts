@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "@/lib/supabase";
-import type { Prediction, Run } from "@/lib/types";
+import type { Prediction, Run, TeamStats } from "@/lib/types";
 
 // Latest prediction-job run, or null if there is no run yet or the query
 // fails. Returns null instead of throwing so the footer can show
@@ -30,13 +30,18 @@ export async function getPredictions(): Promise<Prediction[]> {
   return (data ?? []) as Prediction[];
 }
 
-// The 20 team names, alphabetically. Throws with the Supabase error message.
-export async function getTeamNames(): Promise<string[]> {
+// All 20 full team_stats rows (one per team), ordered alphabetically by team.
+// One query serves both the picker names and the stage 4 comparison card, so
+// the browser never refetches when the selection changes. Throws with the
+// Supabase error message so the calling page can show it to the user.
+export async function getTeamStats(): Promise<TeamStats[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("team_stats")
-    .select("team")
+    .select("*")
     .order("team");
   if (error) throw new Error(`team_stats: ${error.message}`);
-  return ((data ?? []) as { team: string }[]).map((t) => t.team);
+  return ((data ?? []) as TeamStats[]).sort((a, b) =>
+    a.team.localeCompare(b.team)
+  );
 }
