@@ -1,16 +1,28 @@
-// Side-by-side pre-match stats for the two selected teams. Pure display:
-// the server passes all team_stats rows once, so changing the picker updates
-// instantly with no extra requests. Rendered inside MatchupTool.
+// Side-by-side pre-match stats for the two selected teams. Animated values
+// count here so only this card re-renders per frame.
 
+"use client";
+
+import { memo, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import Card from "@/components/Card";
+import {
+  ANIM_EASE_CSS,
+  ANIM_MS,
+  fadeInStyle,
+  useAnimatedNumber,
+  useHasChanged,
+} from "@/lib/animate";
 import { formatMelbourne } from "@/lib/format";
 import {
   betterSide,
   eloRank,
   formatStatValue,
+  ordinal,
   STAT_GROUPS,
   STAT_ROWS,
 } from "@/lib/stats";
+import type { StatRowDef } from "@/lib/stats";
 import type { TeamStats } from "@/lib/types";
 
 type TeamStatsCardProps = {
@@ -19,7 +31,127 @@ type TeamStatsCardProps = {
   teamStats: TeamStats[];
 };
 
+// One animated numeric cell. Keeps its format while counting (2 decimals,
+// signed trends through zero, whole-number Elo); a null on either side fades
+// instantly instead of counting. The visible number is aria-hidden; the
+// card's sr-only live region announces final values only.
+const CountedStat = memo(function CountedStat({
+  def,
+  value,
+  rank,
+  animate,
+}: {
+  def: StatRowDef;
+  value: number | null;
+  rank: number | null;
+  animate: boolean;
+}) {
+  const [display, done] = useAnimatedNumber(value);
+  const instant = value === null || display === null;
+  // "–" switches fade in via the shared mount animation instead of counting.
+  if (instant) {
+    const dash = formatStatValue(def, value, rank);
+    return (
+      <span
+        key={dash}
+        aria-hidden="true"
+        className={`inline-block tabular-nums${animate ? " epl-anim" : ""}`}
+        style={fadeInStyle(animate)}
+      >
+        {dash}
+      </span>
+    );
+  }
+  // Elo counts whole numbers; the rank text appears when the count finishes.
+  let text: string;
+  if (def.format === "elo") {
+    const whole = Math.round(display as number).toString();
+    text = rank === null || !done ? whole : `${whole} (${ordinal(rank)})`;
+  } else if (def.format === "signed2") {
+    text = formatSignedFromNumber(display as number);
+  } else {
+    text = (display as number).toFixed(2);
+  }
+  return (
+    <span aria-hidden="true" className="inline-block tabular-nums">
+      {text}
+    </span>
+  );
+});
+
+// Formats a non-null counted number as a signed trend, reusing the same
+// rounding rule as formatSigned2 (tiny negatives show as +0.00).
+function formatSignedFromNumber(n: number): string {
+  const rounded = Number(n.toFixed(2));
+  if (rounded < 0) return `−${Math.abs(rounded).toFixed(2)}`;
+  return `+${rounded.toFixed(2)}`;
+}
+
+// Visible text that fades in on change (column titles, freshness line).
+// Keyed mount animation like the prediction headings; aria-hidden with the
+// final text in the card's sr-only live region.
+function FadeSpan({ text, animate }: { text: string; animate: boolean }) {
+  return (
+    <span
+      key={text}
+      aria-hidden="true"
+      className={`inline-block${animate ? " epl-anim" : ""}`}
+      style={fadeInStyle(animate)}
+    >
+      {text}
+    </span>
+  );
+}
+
+// One comparison row: two counted cells plus a fading winner tint. The tint
+// transitions via CSS background-color; bold switches only when the target
+// leader is settled, so nothing flickers mid-count. Keyed by matchup above,
+// so a new selection resets the shown leader without syncing state in render.
+const StatRow = memo(function StatRow({
+  def,
+  targetLeader,
+  homeCell,
+  awayCell,
+  animate,
+}: {
+  def: StatRowDef;
+  targetLeader: "home" | "away" | null;
+  homeCell: ReactNode;
+  awayCell: ReactNode;
+  animate: boolean;
+}) {
+  const [shownLeader, setShownLeader] = useState(targetLeader);
+  useEffect(() => {
+    if (!animate || shownLeader === targetLeader) return;
+    const id = setTimeout(() => setShownLeader(targetLeader), ANIM_MS);
+    return () => clearTimeout(id);
+  }, [targetLeader, animate, shownLeader]);
+
+  // Bold carries the meaning; the tint is decoration only so colour is never
+  // the only signal. Background colour transitions via inline style (same
+  // duration/easing as the counts); Tailwind cannot take the shared constant.
+  const tintStyle = { transition: `background-color ${ANIM_MS}ms ${ANIM_EASE_CSS}` };
+  const homeClasses = shownLeader === "home" ? "bg-home/10 font-bold text-ink" : "text-muted";
+  const awayClasses = shownLeader === "away" ? "bg-away/10 font-bold text-ink" : "text-muted";
+
+  return (
+    <tr className="border-t border-border">
+      <td className={`px-2 py-2 text-left${animate ? " epl-anim" : ""} ${homeClasses}`} style={tintStyle}>
+        {homeCell}
+      </td>
+      <th scope="row" className="px-1 py-2 text-center font-medium text-ink">
+        {def.label}
+      </th>
+      <td className={`px-2 py-2 text-right${animate ? " epl-anim" : ""} ${awayClasses}`} style={tintStyle}>
+        {awayCell}
+      </td>
+    </tr>
+  );
+});
+
 export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardProps) {
+  // Animate only after the first selection change, never on page load.
+  const animate = useHasChanged(`${home}|${away}`);
   const homeRow = teamStats.find((r) => r.team === home) ?? null;
   const awayRow = teamStats.find((r) => r.team === away) ?? null;
 
@@ -45,6 +177,16 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
     .filter((t): t is string => t !== null)
     .sort()
     .at(-1);
+  const freshnessText = `Stats updated: ${latestUpdate ? formatMelbourne(latestUpdate) : "unavailable"}`;
+
+  // Final values only for the live region: intermediates stay silent.
+  const liveSummary =
+    `Team stats, ${home} at home against ${away}. ` +
+    STAT_ROWS.map((def) => {
+      const hv = formatStatValue(def, homeRow[def.key], homeEloRank);
+      const av = formatStatValue(def, awayRow[def.key], awayEloRank);
+      return `${def.label}: ${home} ${hv}, ${away} ${av}`;
+    }).join(". ");
 
   return (
     <Card>
@@ -62,13 +204,15 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
           <thead>
             <tr className="align-bottom">
               <th scope="col" className="pb-2 text-left font-semibold">
-                {home} <span className="font-normal text-muted">(home)</span>
+                <FadeSpan text={home} animate={animate} />{" "}
+                <span className="font-normal text-muted">(home)</span>
               </th>
               <th scope="col" className="pb-2 font-normal text-muted">
                 <span className="sr-only">Stat</span>
               </th>
               <th scope="col" className="pb-2 text-right font-semibold">
-                {away} <span className="font-normal text-muted">(away)</span>
+                <FadeSpan text={away} animate={animate} />{" "}
+                <span className="font-normal text-muted">(away)</span>
               </th>
             </tr>
           </thead>
@@ -83,36 +227,30 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
                   {group}
                 </th>
               </tr>
-              {STAT_ROWS.filter((def) => def.group === group).map((def) => {
-                const homeValue = homeRow[def.key];
-                const awayValue = awayRow[def.key];
-                const leader = betterSide(homeValue, awayValue, def.betterWhen);
-                const homeWins = leader === "home";
-                const awayWins = leader === "away";
-
-                // Bold carries the meaning; the tint is decoration only so
-                // colour is never the only signal.
-                const homeClasses = homeWins
-                  ? "bg-home/10 font-bold text-ink"
-                  : "text-muted";
-                const awayClasses = awayWins
-                  ? "bg-away/10 font-bold text-ink"
-                  : "text-muted";
-
-                return (
-                  <tr key={def.key} className="border-t border-border">
-                    <td className={`px-2 py-2 text-left tabular-nums ${homeClasses}`}>
-                      {formatStatValue(def, homeValue, homeEloRank)}
-                    </td>
-                    <th scope="row" className="px-1 py-2 text-center font-medium text-ink">
-                      {def.label}
-                    </th>
-                    <td className={`px-2 py-2 text-right tabular-nums ${awayClasses}`}>
-                      {formatStatValue(def, awayValue, awayEloRank)}
-                    </td>
-                  </tr>
-                );
-              })}
+              {STAT_ROWS.filter((def) => def.group === group).map((def) => (
+                <StatRow
+                  key={`${def.key}|${home}|${away}`}
+                  def={def}
+                  targetLeader={betterSide(homeRow[def.key], awayRow[def.key], def.betterWhen)}
+                  homeCell={
+                    <CountedStat
+                      def={def}
+                      value={homeRow[def.key]}
+                      rank={homeEloRank}
+                      animate={animate}
+                    />
+                  }
+                  awayCell={
+                    <CountedStat
+                      def={def}
+                      value={awayRow[def.key]}
+                      rank={awayEloRank}
+                      animate={animate}
+                    />
+                  }
+                  animate={animate}
+                />
+              ))}
             </tbody>
           ))}
         </table>
@@ -148,7 +286,10 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
       </details>
 
       <p className="mt-4 text-xs text-muted">
-        Stats updated: {latestUpdate ? formatMelbourne(latestUpdate) : "unavailable"}
+        <FadeSpan text={freshnessText} animate={animate} />
+        <span className="sr-only" role="status">
+          {freshnessText}. {liveSummary}
+        </span>
       </p>
     </Card>
   );

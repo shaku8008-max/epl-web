@@ -38,3 +38,24 @@ body {
   color: var(--color-ink);
   font-family: var(--font-body);
 }
+
+/* Fade-in for swapped text on the Predict page (see lib/animate.ts).
+   Mount-keyed spans fade in over the same space: no layout shift. */
+@keyframes epl-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* No animation at all when the device asks for reduced motion: every width,
+   colour and opacity change below switches instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .epl-anim,
+  .epl-anim * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
