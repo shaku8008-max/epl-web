@@ -13,7 +13,7 @@ type TeamPickerProps = {
 };
 
 const selectClasses =
-  "mt-1 w-full rounded-card border border-border bg-surface px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "mt-1 min-h-11 w-full rounded-card border border-border bg-surface px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export default function TeamPicker({
   teams,

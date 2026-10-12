@@ -31,7 +31,7 @@ export async function getPredictions(): Promise<Prediction[]> {
 }
 
 // All 20 full team_stats rows (one per team), ordered alphabetically by team.
-// One query serves both the picker names and the stage 4 comparison card, so
+// One query serves both the picker names and the comparison card, so
 // the browser never refetches when the selection changes. Throws with the
 // Supabase error message so the calling page can show it to the user.
 export async function getTeamStats(): Promise<TeamStats[]> {

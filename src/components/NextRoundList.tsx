@@ -32,7 +32,8 @@ export default function NextRoundList({
               <button
                 type="button"
                 onClick={() => onSelect(f)}
-                className="-mx-2 flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 rounded-card px-2 py-3 text-left transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex min-h-11 w-full flex-wrap items-baseline gap-x-3 gap-y-1 rounded-card px-2 py-3 text-left transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                aria-label={`Select ${f.home} at home against ${f.away}`}
               >
                 <span className="w-20 shrink-0 text-sm text-muted">
                   {formatFixtureDate(f.fixture_date)}

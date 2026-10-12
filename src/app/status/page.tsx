@@ -5,6 +5,7 @@
 // This is a "server component": it runs on the server only, so the Supabase
 // calls below happen there, not in the browser.
 
+import type { Metadata } from "next";
 import { getSupabaseClient } from "@/lib/supabase";
 import { formatMelbourne } from "@/lib/format";
 import type { Run } from "@/lib/types";
@@ -12,6 +13,13 @@ import type { Run } from "@/lib/types";
 // Render on every request instead of at build time, so the queries run fresh
 // each time you load the page.
 export const dynamic = "force-dynamic";
+
+// Kept out of search results: a troubleshooting page, not site content.
+export const metadata: Metadata = {
+  title: "Status",
+  description: "Supabase connection check for the EPL Predictor site.",
+  robots: { index: false, follow: false },
+};
 
 // What the page shows, once all queries have succeeded.
 type CheckData = {

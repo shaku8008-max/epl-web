@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Card from "@/components/Card";
 import RefreshControls from "@/components/RefreshControls";
 import { loadRefreshStatus } from "@/app/api/refresh/route";
@@ -6,6 +7,12 @@ import { formatMelbourne } from "@/lib/format";
 // Request-time render (same as the other pages): the layout footer queries
 // Supabase live, and this page loads its initial state on the server too.
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Refresh",
+  description:
+    "Fetch the latest results and recompute every Premier League prediction.",
+};
 
 // Server component: loads the initial state once, then hands it to the small
 // RefreshControls client component for the button, countdown and polling.

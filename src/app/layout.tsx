@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import PitchIcon from "@/components/PitchIcon";
@@ -20,8 +20,20 @@ const bodyFont = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EPL Predictor",
-  description: "Premier League match predictions",
+  title: {
+    default: "EPL Predictor",
+    template: "%s · EPL Predictor",
+  },
+  description: "Premier League match predictions from recent form and xG.",
+  openGraph: {
+    title: "EPL Predictor",
+    description: "Premier League match predictions from recent form and xG.",
+  },
+};
+
+// Green browser chrome on mobile (viewport export is where themeColor lives).
+export const viewport: Viewport = {
+  themeColor: "#166534",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -31,7 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   return (
     <html
-      lang="en"
+      lang="en-AU"
       className={`${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
       <body className="flex min-h-dvh flex-col bg-surface font-body text-ink">

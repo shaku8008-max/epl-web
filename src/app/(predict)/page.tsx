@@ -1,6 +1,7 @@
-// Predict page (stage 4). The server loads the data once per request and picks
+// Predict page. The server loads the data once per request and picks
 // the initial matchup; the interactive picker runs in the browser (MatchupTool).
 
+import type { Metadata } from "next";
 import Card from "@/components/Card";
 import MatchupTool from "@/components/MatchupTool";
 import { getPredictions, getTeamStats } from "@/lib/data";
@@ -9,6 +10,12 @@ import type { Prediction, TeamStats } from "@/lib/types";
 
 // Request-time render: queries run fresh on every load, never at build time.
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Predict",
+  description:
+    "Pick any two Premier League teams to see the home, draw and away probabilities.",
+};
 
 // Plain loader with no JSX, so query problems can be caught and reported
 // instead of crashing the page (the linter forbids JSX inside try/catch).

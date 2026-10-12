@@ -1,4 +1,4 @@
-// Row configuration and pure helpers for the stage 4 team-stats comparison.
+// Row configuration and pure helpers for the team-stats comparison.
 // Kept free of Supabase imports so the client MatchupTool bundle stays small.
 // To add or relabel a stat later, edit STAT_ROWS only; the card renders from it.
 

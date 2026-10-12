@@ -119,7 +119,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
       </div>
 
       <details className="mt-4 text-sm">
-        <summary className="cursor-pointer font-medium text-primary">
+        <summary className="cursor-pointer rounded-card font-medium text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           What do these mean?
         </summary>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">

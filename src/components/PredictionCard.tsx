@@ -18,7 +18,7 @@ export default function PredictionCard({
 }: PredictionCardProps) {
   if (!prediction) {
     return (
-      <div id="prediction-card" className="scroll-mt-4">
+      <div id="prediction-card" className="scroll-mt-4" aria-live="polite">
         <Card>
           <h2 className="font-heading text-xl font-semibold">
             {home} (home) v {away} (away)
@@ -56,7 +56,7 @@ export default function PredictionCard({
   const mostLikely = outcomes.reduce((best, o) => (o.value > best.value ? o : best));
 
   return (
-    <div id="prediction-card" className="scroll-mt-4">
+    <div id="prediction-card" className="scroll-mt-4" aria-live="polite">
       <Card>
         <h2 className="font-heading text-xl font-semibold">
           {home} (home) v {away} (away)

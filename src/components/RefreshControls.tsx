@@ -193,7 +193,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
 
   if (phase.name === "refreshing") {
     return (
-      <div className="mt-4" role="status" aria-live="polite">
+      <div className="mt-4" role="status">
         <Button disabled>
           <span
             aria-hidden="true"
