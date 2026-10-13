@@ -50,6 +50,80 @@ body {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* Team stats comparison table (see components/TeamStatsCard.tsx).     */
+/* Built from divs in a CSS grid rather than a <table>: an absolutely  */
+/* positioned <td> is unreliable, and position: relative on a <tr> is */
+/* undefined behaviour, which is what broke the sliding highlight.     */
+/*                                                                     */
+/* Geometry is defined once here. --stats-label-w is the middle        */
+/* column, so the two value columns are always equal and the pill and  */
+/* the dividers can be positioned with plain percentages. No measuring */
+/* in JavaScript and no container queries are needed.                  */
+/* ------------------------------------------------------------------ */
+
+/* Width of the middle (stat label) column. */
+.stats-table {
+  --stats-label-w: 8rem;
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .stats-table {
+    --stats-label-w: 10rem;
+  }
+}
+
+/* One row: home value, label, away value. minmax(0, 1fr) keeps the value
+   columns from ever pushing the card wider, so labels wrap instead of
+   scrolling sideways on a 360 px phone. */
+.stats-row {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    var(--stats-label-w)
+    minmax(0, 1fr);
+  align-items: center;
+}
+
+/* Thin vertical rules between the three columns, running the full height of
+   the table (through the group subheadings and the team-name headings too). */
+.stats-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.stats-divider-left {
+  left: calc(50% - var(--stats-label-w) / 2);
+}
+
+.stats-divider-right {
+  left: calc(50% + var(--stats-label-w) / 2);
+}
+
+/* The sliding highlight. Always mounted, never a grid item, so it can never
+   shift the cells. Exactly one value column wide; translateX(100% + label
+   column) lands it on the other side at every width. */
+.stats-pill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(50% - var(--stats-label-w) / 2);
+  pointer-events: none;
+}
+
+/* Visible tint, inset a little so it never touches the dividers. */
+.stats-pill-fill {
+  position: absolute;
+  inset: 0.25rem 0.125rem;
+  border-radius: 9999px;
+}
+
 /* Fade-out for the outgoing copy during a text crossfade (TeamStatsCard's
    FadeSpan): it is stacked in the same grid cell as the incoming text and
    leaves after the fade, so the box size never changes. */

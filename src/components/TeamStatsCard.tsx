@@ -134,8 +134,12 @@ function FadeSpan({
     return () => clearTimeout(id);
   }, [outgoing]);
 
+  // inline-grid (not grid) so the team name and its "(home)" label flow on one
+  // line when there is room and wrap only when there is not. The box still
+  // sizes to the widest of the two copies, and because the column widths are
+  // fixed by the row grid nothing around it ever moves.
   return (
-    <span className="grid">
+    <span className="inline-grid">
       {outgoing !== null && (
         <span
           aria-hidden="true"
@@ -159,10 +163,11 @@ function FadeSpan({
 }
 
 // One comparison row: two counted cells plus a sliding winner pill. The pill
-// is an absolute rounded highlight behind the winning value; it moves with a
-// CSS transform between the left and right cells, fading out when neither
-// side leads and fading in on the newly leading side. Bold switches when the
-// slide finishes, so nothing flickers mid-count.
+// is an absolutely positioned rounded highlight behind the winning value; it
+// is never a grid item, so it can never shift the cells. It moves with a CSS
+// transform between the two value columns, fading out where it is when
+// neither side leads and fading in on the newly leading side. Bold switches
+// when the slide finishes, so nothing flickers mid-count.
 //
 // Stable identity matters: rows are keyed by stat only and keep their own
 // state, so a selection change updates values in place (counting from the
@@ -199,19 +204,20 @@ const StatRow = memo(function StatRow({
   // otherwise the target straight away.
   const leader = animate ? shownLeader : targetLeader;
 
-  // Pill position: left cell, right cell, or hidden. The pill spans exactly
-  // one side column (30% of the row, matching the colgroup); translateX moves
-  // it across the row, so the right cell needs a shift of
-  // (rowWidth - pillWidth) / pillWidth = 70/30 = 233.33% of its own width.
-  // Position and colour follow the target, so the tint morphs while the pill
-  // travels; opacity fades the pill out when neither side leads, and it stays
-  // put on its last side while fading. inset-y keeps the row height unchanged.
+  // Pill position and colour follow the target, so the tint morphs while the
+  // pill travels. The away shift is "one pill width + the label column",
+  // which is exactly the gap between the two value columns, so it lands right
+  // at any width (the widths are defined in globals.css). When neither side
+  // leads the pill fades out where it is, and a side becoming better fades in
+  // on that side rather than sliding across from the old one.
   const pillVisible = leader !== null || targetLeader !== null;
   const pillSide = targetLeader ?? leader;
-  const pillColor = pillSide === "home" ? "bg-home/10" : "bg-away/10";
+  const pillColor = pillSide === "home" ? "bg-home/25" : "bg-away/25";
   const pillStyle: CSSProperties = {
     transform:
-      pillSide === "away" ? "translateX(233.33%)" : "translateX(0%)",
+      pillSide === "away"
+        ? "translateX(calc(100% + var(--stats-label-w)))"
+        : "translateX(0%)",
     opacity: targetLeader === null ? 0 : 1,
     transition: animate
       ? `transform ${ANIM_MS}ms ${ANIM_EASE_CSS} ${delayMs}ms, ` +
@@ -226,16 +232,23 @@ const StatRow = memo(function StatRow({
   const awayClasses = leader === "away" ? "font-bold text-ink" : "text-muted";
 
   return (
-    <tr className={`relative border-t border-border${animate ? " epl-anim" : ""}`}>
-      {/* Sliding highlight behind the winning value. pointer-events-none so
-          it never blocks taps; text cells sit above it (z-10). */}
-      <td aria-hidden="true" className="pointer-events-none absolute inset-y-1 left-0 w-[30%] p-0">
-        <span
-          className={`block h-full w-full rounded-full ${pillColor}`}
-          style={{ ...pillStyle, visibility: pillVisible ? "visible" : "hidden" }}
-        />
-      </td>
-      <td className={`relative z-10 px-2 py-2 text-left tabular-nums ${homeClasses}`}>
+    <div
+      role="row"
+      className={`stats-row border-t border-border${animate ? " epl-anim" : ""}`}
+    >
+      {/* Sliding highlight behind the winning value. pointer-events-none so it
+          never blocks taps; the cells above it are z-10. */}
+      <span
+        aria-hidden="true"
+        className="stats-pill z-0"
+        style={{ ...pillStyle, visibility: pillVisible ? "visible" : "hidden" }}
+      >
+        <span className={`stats-pill-fill block ${pillColor}`} />
+      </span>
+      <div
+        role="cell"
+        className={`relative z-10 px-2 py-2 text-center tabular-nums ${homeClasses}`}
+      >
         <CountedStat
           def={def}
           value={homeValue}
@@ -243,11 +256,17 @@ const StatRow = memo(function StatRow({
           animate={animate}
           delayMs={delayMs}
         />
-      </td>
-      <th scope="row" className="relative z-10 px-1 py-2 text-center font-medium text-ink">
+      </div>
+      <div
+        role="rowheader"
+        className="relative z-10 px-1 py-2 text-center font-medium text-ink"
+      >
         {def.label}
-      </th>
-      <td className={`relative z-10 px-2 py-2 text-right tabular-nums ${awayClasses}`}>
+      </div>
+      <div
+        role="cell"
+        className={`relative z-10 px-2 py-2 text-center tabular-nums ${awayClasses}`}
+      >
         <CountedStat
           def={def}
           value={awayValue}
@@ -255,8 +274,8 @@ const StatRow = memo(function StatRow({
           animate={animate}
           delayMs={delayMs}
         />
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 });
 
@@ -307,59 +326,61 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
     <Card>
       <h2 className="font-heading text-xl font-semibold">Team stats</h2>
 
-      <div className="mt-4 overflow-x-hidden">
-        <table className="w-full table-fixed text-sm">
-          {/* Fixed thirds: narrow side columns so long team names wrap instead
-              of pushing the table wider than a 360 px phone. */}
-          <colgroup>
-            <col className="w-[30%]" />
-            <col className="w-[40%]" />
-            <col className="w-[30%]" />
-          </colgroup>
-          <thead>
-            <tr className="align-bottom">
-              <th scope="col" className="pb-2 text-left font-semibold">
-                <FadeSpan text={home} animate={animate} />{" "}
-                <span className="font-normal text-muted">(home)</span>
-              </th>
-              <th scope="col" className="pb-2 font-normal text-muted">
-                <span className="sr-only">Stat</span>
-              </th>
-              <th scope="col" className="pb-2 text-right font-semibold">
-                <FadeSpan text={away} animate={animate} />{" "}
-                <span className="font-normal text-muted">(away)</span>
-              </th>
-            </tr>
-          </thead>
-          {/* Ripple: STAT_ROWS is already in display order, so the flat index
-              staggers each row ~28 ms after the one above; the whole table
-              finishes in ~700 ms. Group headers render from the same pass. */}
-          {STAT_GROUPS.map((group) => (
-            <tbody key={group}>
-              <tr>
-                <th
-                  scope="colgroup"
-                  colSpan={3}
-                  className="pb-1 pt-4 text-left font-heading text-xs font-semibold uppercase tracking-wide text-muted"
-                >
-                  {group}
-                </th>
-              </tr>
-              {STAT_ROWS.filter((def) => def.group === group).map((def) => (
-                <StatRow
-                  key={def.key}
-                  def={def}
-                  homeValue={homeRow[def.key]}
-                  awayValue={awayRow[def.key]}
-                  homeEloRank={homeEloRank}
-                  awayEloRank={awayEloRank}
-                  animate={animate}
-                  delayMs={STAT_ROWS.indexOf(def) * RIPPLE_MS}
-                />
-              ))}
-            </tbody>
-          ))}
-        </table>
+      {/* A grid of divs with table roles: the layout is a CSS grid (needed for
+          the absolutely positioned highlight) and the roles keep it readable
+          as a table for screen readers. */}
+      <div
+        role="table"
+        aria-label={`Team stats comparison: ${home} at home, ${away} away`}
+        className="stats-table mt-4 text-sm"
+      >
+        {/* Continuous vertical rules: home values | labels | away values. */}
+        <span aria-hidden="true" className="stats-divider stats-divider-left" />
+        <span aria-hidden="true" className="stats-divider stats-divider-right" />
+
+        {/* Team-name headings, centred over their own columns. */}
+        <div role="row" className="stats-row pb-2">
+          <div role="columnheader" className="px-1 text-center font-semibold">
+            <FadeSpan text={home} animate={animate} />{" "}
+            <span className="font-normal text-muted">(home)</span>
+          </div>
+          <div role="columnheader" className="px-1 text-center font-normal text-muted">
+            <span className="sr-only">Stat</span>
+          </div>
+          <div role="columnheader" className="px-1 text-center font-semibold">
+            <FadeSpan text={away} animate={animate} />{" "}
+            <span className="font-normal text-muted">(away)</span>
+          </div>
+        </div>
+
+        {/* Ripple: STAT_ROWS is already in display order, so the flat index
+            staggers each row ~28 ms after the one above; the whole table
+            finishes in ~700 ms. Group headers render from the same pass. */}
+        {STAT_GROUPS.map((group) => (
+          <div role="rowgroup" key={group}>
+            <div role="row" className="stats-row pb-1 pt-4">
+              <div
+                role="columnheader"
+                aria-colspan={3}
+                className="col-span-3 px-1 text-left font-heading text-xs font-semibold uppercase tracking-wide text-muted"
+              >
+                {group}
+              </div>
+            </div>
+            {STAT_ROWS.filter((def) => def.group === group).map((def) => (
+              <StatRow
+                key={def.key}
+                def={def}
+                homeValue={homeRow[def.key]}
+                awayValue={awayRow[def.key]}
+                homeEloRank={homeEloRank}
+                awayEloRank={awayEloRank}
+                animate={animate}
+                delayMs={STAT_ROWS.indexOf(def) * RIPPLE_MS}
+              />
+            ))}
+          </div>
+        ))}
       </div>
 
       <details className="mt-4 text-sm">
