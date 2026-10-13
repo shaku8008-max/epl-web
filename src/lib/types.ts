@@ -58,3 +58,32 @@ export type Run = {
   xg_ok: boolean;
   status: string;
 };
+
+// Table `results`: one row per played match, uploaded by the Python project.
+// Primary key (home, away, fixture_date).
+export type Result = {
+  home: string;
+  away: string;
+  fixture_date: string;
+  home_goals: number | null;
+  away_goals: number | null;
+  result: "H" | "D" | "A" | null;
+};
+
+// Table `journal`: one row per recorded bet. Written by the website via
+// server actions (service key), never by the public key.
+export type JournalEntry = {
+  id: number;
+  home: string;
+  away: string;
+  fixture_date: string;
+  pick: "H" | "D" | "A";
+  stake: number;
+  odds: number;
+  placed_at: string;
+  notes: string | null;
+  status: "open" | "won" | "lost" | "void";
+  result: "H" | "D" | "A" | null;
+  settled_at: string | null;
+  created_at: string;
+};
