@@ -3,6 +3,7 @@
 // model probabilities (to show what the model said for each pick).
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import Card from "@/components/Card";
 import AddBetForm from "@/components/AddBetForm";
 import JournalEntry from "@/components/JournalEntry";
@@ -102,6 +103,15 @@ export default async function JournalPage() {
       <p className="mt-3 max-w-2xl text-lg">
         Record your predictions with a stake and odds, then see whether the
         model is actually paying off.
+      </p>
+
+      <p className="mt-4">
+        <Link
+          href="/journal/history"
+          className="font-medium text-primary underline underline-offset-2"
+        >
+          View history
+        </Link>
       </p>
 
       <div className="mt-8">
