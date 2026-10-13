@@ -13,10 +13,10 @@ export default function Card({
   variant = "tint",
   className = "",
 }: CardProps) {
-  const background = variant === "white" ? "bg-surface" : "bg-tint";
+  const background = variant === "white" ? "bg-surface shadow-card" : "bg-tint";
   return (
     <div
-      className={`rounded-card border border-border p-6 shadow-card ${background} ${className}`}
+      className={`rounded-card border border-border p-6 ${background} ${className}`}
     >
       {children}
     </div>

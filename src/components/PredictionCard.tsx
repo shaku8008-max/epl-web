@@ -97,7 +97,7 @@ export default function PredictionCard({
   if (!prediction) {
     return (
       <div id="prediction-card" className="scroll-mt-4">
-        <Card>
+        <Card variant="white">
           <h2 className="font-heading text-xl font-semibold">
             <FadeText text={heading} animate={animate} />
             <span className="sr-only" role="status">
@@ -145,7 +145,7 @@ export default function PredictionCard({
 
   return (
     <div id="prediction-card" className={`scroll-mt-4${animate ? " epl-anim" : ""}`}>
-      <Card>
+      <Card variant="white">
         <h2 className="font-heading text-xl font-semibold">
           <FadeText text={heading} animate={animate} />
         </h2>

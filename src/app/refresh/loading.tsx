@@ -3,7 +3,7 @@
 export default function RefreshLoading() {
   return (
     <section aria-busy="true" aria-label="Loading refresh status">
-      <h1 className="font-heading text-3xl font-bold text-primary">Refresh</h1>
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Refresh</h1>
       <p className="mt-3 max-w-2xl text-lg">
         Refresh pulls in the latest match results and recomputes every
         prediction in the database.

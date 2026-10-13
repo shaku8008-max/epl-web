@@ -3,7 +3,7 @@
 export default function PredictLoading() {
   return (
     <section aria-busy="true" aria-label="Loading predictions">
-      <h1 className="font-heading text-3xl font-bold text-primary">Predict</h1>
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Predict</h1>
       <p className="mt-3 max-w-2xl text-lg">
         Pick any two Premier League teams to see the home, draw and away
         probabilities from the model, plus recent stats for both teams.

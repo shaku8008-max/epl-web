@@ -28,7 +28,7 @@ export default function Tabs() {
             aria-current={active ? "page" : undefined}
             className={
               active
-                ? "inline-flex min-h-11 items-center rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                ? "inline-flex min-h-11 items-center rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-primary shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 : "inline-flex min-h-11 items-center rounded-full px-4 py-1.5 text-sm font-semibold text-white/85 transition-colors hover:bg-primary-light hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             }
           >

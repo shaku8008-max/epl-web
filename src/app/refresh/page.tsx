@@ -24,7 +24,7 @@ export default async function RefreshPage() {
     const message = err instanceof Error ? err.message : String(err);
     return (
       <section>
-        <h1 className="font-heading text-3xl font-bold text-primary">Refresh</h1>
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Refresh</h1>
         <p className="mt-3 max-w-2xl text-lg">
           Refresh pulls in the latest match results and recomputes every
           prediction in the database.
@@ -39,12 +39,12 @@ export default async function RefreshPage() {
 
   return (
     <section>
-      <h1 className="font-heading text-3xl font-bold text-primary">Refresh</h1>
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Refresh</h1>
       <p className="mt-3 max-w-2xl text-lg">
         Refresh pulls in the latest match results and recomputes every
         prediction in the database.
       </p>
-      <Card className="mt-8">
+      <Card variant="white" className="mt-8">
         <p>
           <span className="font-medium">Data as of:</span>{" "}
           {initial.dataAsOf

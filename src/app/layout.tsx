@@ -47,7 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
       <body className="flex min-h-dvh flex-col bg-surface font-body text-ink">
-        <header className="bg-primary text-white">
+        <header className="bg-gradient-to-b from-primary-light to-primary text-white shadow-sm">
           <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
             <div className="flex items-center gap-2.5">
               <PitchIcon className="h-7 w-7" />
@@ -64,14 +64,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </main>
 
         <footer className="border-t border-border bg-tint">
-          <div className="mx-auto w-full max-w-4xl px-4 py-6 text-sm text-muted sm:px-6">
+          <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-6 text-sm text-muted sm:px-6">
             <p>
               <span className="font-medium text-ink">Data as of:</span>{" "}
               {run
                 ? `${formatMelbourne(run.data_as_of)} · model ${run.model_version}`
                 : "unavailable"}
             </p>
-            <p className="mt-1">For fun only. Not betting advice.</p>
+            <p>For fun only. Not betting advice.</p>
           </div>
         </footer>
       </body>

@@ -6,19 +6,19 @@
    rounded-card; --shadow-card generates shadow-card. */
 @theme {
   /* Brand greens: deep pitch green + a lighter green for hovers/highlights */
-  --color-primary: #166534;
-  --color-primary-light: #1d7a42;
+  --color-primary: #14532d;
+  --color-primary-light: #166534;
 
   /* Surfaces, borders and text */
   --color-surface: #ffffff;
-  --color-tint: #f4f8f5;
-  --color-border: #dde7e0;
-  --color-ink: #14201a;
-  --color-muted: #5b6b62;
+  --color-tint: #f3f7f4;
+  --color-border: #dbe5de;
+  --color-ink: #0f1a14;
+  --color-muted: #55655c;
 
   /* Outcome colours: home win / draw / away win. Always shown together with a
      text label, so colour is never the only signal. */
-  --color-home: #166534;
+  --color-home: #14532d;
   --color-draw: #64748b;
   --color-away: #1e4e79;
 
@@ -29,7 +29,7 @@
 
   /* Shape and depth */
   --radius-card: 0.75rem;
-  --shadow-card: 0 1px 2px rgba(20, 32, 26, 0.06), 0 6px 16px rgba(20, 32, 26, 0.05);
+  --shadow-card: 0 1px 2px rgba(15, 26, 20, 0.05), 0 8px 24px rgba(15, 26, 20, 0.06);
 }
 
 /* Light mode only: no prefers-color-scheme switch, so the site stays white. */

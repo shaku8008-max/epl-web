@@ -32,7 +32,7 @@ export default async function HistoryPage() {
     const message = err instanceof Error ? err.message : String(err);
     return (
       <section>
-        <h1 className="font-heading text-3xl font-bold text-primary">History</h1>
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">History</h1>
         <Card className="mt-8">
           <p className="font-semibold">History is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{message}</p>
@@ -46,12 +46,12 @@ export default async function HistoryPage() {
 
   return (
     <section>
-      <h1 className="font-heading text-3xl font-bold text-primary">History</h1>
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">History</h1>
       <p className="mt-3 max-w-2xl text-lg">
         How your journal has performed over time, bet by bet.
       </p>
 
-      <Card className="mt-8">
+      <Card variant="white" className="mt-8">
         <div className="flex items-baseline justify-between gap-3">
           <h2 className="font-heading text-xl font-semibold">
             Cumulative profit / loss
@@ -70,7 +70,7 @@ export default async function HistoryPage() {
         </div>
       </Card>
 
-      <Card className="mt-6">
+      <Card variant="white" className="mt-6">
         <h2 className="font-heading text-xl font-semibold">Settled bets</h2>
         {list.length === 0 ? (
           <p className="mt-2 text-muted">

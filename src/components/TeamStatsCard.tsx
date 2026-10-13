@@ -293,7 +293,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
   if (!homeRow || !awayRow) {
     const missing = !homeRow ? home : away;
     return (
-      <Card>
+      <Card variant="white">
         <h2 className="font-heading text-xl font-semibold">Team stats</h2>
         <p className="mt-2 text-sm text-muted">
           No stats found for {missing} yet. Predictions above still work.
@@ -323,7 +323,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
     }).join(". ");
 
   return (
-    <Card>
+    <Card variant="white">
       <h2 className="font-heading text-xl font-semibold">Team stats</h2>
 
       {/* A grid of divs with table roles: the layout is a CSS grid (needed for

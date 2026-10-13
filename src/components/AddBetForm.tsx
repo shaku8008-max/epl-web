@@ -38,7 +38,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
 
   if (fixtures.length === 0) {
     return (
-      <Card>
+      <Card variant="white">
         <h2 className="font-heading text-xl font-semibold">Add a bet</h2>
         <p className="mt-2 text-muted">
           No upcoming fixtures to bet on right now. Check back after the next
@@ -90,7 +90,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
   }
 
   return (
-    <Card>
+    <Card variant="white">
       <h2 className="font-heading text-xl font-semibold">Add a bet</h2>
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         <div>

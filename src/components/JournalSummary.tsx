@@ -32,7 +32,7 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
   const voidCount = entries.filter((e) => e.status === "void").length;
 
   return (
-    <Card>
+    <Card variant="white">
       <h2 className="font-heading text-xl font-semibold">Summary</h2>
       <dl className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div>
