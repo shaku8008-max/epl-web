@@ -16,7 +16,11 @@ export function easeOutCubic(t: number): number {
 
 export const ANIM_EASE_CSS = "cubic-bezier(0.33, 1, 0.68, 1)";
 
-// Brief crossfade for swapped text (team names, fixture and freshness lines).
+// How long rows wait before starting, top to bottom, so the change ripples
+// down the table. 10 rows x 28 ms + 450 ms counts finish inside ~800 ms.
+export const RIPPLE_MS = 28;
+
+// Brief fade-in for swapped text (team names, freshness line) and "–" flips.
 export const TEXT_MS = 150;
 
 // CSS-only fade-in for swapped text: the caller renders
@@ -26,6 +30,13 @@ export const TEXT_MS = 150;
 export function fadeInStyle(animate: boolean): CSSProperties | undefined {
   if (!animate) return undefined;
   return { animation: `epl-fade-in ${TEXT_MS}ms ease-out` };
+}
+
+// The matching fade-out for the outgoing copy during a crossfade. The caller
+// renders it on top of the incoming copy for the same duration and then
+// unmounts it, so the box size never changes.
+export function fadeOutStyle(): CSSProperties {
+  return { animation: `epl-fade-out ${TEXT_MS}ms ease-in` };
 }
 
 // True when the device asks for reduced motion. Initialised lazily from
@@ -61,13 +72,17 @@ export function useHasChanged(value: unknown): boolean {
   return changed;
 }
 
-// Counts from the currently displayed number to the target over ANIM_MS.
+// Counts from the currently displayed number to the target over ANIM_MS,
+// optionally starting after delayMs (ripple: rows start top to bottom).
 // Returns [display, done]: done is true when the display equals the target.
 // Instant (no counting) when the target is first seen, when motion is reduced,
 // or when either side is null (the caller fades "–" instead). Rapid changes
 // cancel the in-flight frame and start from wherever the display currently
 // is, so values never jump back or queue up.
-export function useAnimatedNumber(target: number | null): [number | null, boolean] {
+export function useAnimatedNumber(
+  target: number | null,
+  delayMs = 0
+): [number | null, boolean] {
   const reduced = usePrefersReducedMotion();
   const [display, setDisplay] = useState<number | null>(target);
   const displayRef = useRef<number | null>(target);
@@ -88,9 +103,9 @@ export function useAnimatedNumber(target: number | null): [number | null, boolea
       setDisplay(target);
       return;
     }
-    const start = performance.now();
+    const start = performance.now() + delayMs;
     const tick = (now: number) => {
-      const t = Math.min((now - start) / ANIM_MS, 1);
+      const t = Math.min(Math.max((now - start) / ANIM_MS, 0), 1);
       const value = t >= 1 ? target : from + (target - from) * easeOutCubic(t);
       displayRef.current = value;
       setDisplay(value);
@@ -99,7 +114,7 @@ export function useAnimatedNumber(target: number | null): [number | null, boolea
     cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [target, reduced]);
+  }, [target, reduced, delayMs]);
 
   return [display, display === target];
 }

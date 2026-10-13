@@ -50,6 +50,18 @@ body {
   }
 }
 
+/* Fade-out for the outgoing copy during a text crossfade (TeamStatsCard's
+   FadeSpan): it is stacked in the same grid cell as the incoming text and
+   leaves after the fade, so the box size never changes. */
+@keyframes epl-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* No animation at all when the device asks for reduced motion: every width,
    colour and opacity change below switches instantly. */
 @media (prefers-reduced-motion: reduce) {

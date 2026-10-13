@@ -4,14 +4,18 @@
 "use client";
 
 import { memo, useEffect, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties } from "react";
 import Card from "@/components/Card";
 import {
   ANIM_EASE_CSS,
   ANIM_MS,
   fadeInStyle,
+  fadeOutStyle,
+  RIPPLE_MS,
+  TEXT_MS,
   useAnimatedNumber,
   useHasChanged,
+  usePrefersReducedMotion,
 } from "@/lib/animate";
 import { formatMelbourne } from "@/lib/format";
 import {
@@ -40,20 +44,26 @@ const CountedStat = memo(function CountedStat({
   value,
   rank,
   animate,
+  delayMs,
 }: {
   def: StatRowDef;
   value: number | null;
   rank: number | null;
   animate: boolean;
+  delayMs: number;
 }) {
-  const [display, done] = useAnimatedNumber(value);
+  const [display, done] = useAnimatedNumber(value, animate ? delayMs : 0);
   const instant = value === null || display === null;
+  // Keys flip only when a value appears or disappears, so the dash and the
+  // number swap places once (each fading in) instead of popping, while the
+  // key stays stable through every counting frame.
+  const flipKey = `${def.key}-${instant ? "dash" : "num"}`;
   // "–" switches fade in via the shared mount animation instead of counting.
   if (instant) {
     const dash = formatStatValue(def, value, rank);
     return (
       <span
-        key={dash}
+        key={flipKey}
         aria-hidden="true"
         className={`inline-block tabular-nums${animate ? " epl-anim" : ""}`}
         style={fadeInStyle(animate)}
@@ -73,7 +83,12 @@ const CountedStat = memo(function CountedStat({
     text = (display as number).toFixed(2);
   }
   return (
-    <span aria-hidden="true" className="inline-block tabular-nums">
+    <span
+      key={flipKey}
+      aria-hidden="true"
+      className={`inline-block tabular-nums${animate ? " epl-anim" : ""}`}
+      style={fadeInStyle(animate)}
+    >
       {text}
     </span>
   );
@@ -87,71 +102,171 @@ function formatSignedFromNumber(n: number): string {
   return `+${rounded.toFixed(2)}`;
 }
 
-// Visible text that fades in on change (column titles, freshness line).
-// Keyed mount animation like the prediction headings; aria-hidden with the
-// final text in the card's sr-only live region.
-function FadeSpan({ text, animate }: { text: string; animate: boolean }) {
+// Visible text that crossfades to the new value: the outgoing text stays
+// mounted for TEXT_MS, stacked in the same grid cell as the incoming text
+// (so the box never changes size), and the two column headings swap with no
+// layout shift. Screen readers get a stable sr-only copy of the current
+// text; the card's live region announces changes.
+function FadeSpan({
+  text,
+  animate,
+}: {
+  text: string;
+  animate: boolean;
+}) {
+  const [current, setCurrent] = useState(text);
+  const [outgoing, setOutgoing] = useState<string | null>(null);
+
+  // React's documented "adjust state when a prop changes": stash the previous
+  // text for one crossfade. Done during render, never in an effect. Nothing is
+  // stashed when not animating (first load or reduced motion), so the text
+  // simply swaps.
+  if (current !== text) {
+    if (animate) setOutgoing(current);
+    setCurrent(text);
+  }
+
+  // Drop the outgoing copy once the fade is over. No timer when motion is
+  // reduced (the outgoing copy is not rendered then anyway).
+  useEffect(() => {
+    if (outgoing === null) return;
+    const id = setTimeout(() => setOutgoing(null), TEXT_MS);
+    return () => clearTimeout(id);
+  }, [outgoing]);
+
   return (
-    <span
-      key={text}
-      aria-hidden="true"
-      className={`inline-block${animate ? " epl-anim" : ""}`}
-      style={fadeInStyle(animate)}
-    >
-      {text}
+    <span className="grid">
+      {outgoing !== null && (
+        <span
+          aria-hidden="true"
+          className={`col-start-1 row-start-1 epl-anim`}
+          style={fadeOutStyle()}
+        >
+          {outgoing}
+        </span>
+      )}
+      <span
+        key={current}
+        aria-hidden="true"
+        className={`col-start-1 row-start-1${animate ? " epl-anim" : ""}`}
+        style={fadeInStyle(animate)}
+      >
+        {current}
+      </span>
+      <span className="sr-only">{current}</span>
     </span>
   );
 }
 
-// One comparison row: two counted cells plus a fading winner tint. The tint
-// transitions via CSS background-color; bold switches only when the target
-// leader is settled, so nothing flickers mid-count. Keyed by matchup above,
-// so a new selection resets the shown leader without syncing state in render.
+// One comparison row: two counted cells plus a sliding winner pill. The pill
+// is an absolute rounded highlight behind the winning value; it moves with a
+// CSS transform between the left and right cells, fading out when neither
+// side leads and fading in on the newly leading side. Bold switches when the
+// slide finishes, so nothing flickers mid-count.
+//
+// Stable identity matters: rows are keyed by stat only and keep their own
+// state, so a selection change updates values in place (counting from the
+// current display) instead of remounting and jumping.
 const StatRow = memo(function StatRow({
   def,
-  targetLeader,
-  homeCell,
-  awayCell,
+  homeValue,
+  awayValue,
+  homeEloRank,
+  awayEloRank,
   animate,
+  delayMs,
 }: {
   def: StatRowDef;
-  targetLeader: "home" | "away" | null;
-  homeCell: ReactNode;
-  awayCell: ReactNode;
+  homeValue: number | null;
+  awayValue: number | null;
+  homeEloRank: number | null;
+  awayEloRank: number | null;
   animate: boolean;
+  delayMs: number;
 }) {
+  const targetLeader = betterSide(homeValue, awayValue, def.betterWhen);
   const [shownLeader, setShownLeader] = useState(targetLeader);
   useEffect(() => {
+    // Bold follows the slide: wait for the ripple delay plus the slide
+    // duration. When not animating (first load or reduced motion) the derived
+    // leader below already equals the target, so there is nothing to wait for.
     if (!animate || shownLeader === targetLeader) return;
-    const id = setTimeout(() => setShownLeader(targetLeader), ANIM_MS);
+    const id = setTimeout(() => setShownLeader(targetLeader), delayMs + ANIM_MS);
     return () => clearTimeout(id);
-  }, [targetLeader, animate, shownLeader]);
+  }, [targetLeader, animate, shownLeader, delayMs]);
 
-  // Bold carries the meaning; the tint is decoration only so colour is never
-  // the only signal. Background colour transitions via inline style (same
-  // duration/easing as the counts); Tailwind cannot take the shared constant.
-  const tintStyle = { transition: `background-color ${ANIM_MS}ms ${ANIM_EASE_CSS}` };
-  const homeClasses = shownLeader === "home" ? "bg-home/10 font-bold text-ink" : "text-muted";
-  const awayClasses = shownLeader === "away" ? "bg-away/10 font-bold text-ink" : "text-muted";
+  // Which side the bold currently marks: the settled leader while animating,
+  // otherwise the target straight away.
+  const leader = animate ? shownLeader : targetLeader;
+
+  // Pill position: left cell, right cell, or hidden. The pill spans exactly
+  // one side column (30% of the row, matching the colgroup); translateX moves
+  // it across the row, so the right cell needs a shift of
+  // (rowWidth - pillWidth) / pillWidth = 70/30 = 233.33% of its own width.
+  // Position and colour follow the target, so the tint morphs while the pill
+  // travels; opacity fades the pill out when neither side leads, and it stays
+  // put on its last side while fading. inset-y keeps the row height unchanged.
+  const pillVisible = leader !== null || targetLeader !== null;
+  const pillSide = targetLeader ?? leader;
+  const pillColor = pillSide === "home" ? "bg-home/10" : "bg-away/10";
+  const pillStyle: CSSProperties = {
+    transform:
+      pillSide === "away" ? "translateX(233.33%)" : "translateX(0%)",
+    opacity: targetLeader === null ? 0 : 1,
+    transition: animate
+      ? `transform ${ANIM_MS}ms ${ANIM_EASE_CSS} ${delayMs}ms, ` +
+        `opacity ${ANIM_MS}ms ${ANIM_EASE_CSS} ${delayMs}ms, ` +
+        `background-color ${ANIM_MS}ms ${ANIM_EASE_CSS} ${delayMs}ms`
+      : undefined,
+  };
+
+  // Bold carries the meaning; the pill is decoration only so colour is never
+  // the only signal.
+  const homeClasses = leader === "home" ? "font-bold text-ink" : "text-muted";
+  const awayClasses = leader === "away" ? "font-bold text-ink" : "text-muted";
 
   return (
-    <tr className="border-t border-border">
-      <td className={`px-2 py-2 text-left${animate ? " epl-anim" : ""} ${homeClasses}`} style={tintStyle}>
-        {homeCell}
+    <tr className={`relative border-t border-border${animate ? " epl-anim" : ""}`}>
+      {/* Sliding highlight behind the winning value. pointer-events-none so
+          it never blocks taps; text cells sit above it (z-10). */}
+      <td aria-hidden="true" className="pointer-events-none absolute inset-y-1 left-0 w-[30%] p-0">
+        <span
+          className={`block h-full w-full rounded-full ${pillColor}`}
+          style={{ ...pillStyle, visibility: pillVisible ? "visible" : "hidden" }}
+        />
       </td>
-      <th scope="row" className="px-1 py-2 text-center font-medium text-ink">
+      <td className={`relative z-10 px-2 py-2 text-left tabular-nums ${homeClasses}`}>
+        <CountedStat
+          def={def}
+          value={homeValue}
+          rank={homeEloRank}
+          animate={animate}
+          delayMs={delayMs}
+        />
+      </td>
+      <th scope="row" className="relative z-10 px-1 py-2 text-center font-medium text-ink">
         {def.label}
       </th>
-      <td className={`px-2 py-2 text-right${animate ? " epl-anim" : ""} ${awayClasses}`} style={tintStyle}>
-        {awayCell}
+      <td className={`relative z-10 px-2 py-2 text-right tabular-nums ${awayClasses}`}>
+        <CountedStat
+          def={def}
+          value={awayValue}
+          rank={awayEloRank}
+          animate={animate}
+          delayMs={delayMs}
+        />
       </td>
     </tr>
   );
 });
 
 export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardProps) {
-  // Animate only after the first selection change, never on page load.
-  const animate = useHasChanged(`${home}|${away}`);
+  // Animate only after the first selection change, never on page load, and
+  // never when the device asks for reduced motion. Both hooks must be called
+  // unconditionally, so they are combined after the fact.
+  const changed = useHasChanged(`${home}|${away}`);
+  const reduced = usePrefersReducedMotion();
+  const animate = changed && !reduced;
   const homeRow = teamStats.find((r) => r.team === home) ?? null;
   const awayRow = teamStats.find((r) => r.team === away) ?? null;
 
@@ -216,6 +331,9 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
               </th>
             </tr>
           </thead>
+          {/* Ripple: STAT_ROWS is already in display order, so the flat index
+              staggers each row ~28 ms after the one above; the whole table
+              finishes in ~700 ms. Group headers render from the same pass. */}
           {STAT_GROUPS.map((group) => (
             <tbody key={group}>
               <tr>
@@ -229,26 +347,14 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
               </tr>
               {STAT_ROWS.filter((def) => def.group === group).map((def) => (
                 <StatRow
-                  key={`${def.key}|${home}|${away}`}
+                  key={def.key}
                   def={def}
-                  targetLeader={betterSide(homeRow[def.key], awayRow[def.key], def.betterWhen)}
-                  homeCell={
-                    <CountedStat
-                      def={def}
-                      value={homeRow[def.key]}
-                      rank={homeEloRank}
-                      animate={animate}
-                    />
-                  }
-                  awayCell={
-                    <CountedStat
-                      def={def}
-                      value={awayRow[def.key]}
-                      rank={awayEloRank}
-                      animate={animate}
-                    />
-                  }
+                  homeValue={homeRow[def.key]}
+                  awayValue={awayRow[def.key]}
+                  homeEloRank={homeEloRank}
+                  awayEloRank={awayEloRank}
                   animate={animate}
+                  delayMs={STAT_ROWS.indexOf(def) * RIPPLE_MS}
                 />
               ))}
             </tbody>
