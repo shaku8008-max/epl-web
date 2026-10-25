@@ -14,8 +14,8 @@ const aud = new Intl.NumberFormat("en-AU", {
   currency: "AUD",
 });
 
-const GREEN = "#166534";
-const RED = "#b91c1c";
+const GREEN = "var(--color-primary)";
+const RED = "var(--color-out)";
 
 function pickLabel(p: HistoryPoint): string {
   const { home, away, pick } = p.entry;
@@ -33,7 +33,7 @@ export default function HistoryList({ series }: HistoryListProps) {
     <ul className="divide-y divide-border">
       {series.map((p) => {
         const { entry, profit } = p;
-        const color = profit > 0 ? GREEN : profit < 0 ? RED : "#5b6b62";
+        const color = profit > 0 ? GREEN : profit < 0 ? RED : "var(--color-muted)";
         const widthPct = maxAbs === 0 ? 0 : (Math.abs(profit) / maxAbs) * 100;
         const amount =
           profit === 0 ? aud.format(0) : `${profit > 0 ? "+" : "−"}${aud.format(Math.abs(profit))}`;
@@ -48,14 +48,17 @@ export default function HistoryList({ series }: HistoryListProps) {
                 <div className="mt-0.5 text-sm text-muted">
                   {entry.settled_at
                     ? formatMelbourne(entry.settled_at)
-                    : "unavailable"}{" "}
-                  · {pickLabel(p)} · {aud.format(entry.stake)} @{" "}
+                    : "unavailable"} - {pickLabel(p)} - {aud.format(entry.stake)} @{" "}
                   {entry.odds.toFixed(2)}
                 </div>
               </div>
               <div
-                className="shrink-0 font-semibold tabular-nums"
-                style={{ color }}
+                className={`shrink-0 font-semibold font-tabular ${
+                  entry.status === "void"
+                    ? "rounded-card border border-border bg-tint px-2 py-1 text-ink"
+                    : ""
+                }`}
+                style={{ color: entry.status === "void" ? "var(--color-ink)" : color }}
               >
                 {entry.status === "void" ? "Void" : amount}
               </div>

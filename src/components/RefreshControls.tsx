@@ -233,7 +233,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
       <div className="mt-4" role="status">
         <p className="font-semibold">The update is taking longer than usual.</p>
         <p className="mt-1 text-sm text-muted">
-          Please check back later — the new data will appear automatically.
+           Please check back later - the new data will appear automatically.
         </p>
         <div className="mt-3">
           <Button onClick={() => setPhase({ name: "idle" })} variant="secondary">

@@ -38,13 +38,13 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
 
   if (fixtures.length === 0) {
     return (
-      <Card variant="white">
+      <div className="border-y border-border py-6">
         <h2 className="font-heading text-xl font-semibold">Add a bet</h2>
         <p className="mt-2 text-muted">
           No upcoming fixtures to bet on right now. Check back after the next
           refresh.
         </p>
-      </Card>
+      </div>
     );
   }
 
@@ -90,7 +90,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
   }
 
   return (
-    <Card variant="white">
+    <div className="border-y border-border py-6">
       <h2 className="font-heading text-xl font-semibold">Add a bet</h2>
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         <div>
@@ -105,7 +105,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
           >
             {fixtures.map((f) => (
               <option key={`${f.home}|${f.away}`} value={`${f.home}|${f.away}`}>
-                {formatFixtureDate(f.fixture_date)} — {f.home} v {f.away}
+                {formatFixtureDate(f.fixture_date)} - {f.home} v {f.away}
               </option>
             ))}
           </select>
@@ -212,6 +212,6 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
           {pending ? "Adding…" : "Add bet"}
         </Button>
       </form>
-    </Card>
+    </div>
   );
 }

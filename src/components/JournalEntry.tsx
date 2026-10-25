@@ -24,7 +24,7 @@ const aud = new Intl.NumberFormat("en-AU", {
 const STATUS_STYLES: Record<JournalEntryType["status"], string> = {
   open: "bg-draw text-white",
   won: "bg-primary text-white",
-  lost: "bg-red-700 text-white",
+  lost: "bg-out text-white",
   void: "bg-muted text-white",
 };
 
@@ -58,7 +58,7 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
   }
 
   return (
-    <Card>
+    <div className="border-y border-border py-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-heading text-lg font-semibold">
@@ -69,7 +69,7 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
           </p>
         </div>
         <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status]}`}
+          className={`rounded-card px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status]}`}
         >
           {STATUS_LABELS[entry.status]}
         </span>
@@ -91,7 +91,7 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
         <div>
           <dt className="text-muted">Model said</dt>
           <dd className="font-medium tabular-nums">
-            {modelProb === null ? "–" : `${modelProb}%`}
+            {modelProb === null ? "-" : `${modelProb}%`}
           </dd>
         </div>
       </dl>
@@ -146,6 +146,6 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
           Delete
         </Button>
       </div>
-    </Card>
+    </div>
   );
 }

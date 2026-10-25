@@ -92,13 +92,13 @@ export default async function StatusPage() {
   if ("errors" in result) {
     return (
       <section>
-        <h1 className="font-heading text-3xl font-bold text-primary">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">
           Supabase connection check
         </h1>
-        <p className="mt-4 font-semibold text-red-700">Query failed:</p>
-        <ul className="mt-2 list-disc pl-6">
+        <p className="mt-4 font-semibold text-out">Query failed:</p>
+        <ul className="mt-2 divide-y divide-border border-y border-border">
           {result.errors.map((message) => (
-            <li key={message}>{message}</li>
+            <li key={message} className="py-3">{message}</li>
           ))}
         </ul>
       </section>
@@ -109,22 +109,37 @@ export default async function StatusPage() {
 
   return (
     <section>
-      <h1 className="font-heading text-3xl font-bold text-primary">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">
         Supabase connection check
       </h1>
 
       <h2 className="mt-6 font-heading text-xl font-semibold">Row counts</h2>
-      <ul className="mt-2 list-disc pl-6">
-        <li>predictions: {predictionsCount} rows (expected 380)</li>
-        <li>team_stats: {teamStatsCount} rows (expected 20)</li>
+      <ul className="mt-2 divide-y divide-border border-y border-border">
+        <li className="flex flex-wrap justify-between gap-3 py-3">
+          <span>predictions</span>
+          <span className="font-tabular">{predictionsCount} rows (expected 380)</span>
+        </li>
+        <li className="flex flex-wrap justify-between gap-3 py-3">
+          <span>team_stats</span>
+          <span className="font-tabular">{teamStatsCount} rows (expected 20)</span>
+        </li>
       </ul>
 
       <h2 className="mt-6 font-heading text-xl font-semibold">Latest run</h2>
       {run ? (
-        <ul className="mt-2 list-disc pl-6">
-          <li>data_as_of: {formatMelbourne(run.data_as_of)} (Melbourne time)</li>
-          <li>status: {run.status}</li>
-          <li>model_version: {run.model_version}</li>
+        <ul className="mt-2 divide-y divide-border border-y border-border">
+          <li className="flex flex-wrap justify-between gap-3 py-3">
+            <span>data_as_of</span>
+            <span>{formatMelbourne(run.data_as_of)} (Melbourne time)</span>
+          </li>
+          <li className="flex flex-wrap justify-between gap-3 py-3">
+            <span>status</span>
+            <span>{run.status}</span>
+          </li>
+          <li className="flex flex-wrap justify-between gap-3 py-3">
+            <span>model_version</span>
+            <span>{run.model_version}</span>
+          </li>
         </ul>
       ) : (
         <p className="mt-2">No rows found in runs.</p>
@@ -133,9 +148,9 @@ export default async function StatusPage() {
       <h2 className="mt-6 font-heading text-xl font-semibold">
         Teams ({teamNames.length})
       </h2>
-      <ul className="mt-2 list-disc pl-6">
+      <ul className="mt-2 divide-y divide-border border-y border-border">
         {teamNames.map((name) => (
-          <li key={name}>{name}</li>
+          <li key={name} className="py-2">{name}</li>
         ))}
       </ul>
     </section>

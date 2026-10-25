@@ -29,10 +29,10 @@ export default async function RefreshPage() {
           Refresh pulls in the latest match results and recomputes every
           prediction in the database.
         </p>
-        <Card className="mt-8">
+        <div className="mt-8 border-y border-border bg-tint p-6">
           <p className="font-semibold">Refresh status is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{message}</p>
-        </Card>
+        </div>
       </section>
     );
   }
@@ -44,15 +44,15 @@ export default async function RefreshPage() {
         Refresh pulls in the latest match results and recomputes every
         prediction in the database.
       </p>
-      <Card variant="white" className="mt-8">
-        <p>
+      <div className="mt-8 border-y border-border py-6">
+        <p className="text-sm">
           <span className="font-medium">Data as of:</span>{" "}
           {initial.dataAsOf
             ? `${formatMelbourne(initial.dataAsOf)} (Melbourne time)`
             : "unavailable"}
         </p>
         <RefreshControls initial={initial} />
-      </Card>
+      </div>
     </section>
   );
 }

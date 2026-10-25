@@ -87,10 +87,10 @@ export default async function JournalPage() {
           Record your predictions with a stake and odds, then see whether the
           model is actually paying off.
         </p>
-        <Card className="mt-8">
+        <div className="mt-8 border-y border-border bg-tint p-6">
           <p className="font-semibold">The journal is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{result.error}</p>
-        </Card>
+        </div>
       </section>
     );
   }
@@ -122,13 +122,13 @@ export default async function JournalPage() {
         <AddBetForm fixtures={fixtures} />
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6">
         {entries.length === 0 ? (
-          <Card>
+          <div className="border-y border-border py-6">
             <p className="text-muted">
               No bets yet. Add one above to start tracking the model.
             </p>
-          </Card>
+          </div>
         ) : (
           entries.map((entry) => (
             <JournalEntry

@@ -32,14 +32,14 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
   const voidCount = entries.filter((e) => e.status === "void").length;
 
   return (
-    <Card variant="white">
+    <div className="border-y border-border py-6">
       <h2 className="font-heading text-xl font-semibold">Summary</h2>
-      <dl className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <dl className="mt-4 grid grid-cols-2 divide-x divide-border sm:grid-cols-3">
         <div>
           <dt className="text-sm text-muted">Profit / loss</dt>
           <dd
-            className={`mt-1 text-2xl font-semibold tabular-nums ${
-              profit > 0 ? "text-primary" : profit < 0 ? "text-red-700" : "text-ink"
+            className={`mt-1 text-2xl font-semibold font-tabular ${
+              profit > 0 ? "text-primary" : profit < 0 ? "text-out" : "text-ink"
             }`}
           >
             {aud.format(profit)}
@@ -47,14 +47,14 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
         </div>
         <div>
           <dt className="text-sm text-muted">ROI</dt>
-          <dd className="mt-1 text-2xl font-semibold tabular-nums">
-            {roi === null ? "–" : `${roi >= 0 ? "+" : ""}${roi.toFixed(1)}%`}
+          <dd className="mt-1 text-2xl font-semibold font-tabular">
+            {roi === null ? "-" : `${roi >= 0 ? "+" : ""}${roi.toFixed(1)}%`}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-muted">Win rate</dt>
-          <dd className="mt-1 text-2xl font-semibold tabular-nums">
-            {winRate === null ? "–" : `${winRate.toFixed(0)}%`}
+          <dd className="mt-1 text-2xl font-semibold font-tabular">
+            {winRate === null ? "-" : `${winRate.toFixed(0)}%`}
           </dd>
         </div>
       </dl>
@@ -63,6 +63,6 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
         {voidCount > 0 ? `, ${voidCount} void` : ""}
         {openCount > 0 ? `, ${openCount} open` : ""}.
       </p>
-    </Card>
+    </div>
   );
 }

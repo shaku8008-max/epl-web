@@ -33,10 +33,10 @@ export default async function HistoryPage() {
     return (
       <section>
         <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">History</h1>
-        <Card className="mt-8">
+        <div className="mt-8 border-y border-border bg-tint p-6">
           <p className="font-semibold">History is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{message}</p>
-        </Card>
+        </div>
       </section>
     );
   }
@@ -51,14 +51,14 @@ export default async function HistoryPage() {
         How your journal has performed over time, bet by bet.
       </p>
 
-      <Card variant="white" className="mt-8">
+      <div className="mt-8 border-y border-border py-6">
         <div className="flex items-baseline justify-between gap-3">
           <h2 className="font-heading text-xl font-semibold">
             Cumulative profit / loss
           </h2>
           <span
             className={`text-2xl font-semibold tabular-nums ${
-              total > 0 ? "text-primary" : total < 0 ? "text-red-700" : "text-ink"
+              total > 0 ? "text-primary" : total < 0 ? "text-out" : "text-ink"
             }`}
           >
             {total > 0 ? "+" : total < 0 ? "−" : ""}
@@ -68,9 +68,9 @@ export default async function HistoryPage() {
         <div className="mt-4">
           <HistoryChart series={series} />
         </div>
-      </Card>
+      </div>
 
-      <Card variant="white" className="mt-6">
+      <div className="mt-6 border-y border-border py-6">
         <h2 className="font-heading text-xl font-semibold">Settled bets</h2>
         {list.length === 0 ? (
           <p className="mt-2 text-muted">
@@ -81,7 +81,7 @@ export default async function HistoryPage() {
             <HistoryList series={list} />
           </div>
         )}
-      </Card>
+      </div>
 
       <p className="mt-6">
         <Link

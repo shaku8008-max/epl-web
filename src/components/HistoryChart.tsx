@@ -35,7 +35,7 @@ export default function HistoryChart({ series }: HistoryChartProps) {
   const points = series.map((p, i) => `${x(i)},${y(p.total)}`).join(" ");
   const zeroY = y(0);
   const finalTotal = totals[totals.length - 1];
-  const lineColor = finalTotal >= 0 ? "#166534" : "#b91c1c";
+  const lineColor = finalTotal >= 0 ? "var(--color-primary)" : "var(--color-out)";
 
   return (
     <svg
@@ -51,7 +51,7 @@ export default function HistoryChart({ series }: HistoryChartProps) {
           x2={WIDTH - PAD}
           y1={zeroY}
           y2={zeroY}
-          stroke="#dde7e0"
+          stroke="var(--color-border)"
           strokeWidth={1}
         />
       )}
