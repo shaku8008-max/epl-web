@@ -31,11 +31,11 @@ export default function JevTeamNews({ teamName, news }: JevTeamNewsProps) {
             return (
               <li
                 key={p.name}
-                className="rounded-card border border-border bg-surface p-3"
+                className="border-t border-border py-3 first:border-t-0"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-medium">{p.name}</span>
-                  <span className="text-sm text-muted">{p.position ?? "–"}</span>
+                  <span className="text-sm text-muted">{p.position ?? "-"}</span>
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {level === "out" && (

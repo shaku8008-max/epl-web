@@ -4,7 +4,6 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import Card from "@/components/Card";
 import JevFixtureCard from "@/components/JevFixtureCard";
 import { getJevPredictions } from "@/lib/data";
 import { isStale } from "@/lib/jev";
@@ -41,10 +40,10 @@ export default async function JevPage() {
         <p className="mt-3 max-w-2xl text-lg">
           How the latest team news changes the model&apos;s win chances.
         </p>
-        <Card className="mt-8">
+        <div className="mt-8 border-y border-border bg-tint p-6">
           <p className="font-semibold">Jev is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{result.error}</p>
-        </Card>
+        </div>
       </section>
     );
   }
@@ -57,7 +56,7 @@ export default async function JevPage() {
   const stale = isStale(newest);
 
   return (
-    <section>
+    <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Jev</h1>
       <p className="mt-3 max-w-2xl text-lg">
         An experiment: Jev adjusts the model&apos;s win chances using only injury
@@ -76,23 +75,23 @@ export default async function JevPage() {
       </p>
 
       {stale && (
-        <Card className="mt-6">
+        <div className="mt-6 border-y border-border bg-tint p-6 text-ink">
           <p className="font-semibold">News may be out of date</p>
           <p className="mt-1 text-sm text-muted">
             The latest news was fetched more than two days ago.
           </p>
-        </Card>
+        </div>
       )}
 
       {fixtures.length === 0 ? (
-        <Card className="mt-6">
+        <div className="mt-6 border-y border-border py-6">
           <p className="text-muted">
             No upcoming fixtures with news yet. Check back after the next
             refresh.
           </p>
-        </Card>
+        </div>
       ) : (
-        <div className="mt-6 space-y-6">
+        <div className="mt-6">
           {fixtures.map((f) => (
             <JevFixtureCard
               key={`${f.home}|${f.away}|${f.fixture_date}`}

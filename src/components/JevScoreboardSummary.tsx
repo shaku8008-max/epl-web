@@ -2,7 +2,6 @@
 // comparison (log loss and accuracy), and the head-to-head counts against the
 // plain model. Server component: pure display.
 
-import Card from "@/components/Card";
 import { dataNote, type ScoreSummary, type VersionScore } from "@/lib/jevScore";
 
 type JevScoreboardSummaryProps = {
@@ -16,12 +15,12 @@ const VERSIONS: { key: "plain" | "half" | "full"; label: string }[] = [
 ];
 
 function formatLoss(score: VersionScore): string {
-  return score.logLoss === null ? "–" : score.logLoss.toFixed(3);
+  return score.logLoss === null ? "-" : score.logLoss.toFixed(3);
 }
 
 function formatAccuracy(score: VersionScore): string {
   return score.accuracy === null
-    ? "–"
+    ? "-"
     : `${Math.round(score.accuracy * 100)}%`;
 }
 
@@ -33,7 +32,7 @@ export default function JevScoreboardSummary({
   summary,
 }: JevScoreboardSummaryProps) {
   return (
-    <Card variant="white" className="mt-6">
+    <section className="mt-6 border-y border-border py-6">
       <h2 className="font-heading text-xl font-semibold">How much data</h2>
       <p className="mt-2">
         <span className="font-semibold tabular-nums">{summary.count}</span>{" "}
@@ -48,20 +47,20 @@ export default function JevScoreboardSummary({
         </p>
       )}
       {summary.promptVersions.length > 1 && (
-        <p className="mt-2 rounded-card border border-border bg-tint p-3 text-sm">
+        <p className="mt-2 border-y border-border bg-tint p-3 text-sm text-ink">
           This comparison mixes results from more than one prompt version (
           {summary.promptVersions.join(", ")}), so it is not a clean
           like-for-like test.
         </p>
       )}
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <div className="mt-5 grid gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {VERSIONS.map((v) => {
           const score = summary[v.key];
           return (
             <div
               key={v.key}
-              className="rounded-card border border-border bg-surface p-3"
+              className="min-w-0 p-3"
             >
               <p className="text-sm font-semibold">{v.label}</p>
               <dl className="mt-2 space-y-1 text-sm">
@@ -86,16 +85,16 @@ export default function JevScoreboardSummary({
       <h3 className="mt-6 font-heading text-base font-semibold">
         Head to head with the model
       </h3>
-      <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
-        <p>
+      <div className="mt-2 grid divide-y divide-border border-y border-border text-sm sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <p className="py-2 sm:pr-4">
           <span className="font-semibold">Jev half shift:</span>{" "}
           {headToHead(summary.half)}
         </p>
-        <p>
+        <p className="py-2 sm:pl-4">
           <span className="font-semibold">Jev full shift:</span>{" "}
           {headToHead(summary.full)}
         </p>
       </div>
-    </Card>
+    </section>
   );
 }

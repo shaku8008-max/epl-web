@@ -4,7 +4,6 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import Card from "@/components/Card";
 import JevScoreboardList from "@/components/JevScoreboardList";
 import JevScoreboardSummary from "@/components/JevScoreboardSummary";
 import { getJevSettledPredictions } from "@/lib/data";
@@ -50,10 +49,10 @@ export default async function JevScoreboardPage() {
         <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary">
           Jev scoreboard
         </h1>
-        <Card className="mt-8">
+        <div className="mt-8 border-y border-border bg-tint p-6">
           <p className="font-semibold">The scoreboard is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{result.error}</p>
-        </Card>
+        </div>
       </section>
     );
   }
@@ -61,7 +60,7 @@ export default async function JevScoreboardPage() {
   const board = buildScoreboard(result.rows);
 
   return (
-    <section>
+    <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <p className="text-sm">
         <Link
           href="/jev"
@@ -96,11 +95,11 @@ export default async function JevScoreboardPage() {
       </div>
 
       {board.matches.length === 0 ? (
-        <Card className="mt-6">
+        <div className="mt-6 border-y border-border py-6">
           <p className="text-muted">
             No finished matches yet. Results appear after the daily update.
           </p>
-        </Card>
+        </div>
       ) : (
         <>
           <JevScoreboardSummary summary={board.summary} />
