@@ -73,21 +73,29 @@ export default function MatchupTool({
   }
 
   return (
-    <div className="mt-8 space-y-6">
-      <TeamPicker
-        teams={teams}
-        home={pair.home}
-        away={pair.away}
-        onHomeChange={chooseHome}
-        onAwayChange={chooseAway}
-        onSwap={swap}
-      />
+    <div className="mt-8 space-y-6 lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)] lg:gap-6 lg:space-y-0">
+      <div className="lg:col-span-2">
+        <TeamPicker
+          teams={teams}
+          home={pair.home}
+          away={pair.away}
+          onHomeChange={chooseHome}
+          onAwayChange={chooseAway}
+          onSwap={swap}
+        />
+      </div>
 
-      <PredictionCard home={pair.home} away={pair.away} prediction={prediction} />
+      <div className="lg:col-span-2">
+        <PredictionCard home={pair.home} away={pair.away} prediction={prediction} />
+      </div>
 
-      <TeamStatsCard home={pair.home} away={pair.away} teamStats={teamStats} />
+      <div>
+        <TeamStatsCard home={pair.home} away={pair.away} teamStats={teamStats} />
+      </div>
 
-      <NextRoundList predictions={predictions} onSelect={selectFixture} />
+      <div>
+        <NextRoundList predictions={predictions} onSelect={selectFixture} />
+      </div>
     </div>
   );
 }

@@ -2,7 +2,11 @@
 // will appear, so a slow database response never shows a blank page.
 export default function PredictLoading() {
   return (
-    <section aria-busy="true" aria-label="Loading predictions">
+    <section
+      aria-busy="true"
+      aria-label="Loading predictions"
+      className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]"
+    >
       <h1 className="font-heading text-4xl font-bold tracking-tight text-ink">Predict</h1>
       <p className="mt-3 max-w-2xl text-lg">
         Pick any two Premier League teams to see the home, draw and away

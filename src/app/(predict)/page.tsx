@@ -71,7 +71,7 @@ export default async function PredictPage(props: PageProps<"/">) {
   );
 
   return (
-    <section>
+    <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Predict</h1>
       <p className="mt-3 max-w-2xl text-lg">
         Pick any two Premier League teams to see the home, draw and away
