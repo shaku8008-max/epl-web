@@ -43,7 +43,7 @@ function stepDescription(step: ExplainStep): string {
 function stepColour(tenths: number): string {
   if (tenths > 0) return "bg-home";
   if (tenths < 0) return "bg-away";
-  return "bg-border";
+  return "bg-muted";
 }
 
 function stepTextColour(tenths: number): string {
@@ -56,38 +56,31 @@ function StepRow({
   label,
   subLabel,
   value,
-  before,
-  after,
-  scaleMin,
-  scaleRange,
+  scale,
 }: {
   label: string;
   subLabel?: string;
   value: number;
-  before: number;
-  after: number;
-  scaleMin: number;
-  scaleRange: number;
+  scale: number;
 }) {
-  const left = ((Math.min(before, after) - scaleMin) / scaleRange) * 100;
-  const width = (Math.abs(after - before) / scaleRange) * 100;
+  const width = Math.min(50, (Math.abs(value / 10) / scale) * 50);
   const move = direction(value);
 
   return (
-    <div className="grid grid-cols-[minmax(7rem,1fr)_minmax(0,1.5fr)_4.5rem] items-center gap-3 border-t border-border py-3 sm:grid-cols-[minmax(12rem,1fr)_minmax(14rem,3fr)_6rem]">
-      <div className="min-w-0">
+    <div className="waterfall-step waterfall-row">
+      <div className="waterfall-step-label min-w-0">
         <p className="font-medium">{label}</p>
         {subLabel && <p className="mt-0.5 text-sm text-muted">{subLabel}</p>}
       </div>
-      <div className="relative h-8" aria-hidden="true">
-        <span className="absolute inset-x-0 top-1/2 border-t border-border" />
+      <div className="waterfall-bar-track waterfall-bar" aria-hidden="true">
+        <span className="waterfall-centre-line" />
         <span
-          className={`absolute top-1/2 h-4 -translate-y-1/2 ${stepColour(value)}`}
-          style={{ left: `${left}%`, width: `max(2px, ${width}%)` }}
+          className={`waterfall-bar-fill ${value < 0 ? "waterfall-bar-fill--lower" : value > 0 ? "waterfall-bar-fill--raise" : "waterfall-bar-fill--zero"} ${stepColour(value)}`}
+          style={{ width: value === 0 ? "2px" : `max(4px, ${width}%)` }}
         />
       </div>
-      <div className={`text-right ${stepTextColour(value)}`}>
-        <p className="font-tabular font-semibold">{signedValue(value)}</p>
+      <div className={`waterfall-step-value text-right ${stepTextColour(value)}`}>
+        <p className="font-tabular text-[22px] font-semibold leading-none">{signedValue(value)}</p>
         <p className="text-sm">{move}</p>
       </div>
     </div>
@@ -136,19 +129,7 @@ export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
   }
 
   const { display } = state;
-  const values = [
-    display.startTenths / 10,
-    ...display.steps.reduce<number[]>((running, step) => {
-      running.push(running[running.length - 1] + step.tenths / 10);
-      return running;
-    }, [display.startTenths / 10]),
-    display.endTenths / 10,
-  ];
-  const scaleMin = Math.min(...values) - 2;
-  const scaleMax = Math.max(...values) + 2;
-  const scaleRange = scaleMax - scaleMin || 1;
-  const start = display.startTenths / 10;
-  const end = display.endTenths / 10;
+  const stepScale = Math.max(3, ...display.steps.map((step) => Math.abs(step.tenths / 10)));
 
   return (
     <section className="lg:col-span-2 border-t border-border pt-6" aria-labelledby="stats-waterfall-heading">
@@ -159,46 +140,41 @@ export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
         The chart starts from the home win chance for an average home team against an average visiting team ({formatTenths(display.startTenths)}%). Each step shows how much one group of stats moves that chance for this pairing, using each team&apos;s current numbers. The last bar is the model&apos;s home win chance, shown to one decimal place; the ribbon above rounds it to a whole number, so the two can differ slightly. This shows how the model weighs its inputs, not proof of what causes a result. Points and goals in the table above are not used by the model, so they do not appear here.
       </p>
 
-      <div className="mt-6">
-        <div className="grid grid-cols-[minmax(7rem,1fr)_minmax(0,1.5fr)_4.5rem] items-center gap-3 border-y border-border py-3 sm:grid-cols-[minmax(12rem,1fr)_minmax(14rem,3fr)_6rem]">
-          <p className="font-medium">Average match</p>
-          <div className="relative h-8" aria-hidden="true">
-            <span className="absolute inset-x-0 top-1/2 border-t border-border" />
-            <span
-              className="absolute top-1/2 h-5 w-1 -translate-x-1/2 -translate-y-1/2 bg-primary"
-              style={{ left: `${((start - scaleMin) / scaleRange) * 100}%` }}
-            />
+      <div className="waterfall-chart mt-6" aria-hidden="true">
+        <div className="waterfall-summary waterfall-row">
+          <div>
+            <p className="font-medium">Average match</p>
+            <p className="mt-0.5 text-sm text-muted">Starting point: an average home team against an average visitor</p>
           </div>
-          <p className="text-right font-tabular font-semibold text-primary">{formatTenths(display.startTenths)}%</p>
+          <div />
+          <p className="waterfall-summary-value text-right font-tabular text-[28px] font-semibold leading-none text-ink">{formatTenths(display.startTenths)}%</p>
         </div>
 
-        {display.steps.map((step, index) => {
-          const before = values[index];
-          const after = values[index + 1];
+        <div className="waterfall-direction-row text-sm text-muted">
+          <span />
+          <div className="flex justify-between">
+            <span>&larr; Lowers the home win chance</span>
+            <span>Raises the home win chance &rarr;</span>
+          </div>
+          <span />
+        </div>
+
+        {display.steps.map((step) => {
           return (
             <StepRow
               key={step.key}
               label={step.label}
               subLabel={step.subLabel}
               value={step.tenths}
-              before={before}
-              after={after}
-              scaleMin={scaleMin}
-              scaleRange={scaleRange}
+              scale={stepScale}
             />
           );
         })}
 
-        <div className="grid grid-cols-[minmax(7rem,1fr)_minmax(0,1.5fr)_4.5rem] items-center gap-3 border-t border-border py-3 sm:grid-cols-[minmax(12rem,1fr)_minmax(14rem,3fr)_6rem]">
+        <div className="waterfall-model waterfall-row">
           <p className="font-medium">Model</p>
-          <div className="relative h-8" aria-hidden="true">
-            <span className="absolute inset-x-0 top-1/2 border-t border-border" />
-            <span
-              className="absolute top-1/2 h-5 -translate-x-1/2 -translate-y-1/2 bg-primary"
-              style={{ left: `${((end - scaleMin) / scaleRange) * 100}%`, width: "4px" }}
-            />
-          </div>
-          <p className="text-right font-tabular font-semibold text-primary">{formatTenths(display.endTenths)}%</p>
+          <div />
+          <p className="waterfall-summary-value text-right font-tabular text-[28px] font-semibold leading-none text-ink">{formatTenths(display.endTenths)}%</p>
         </div>
       </div>
 
