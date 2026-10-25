@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "@/lib/supabase";
-import type { Prediction, Run, TeamStats } from "@/lib/types";
+import type { JevPrediction, Prediction, Run, TeamStats } from "@/lib/types";
 
 // Latest prediction-job run, or null if there is no run yet or the query
 // fails. Returns null instead of throwing so the footer can show
@@ -44,4 +44,20 @@ export async function getTeamStats(): Promise<TeamStats[]> {
   return ((data ?? []) as TeamStats[]).sort((a, b) =>
     a.team.localeCompare(b.team)
   );
+}
+
+// Upcoming Jev fixtures, oldest first. "Today" is the UTC date (fixture dates
+// are UK dates; the Melbourne date runs ahead and would hide matches that have
+// not kicked off yet). The filter is display-only: rows are never deleted.
+export async function getJevPredictions(): Promise<JevPrediction[]> {
+  const supabase = getSupabaseClient();
+  const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await supabase
+    .from("jev_predictions")
+    .select("*")
+    .gte("fixture_date", today)
+    .order("fixture_date", { ascending: true })
+    .order("home", { ascending: true });
+  if (error) throw new Error(`jev_predictions: ${error.message}`);
+  return (data ?? []) as JevPrediction[];
 }

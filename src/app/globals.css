@@ -21,6 +21,8 @@
   --color-home: #14532d;
   --color-draw: #64748b;
   --color-away: #1e4e79;
+  --color-out: #b91c1c;
+  --color-doubtful: #b45309;
 
   /* Fonts. The font files load with next/font in layout.tsx, which defines
      --font-space-grotesk and --font-inter on the <html> element. */

@@ -87,3 +87,49 @@ export type JournalEntry = {
   settled_at: string | null;
   created_at: string;
 };
+
+// Table `jev_predictions`: one row per upcoming fixture with Jev's news-based
+// adjustment. Public read. Primary key (home, away, fixture_date).
+// The `news` jsonb is typed loosely below because the Python job owns its
+// exact shape; every field is read defensively (null-safe) in the UI.
+export type JevPlayer = {
+  name: string;
+  position: string | null;
+  status: string | null; // "injured" | "suspended" | ...
+  level: "out" | "doubtful" | string | null;
+  chance_of_playing: number | null; // 0 | 25 | 50 | 75 | null
+  news: string | null;
+  minutes: number | null;
+};
+
+export type JevTeamNews = {
+  team: string | null;
+  min_minutes: number | null;
+  players: JevPlayer[] | null;
+};
+
+export type JevNews = {
+  home: JevTeamNews | null;
+  away: JevTeamNews | null;
+};
+
+export type JevPrediction = {
+  home: string;
+  away: string;
+  fixture_date: string;
+  p_home: number;
+  p_draw: number;
+  p_away: number;
+  news: JevNews | null;
+  news_text: string | null;
+  jev_choice: string | null;
+  jev_confidence: number | null;
+  jev_probabilities: Record<string, number> | null; // shape unknown, unused
+  shift_points: number | null;
+  adj_home: number | null;
+  adj_draw: number | null;
+  adj_away: number | null;
+  jev_model: string | null;
+  prompt_version: string | null;
+  generated_at: string;
+};
