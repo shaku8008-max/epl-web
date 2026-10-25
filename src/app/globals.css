@@ -5,17 +5,18 @@
    --font-* generates font-heading / font-body; --radius-card generates
    rounded-card. */
 @theme {
-  /* Terrace palette: ink is the brand base, amber is the single accent. */
-  --color-primary: #14201b;
-  --color-primary-light: #26332c;
-  --color-accent: #e6b23a;
+  /* Daylight palette: ink is the text base and violet is the single accent. */
+  --color-primary: #1b2433;
+  --color-primary-light: #edf1f7;
+  --color-accent: #6d4ae0;
+  --color-accent-dark: #5b3bc4;
 
   /* Surfaces, borders and text. */
-  --color-surface: #f7f7f2;
-  --color-tint: #eeeee7;
-  --color-border: #d4d6cc;
-  --color-ink: #14201b;
-  --color-muted: #59635d;
+  --color-surface: #f6f8fb;
+  --color-tint: #edf1f7;
+  --color-border: #d9e0ea;
+  --color-ink: #1b2433;
+  --color-muted: #536174;
 
   /* Outcome colours: home win / draw / away win. Always shown together with a
      text label, so colour is never the only signal. */
@@ -34,11 +35,12 @@
   --radius-card: 0.5rem;
 }
 
-/* The product is intentionally chalk-and-ink rather than system-themed. */
+/* The product uses a light daylight surface rather than system theming. */
 body {
   background: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-body);
+  font-size: 18px;
 }
 
 /* Data values remain aligned when digits change. */

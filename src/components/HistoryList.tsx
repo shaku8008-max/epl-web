@@ -45,7 +45,7 @@ export default function HistoryList({ series }: HistoryListProps) {
                 <div className="font-medium">
                   {entry.home} v {entry.away}
                 </div>
-                <div className="mt-0.5 text-sm text-muted">
+                <div className="mt-0.5 text-base text-muted">
                   {entry.settled_at
                     ? formatMelbourne(entry.settled_at)
                     : "unavailable"} - {pickLabel(p)} - {aud.format(entry.stake)} @{" "}

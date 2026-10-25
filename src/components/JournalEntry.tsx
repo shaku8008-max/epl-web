@@ -61,21 +61,21 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
     <div className="border-y border-border py-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-heading text-lg font-semibold">
+          <h2 className="font-heading text-2xl font-semibold">
             {entry.home} v {entry.away}
           </h2>
-          <p className="mt-0.5 text-sm text-muted">
+          <p className="mt-0.5 text-base text-muted">
             {formatFixtureDate(entry.fixture_date)}
           </p>
         </div>
         <span
-          className={`rounded-card px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status]}`}
+          className={`rounded-card px-3 py-1 text-sm font-semibold ${STATUS_STYLES[entry.status]}`}
         >
           {STATUS_LABELS[entry.status]}
         </span>
       </div>
 
-      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">
+      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-base sm:grid-cols-4">
         <div>
           <dt className="text-muted">Pick</dt>
           <dd className="font-medium">{pickLabel}</dd>
@@ -96,10 +96,10 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
         </div>
       </dl>
 
-      {entry.notes && <p className="mt-3 text-sm text-muted">{entry.notes}</p>}
+      {entry.notes && <p className="mt-3 text-base text-muted">{entry.notes}</p>}
 
       {error && (
-        <p role="alert" className="mt-3 text-sm font-semibold text-red-700">
+        <p role="alert" className="mt-3 text-base font-semibold text-out">
           {error}
         </p>
       )}

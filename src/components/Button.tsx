@@ -14,10 +14,10 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex min-h-11 items-center justify-center rounded-card px-5 py-2 text-sm font-semibold transition-colors active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50";
+    "inline-flex min-h-12 items-center justify-center rounded-card px-5 py-2 text-base font-semibold transition-colors active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50";
   const look =
     variant === "primary"
-      ? "bg-accent text-primary hover:bg-accent/85"
+      ? "bg-accent text-white hover:bg-accent-dark"
       : "border border-primary text-primary hover:bg-tint";
 
   return <button className={`${base} ${look} ${className}`} {...props} />;

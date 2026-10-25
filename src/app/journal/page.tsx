@@ -82,8 +82,8 @@ export default async function JournalPage() {
   if ("error" in result) {
     return (
       <section>
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Journal</h1>
-        <p className="mt-3 max-w-2xl text-lg">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Journal</h1>
+        <p className="mt-3 max-w-2xl text-lg leading-relaxed">
           Record your predictions with a stake and odds, then see whether the
           model is actually paying off.
         </p>
@@ -99,8 +99,8 @@ export default async function JournalPage() {
 
   return (
     <section>
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Journal</h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Journal</h1>
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         Record your predictions with a stake and odds, then see whether the
         model is actually paying off.
       </p>
@@ -108,7 +108,7 @@ export default async function JournalPage() {
       <p className="mt-4">
         <Link
           href="/journal/history"
-          className="font-medium text-primary underline underline-offset-2"
+          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           View history
         </Link>

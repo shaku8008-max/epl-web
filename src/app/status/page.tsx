@@ -92,11 +92,11 @@ export default async function StatusPage() {
   if ("errors" in result) {
     return (
       <section>
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">
           Supabase connection check
         </h1>
-        <p className="mt-4 font-semibold text-out">Query failed:</p>
-        <ul className="mt-2 divide-y divide-border border-y border-border">
+        <p className="mt-4 text-lg font-semibold text-out">Query failed:</p>
+        <ul className="mt-2 divide-y divide-border border-y border-border text-base">
           {result.errors.map((message) => (
             <li key={message} className="py-3">{message}</li>
           ))}
@@ -109,11 +109,11 @@ export default async function StatusPage() {
 
   return (
     <section>
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">
         Supabase connection check
       </h1>
 
-      <h2 className="mt-6 font-heading text-xl font-semibold">Row counts</h2>
+      <h2 className="mt-6 font-heading text-2xl font-semibold">Row counts</h2>
       <ul className="mt-2 divide-y divide-border border-y border-border">
         <li className="flex flex-wrap justify-between gap-3 py-3">
           <span>predictions</span>
@@ -125,7 +125,7 @@ export default async function StatusPage() {
         </li>
       </ul>
 
-      <h2 className="mt-6 font-heading text-xl font-semibold">Latest run</h2>
+      <h2 className="mt-6 font-heading text-2xl font-semibold">Latest run</h2>
       {run ? (
         <ul className="mt-2 divide-y divide-border border-y border-border">
           <li className="flex flex-wrap justify-between gap-3 py-3">
@@ -145,7 +145,7 @@ export default async function StatusPage() {
         <p className="mt-2">No rows found in runs.</p>
       )}
 
-      <h2 className="mt-6 font-heading text-xl font-semibold">
+      <h2 className="mt-6 font-heading text-2xl font-semibold">
         Teams ({teamNames.length})
       </h2>
       <ul className="mt-2 divide-y divide-border border-y border-border">

@@ -16,7 +16,7 @@ type AddBetFormProps = {
 };
 
 const inputClasses =
-  "mt-1 min-h-11 w-full rounded-card border border-border bg-surface px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "mt-1 min-h-12 w-full rounded-card border border-border bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 export default function AddBetForm({ fixtures }: AddBetFormProps) {
   const [fixtureKey, setFixtureKey] = useState(
@@ -39,8 +39,8 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
   if (fixtures.length === 0) {
     return (
       <div className="border-y border-border py-6">
-        <h2 className="font-heading text-xl font-semibold">Add a bet</h2>
-        <p className="mt-2 text-muted">
+        <h2 className="font-heading text-2xl font-semibold">Add a bet</h2>
+        <p className="mt-2 text-lg text-muted">
           No upcoming fixtures to bet on right now. Check back after the next
           refresh.
         </p>
@@ -91,10 +91,10 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
 
   return (
     <div className="border-y border-border py-6">
-      <h2 className="font-heading text-xl font-semibold">Add a bet</h2>
+      <h2 className="font-heading text-2xl font-semibold">Add a bet</h2>
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         <div>
-          <label htmlFor="bet-fixture" className="block text-sm font-medium">
+          <label htmlFor="bet-fixture" className="block text-base font-medium">
             Fixture
           </label>
           <select
@@ -112,7 +112,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
         </div>
 
         <fieldset>
-          <legend className="block text-sm font-medium">Your pick</legend>
+          <legend className="block text-base font-medium">Your pick</legend>
           <div className="mt-1 grid gap-2 sm:grid-cols-3">
             {(
               [
@@ -123,10 +123,10 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
             ).map((o) => (
               <label
                 key={o.key}
-                className={`flex min-h-11 cursor-pointer items-center justify-between gap-2 rounded-card border px-3 py-2 text-sm ${
+                className={`flex min-h-12 cursor-pointer items-center justify-between gap-2 rounded-card border bg-white px-3 py-2 text-base ${
                   pick === o.key
                     ? "border-primary bg-tint font-semibold"
-                    : "border-border bg-surface"
+                    : "border-border"
                 }`}
               >
                 <span className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
                     value={o.key}
                     checked={pick === o.key}
                     onChange={() => setPick(o.key)}
-                    className="accent-primary"
+                     className="accent-accent"
                   />
                   {o.label}
                 </span>
@@ -150,7 +150,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="bet-stake" className="block text-sm font-medium">
+            <label htmlFor="bet-stake" className="block text-base font-medium">
               Stake (AUD)
             </label>
             <input
@@ -166,7 +166,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
             />
           </div>
           <div>
-            <label htmlFor="bet-odds" className="block text-sm font-medium">
+            <label htmlFor="bet-odds" className="block text-base font-medium">
               Odds (decimal)
             </label>
             <input
@@ -184,7 +184,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
         </div>
 
         <div>
-          <label htmlFor="bet-notes" className="block text-sm font-medium">
+          <label htmlFor="bet-notes" className="block text-base font-medium">
             Notes (optional)
           </label>
           <input
@@ -198,12 +198,12 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
         </div>
 
         {error && (
-          <p role="alert" className="text-sm font-semibold text-red-700">
+          <p role="alert" className="text-base font-semibold text-out">
             {error}
           </p>
         )}
         {success && (
-          <p role="status" className="text-sm font-semibold text-primary">
+          <p role="status" className="text-base font-semibold text-primary">
             Bet added.
           </p>
         )}

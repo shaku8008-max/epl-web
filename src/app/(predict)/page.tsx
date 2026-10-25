@@ -49,8 +49,8 @@ export default async function PredictPage(props: PageProps<"/">) {
   if ("error" in result) {
     return (
       <section>
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Predict</h1>
-        <p className="mt-3 max-w-2xl text-lg">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Predict</h1>
+        <p className="mt-3 max-w-2xl text-lg leading-relaxed">
           Pick any two Premier League teams to see the home, draw and away
           probabilities from the model, plus recent stats for both teams.
         </p>
@@ -72,8 +72,8 @@ export default async function PredictPage(props: PageProps<"/">) {
 
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Predict</h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Predict</h1>
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         Pick any two Premier League teams to see the home, draw and away
         probabilities from the model, plus recent stats for both teams.
       </p>

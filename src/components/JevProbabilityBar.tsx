@@ -25,13 +25,13 @@ export default function JevProbabilityBar({
   if (pHome === null || pDraw === null || pAway === null) {
     return (
       <div>
-        <p className="text-sm font-medium">{label}</p>
+        <p className="text-base font-medium">{label}</p>
         <div className="mt-2 grid min-w-0 grid-cols-3 gap-2" aria-label={`${label} probabilities unavailable`}>
           {SEGMENTS.map((s) => (
             <div key={s.key} className="min-w-0 text-center">
               <div className={`h-1 ${s.color}`} />
-              <span className="mt-2 block font-tabular text-2xl leading-none text-muted lg:text-3xl">-</span>
-              <span className="mt-1 block text-xs text-muted">{s.barLabel}</span>
+              <span className="mt-2 block font-tabular text-3xl leading-none text-muted lg:text-4xl">-</span>
+              <span className="mt-1 block text-sm text-muted">{s.barLabel}</span>
             </div>
           ))}
         </div>
@@ -45,12 +45,12 @@ export default function JevProbabilityBar({
 
   return (
     <div>
-      <p className="text-sm font-medium">{label}</p>
+      <p className="text-base font-medium">{label}</p>
       <div className="mt-2 flex h-8 overflow-hidden rounded-full lg:h-10" aria-hidden="true">
         {SEGMENTS.map((s, i) => (
           <div
             key={s.key}
-            className={`flex min-w-0 items-center justify-center overflow-hidden whitespace-nowrap px-2 text-xs font-semibold text-white ${s.color}`}
+            className={`flex min-w-0 items-center justify-center overflow-hidden whitespace-nowrap px-2 text-sm font-semibold text-white ${s.color}`}
             style={{ width: `${values[i]}%` }}
           >
             {values[i] >= 15 ? `${s.barLabel} ${values[i]}%` : ""}
@@ -61,10 +61,10 @@ export default function JevProbabilityBar({
         {SEGMENTS.map((s, i) => (
           <div key={s.key} className="min-w-0 text-center">
             <div className={`h-1 ${s.color}`} />
-            <span className="mt-2 block font-tabular text-2xl leading-none text-ink lg:text-3xl">
+            <span className="mt-2 block font-tabular text-3xl leading-none text-ink lg:text-4xl">
               {values[i]}%
             </span>
-            <span className="mt-1 block text-xs text-muted">{s.barLabel}</span>
+            <span className="mt-1 block text-sm text-muted">{s.barLabel}</span>
           </div>
         ))}
       </div>

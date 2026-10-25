@@ -41,12 +41,12 @@ export default async function JevScoreboardPage() {
         <p className="text-sm">
           <Link
             href="/jev"
-            className="font-medium text-primary underline underline-offset-2"
+            className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Back to Jev
           </Link>
         </p>
-        <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary">
+        <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">
           Jev scoreboard
         </h1>
         <div className="mt-8 border-y border-border bg-tint p-6">
@@ -64,20 +64,20 @@ export default async function JevScoreboardPage() {
       <p className="text-sm">
         <Link
           href="/jev"
-          className="font-medium text-primary underline underline-offset-2"
+          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           Back to Jev
         </Link>
       </p>
-      <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary">
+      <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">
         Jev scoreboard
       </h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         Does Jev&apos;s news-based shift make the model&apos;s predictions
         better or worse? This page only counts matches that have finished.
       </p>
 
-      <div className="mt-4 max-w-2xl space-y-2 text-sm text-muted">
+      <div className="mt-4 max-w-2xl space-y-2 text-base text-muted">
         <p>
           <span className="font-medium text-ink">Log loss</span> rewards
           a version for giving a high probability to the result that actually

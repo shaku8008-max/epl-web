@@ -3,8 +3,8 @@
 export default function HistoryLoading() {
   return (
     <section aria-busy="true" aria-label="Loading history">
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">History</h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">History</h1>
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         How your journal has performed over time, bet by bet.
       </p>
       <div className="mt-8 divide-y divide-border">

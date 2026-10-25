@@ -33,10 +33,10 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
 
   return (
     <div className="border-y border-border py-6">
-      <h2 className="font-heading text-xl font-semibold">Summary</h2>
+      <h2 className="font-heading text-2xl font-semibold">Summary</h2>
       <dl className="mt-4 grid grid-cols-2 divide-x divide-border sm:grid-cols-3">
         <div>
-          <dt className="text-sm text-muted">Profit / loss</dt>
+          <dt className="text-base text-muted">Profit / loss</dt>
           <dd
             className={`mt-1 text-2xl font-semibold font-tabular ${
               profit > 0 ? "text-primary" : profit < 0 ? "text-out" : "text-ink"
@@ -46,19 +46,19 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-muted">ROI</dt>
+          <dt className="text-base text-muted">ROI</dt>
           <dd className="mt-1 text-2xl font-semibold font-tabular">
             {roi === null ? "-" : `${roi >= 0 ? "+" : ""}${roi.toFixed(1)}%`}
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-muted">Win rate</dt>
+          <dt className="text-base text-muted">Win rate</dt>
           <dd className="mt-1 text-2xl font-semibold font-tabular">
             {winRate === null ? "-" : `${winRate.toFixed(0)}%`}
           </dd>
         </div>
       </dl>
-      <p className="mt-4 text-sm text-muted">
+      <p className="mt-4 text-base text-muted">
         {settled.length} settled ({won.length} won, {lost.length} lost)
         {voidCount > 0 ? `, ${voidCount} void` : ""}
         {openCount > 0 ? `, ${openCount} open` : ""}.

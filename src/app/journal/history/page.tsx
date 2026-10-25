@@ -32,7 +32,7 @@ export default async function HistoryPage() {
     const message = err instanceof Error ? err.message : String(err);
     return (
       <section>
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">History</h1>
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">History</h1>
         <div className="mt-8 border-y border-border bg-tint p-6">
           <p className="font-semibold">History is unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{message}</p>
@@ -46,14 +46,14 @@ export default async function HistoryPage() {
 
   return (
     <section>
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">History</h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">History</h1>
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         How your journal has performed over time, bet by bet.
       </p>
 
       <div className="mt-8 border-y border-border py-6">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-heading text-xl font-semibold">
+          <h2 className="font-heading text-2xl font-semibold">
             Cumulative profit / loss
           </h2>
           <span
@@ -86,7 +86,7 @@ export default async function HistoryPage() {
       <p className="mt-6">
         <Link
           href="/journal"
-          className="font-medium text-primary underline underline-offset-2"
+          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           Back to journal
         </Link>

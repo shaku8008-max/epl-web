@@ -13,15 +13,15 @@ type AppErrorProps = {
 export default function AppError({ error, reset }: AppErrorProps) {
   return (
     <section>
-        <h1 className="font-heading text-3xl font-bold text-ink">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-ink lg:text-5xl">
         Something went wrong
       </h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         The page could not be loaded. Please try again.
       </p>
       <Card className="mt-8">
         <p className="font-semibold">Error details</p>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-base text-muted">
           {error.message || "An unexpected error occurred."}
         </p>
         <div className="mt-4">

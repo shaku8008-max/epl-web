@@ -36,8 +36,8 @@ export default async function JevPage() {
   if ("error" in result) {
     return (
       <section>
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Jev</h1>
-        <p className="mt-3 max-w-2xl text-lg">
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Jev</h1>
+        <p className="mt-3 max-w-2xl text-lg leading-relaxed">
           How the latest team news changes the model&apos;s win chances.
         </p>
         <div className="mt-8 border-y border-border bg-tint p-6">
@@ -57,18 +57,18 @@ export default async function JevPage() {
 
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Jev</h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Jev</h1>
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         An experiment: Jev adjusts the model&apos;s win chances using only injury
         and suspension news from the Fantasy Premier League feed.
       </p>
-      <p className="mt-2 max-w-2xl text-sm text-muted">
+      <p className="mt-2 max-w-2xl text-base text-muted">
         For fun only. Not betting advice.
       </p>
       <p className="mt-3">
         <Link
           href="/jev/scoreboard"
-          className="font-medium text-primary underline underline-offset-2"
+          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           See how Jev is doing
         </Link>

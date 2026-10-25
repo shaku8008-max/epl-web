@@ -12,7 +12,7 @@ export default function Card({
   variant = "tint",
   className = "",
 }: CardProps) {
-  const background = variant === "white" ? "bg-surface" : "bg-tint";
+  const background = variant === "white" ? "bg-white" : "bg-tint";
   return (
     <div
       className={`rounded-card border border-border p-6 ${background} ${className}`}

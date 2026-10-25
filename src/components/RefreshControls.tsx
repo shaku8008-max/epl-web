@@ -201,7 +201,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
           />
           Refreshing…
         </Button>
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-base text-muted">
           Refreshing… this usually takes one to two minutes. You can leave this
           page; the new data will be here when you come back.
         </p>
@@ -213,13 +213,13 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
     return (
       <div className="mt-4" role="status">
         <p className="font-semibold text-primary">Refresh complete</p>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-base text-muted">
           Data as of {formatMelbourne(phase.newDataAsOf)} (Melbourne time).
         </p>
         <p className="mt-3">
           <Link
             href="/"
-            className="font-medium text-primary underline underline-offset-2"
+            className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             View the new predictions
           </Link>
@@ -232,7 +232,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
     return (
       <div className="mt-4" role="status">
         <p className="font-semibold">The update is taking longer than usual.</p>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-base text-muted">
            Please check back later - the new data will appear automatically.
         </p>
         <div className="mt-3">
@@ -248,7 +248,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
     return (
       <div className="mt-4" role="alert">
         <p className="font-semibold">{phase.message}</p>
-        {phase.detail && <p className="mt-1 text-sm text-muted">{phase.detail}</p>}
+        {phase.detail && <p className="mt-1 text-base text-muted">{phase.detail}</p>}
         <div className="mt-3">
           <Button onClick={() => setPhase({ name: "idle" })} variant="secondary">
             Try again
@@ -275,7 +275,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
     return (
       <div className="mt-4">
         <Button disabled>Refresh data</Button>
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-base text-muted">
           Data was updated recently. You can refresh again at {timeOnly}{" "}
           (Melbourne time).
         </p>
@@ -286,7 +286,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
   return (
     <div className="mt-4">
       <Button onClick={startRefresh}>Refresh data</Button>
-      <p className="mt-3 text-sm text-muted">
+      <p className="mt-3 text-base text-muted">
         Fetches the latest results and recomputes every prediction. Takes about
         two minutes.
       </p>

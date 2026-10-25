@@ -14,7 +14,7 @@ const PAD = 16;
 export default function HistoryChart({ series }: HistoryChartProps) {
   if (series.length === 0) {
     return (
-      <p className="text-sm text-muted">
+      <p className="text-base text-muted">
         No settled bets yet, so there is no history to chart.
       </p>
     );

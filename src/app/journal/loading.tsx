@@ -3,8 +3,8 @@
 export default function JournalLoading() {
   return (
     <section aria-busy="true" aria-label="Loading journal">
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary">Journal</h1>
-      <p className="mt-3 max-w-2xl text-lg">
+      <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Journal</h1>
+      <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         Record your predictions with a stake and odds, then see whether the
         model is actually paying off.
       </p>

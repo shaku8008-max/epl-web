@@ -30,8 +30,8 @@ export default function Tabs() {
             aria-current={active ? "page" : undefined}
             className={
               active
-                ? `inline-flex min-h-11 items-center rounded-card bg-accent px-1.5 py-1.5 text-xs text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 sm:text-sm ${utility ? "font-medium sm:px-2 sm:text-xs" : "font-bold"}`
-                : `inline-flex min-h-11 items-center rounded-card px-1.5 py-1.5 text-xs text-white/65 transition-colors hover:bg-primary-light hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 sm:text-sm ${utility ? "font-medium sm:px-2 sm:text-xs" : "font-semibold"}`
+                ? `inline-flex min-h-12 items-center rounded-card bg-accent px-1.5 py-1.5 text-sm text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-bold"}`
+                : `inline-flex min-h-12 items-center rounded-card px-1.5 py-1.5 text-sm text-muted transition-colors hover:bg-tint hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-semibold"}`
             }
           >
             {tab.label}

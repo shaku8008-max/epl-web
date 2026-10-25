@@ -47,7 +47,7 @@ const BarSegment = memo(function BarSegment({
   const wide = value >= 15;
   return (
     <div
-      className={`flex min-w-0 items-center justify-center overflow-hidden whitespace-nowrap px-2 text-xs font-semibold text-white ${color}${animate ? " epl-anim" : ""}`}
+      className={`flex min-w-0 items-center justify-center overflow-hidden whitespace-nowrap px-2 text-sm font-semibold text-white ${color}${animate ? " epl-anim" : ""}`}
       style={
         animate
           ? { width: `${value}%`, transition: `width ${ANIM_MS}ms ${ANIM_EASE_CSS}` }
@@ -100,14 +100,14 @@ export default function PredictionCard({
         <Card variant="white">
           <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
             <span className="min-w-0">
-              <span className="block text-xs font-normal text-muted">home</span>
-              <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+              <span className="block text-sm font-normal text-muted">home</span>
+              <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
                 <FadeText text={home} animate={animate} />
               </span>
             </span>
             <span className="min-w-0 text-right">
-              <span className="block text-xs font-normal text-muted">away</span>
-              <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+              <span className="block text-sm font-normal text-muted">away</span>
+              <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
                 <FadeText text={away} animate={animate} />
               </span>
             </span>
@@ -159,14 +159,14 @@ export default function PredictionCard({
       <Card variant="white">
         <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
           <span className="min-w-0">
-            <span className="block text-xs font-normal text-muted">home</span>
-            <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+              <span className="block text-sm font-normal text-muted">home</span>
+              <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
               <FadeText text={home} animate={animate} />
             </span>
           </span>
           <span className="min-w-0 text-right">
-            <span className="block text-xs font-normal text-muted">away</span>
-            <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+              <span className="block text-sm font-normal text-muted">away</span>
+              <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
               <FadeText text={away} animate={animate} />
             </span>
           </span>
@@ -195,17 +195,17 @@ export default function PredictionCard({
                 <div className={`h-1 ${o.color}`} />
                 <span
                   key={mostLikely.key}
-                  className={`mt-2 block font-tabular text-3xl leading-none lg:text-5xl ${isMostLikely ? "font-semibold text-ink" : "text-muted"}${animate ? " epl-anim" : ""}`}
+                   className={`mt-2 block font-tabular text-4xl leading-none lg:text-6xl ${isMostLikely ? "font-semibold text-ink" : "text-muted"}${animate ? " epl-anim" : ""}`}
                   style={fadeInStyle(animate)}
                 >
                   <CountedPercent value={o.value} />
                 </span>
                 <span
-                  className={`mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs ${isMostLikely ? "font-semibold text-ink" : "text-muted"}`}
+                   className={`mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm ${isMostLikely ? "font-semibold text-ink" : "text-muted"}`}
                 >
                   <span className="whitespace-nowrap">{o.barLabel}</span>
                   {isMostLikely && (
-                    <span className="shrink-0 whitespace-nowrap rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-primary">
+                    <span className="shrink-0 whitespace-nowrap rounded-full bg-accent px-2 py-0.5 text-sm font-semibold text-white">
                       Most likely
                     </span>
                   )}
@@ -215,7 +215,7 @@ export default function PredictionCard({
           })}
         </div>
 
-        <p className="mt-4 text-sm text-muted">
+        <p className="mt-4 text-base text-muted">
           <FadeText text={fixtureText} animate={animate} />
         </p>
 

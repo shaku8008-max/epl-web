@@ -22,7 +22,7 @@ export default function NextRoundList({
 
   return (
     <section className="border-y border-border py-4" aria-labelledby="next-round-heading">
-      <h2 id="next-round-heading" className="font-heading text-xl font-semibold lg:text-2xl">
+      <h2 id="next-round-heading" className="font-heading text-2xl font-semibold lg:text-3xl">
         Next round
       </h2>
       <ul className="mt-2 divide-y divide-border">
@@ -34,16 +34,16 @@ export default function NextRoundList({
               <button
                 type="button"
                 onClick={() => onSelect(f)}
-                className="flex min-h-11 w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-2 py-3 text-left transition-colors hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex min-h-12 w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-2 py-3 text-left transition-colors hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 aria-label={`Select ${f.home} at home against ${f.away}`}
               >
-                <span className="w-20 shrink-0 font-tabular text-sm text-muted">
+                <span className="w-20 shrink-0 font-tabular text-base text-muted">
                   {formatFixtureDate(f.fixture_date)}
                 </span>
                 <span className="flex-1 font-medium">
                   {f.home} v {f.away}
                 </span>
-                <span className="font-tabular text-sm text-muted">
+                <span className="font-tabular text-base text-muted">
                   <span className={pct.home === highest ? "font-semibold text-ink" : undefined}>
                     H {pct.home}%
                   </span>{" "}

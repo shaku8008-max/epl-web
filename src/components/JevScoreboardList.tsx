@@ -53,21 +53,21 @@ export default function JevScoreboardList({
         return (
           <section key={m.key} className="border-t border-border py-6">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="font-heading text-lg font-semibold">
+              <h2 className="font-heading text-2xl font-semibold">
                 {m.home} v {m.away}
               </h2>
-              <span className="font-heading text-lg font-semibold tabular-nums">
+              <span className="font-heading text-2xl font-semibold font-tabular">
                 {score}
               </span>
             </div>
-            <div className="mt-1 space-y-1 text-sm text-muted">
+            <div className="mt-1 space-y-1 text-base text-muted">
               <p>{formatFixtureDate(m.fixtureDate)}</p>
               <p>{RESULT_WORDS[m.result]}</p>
             </div>
-            <p className="mt-2 text-sm">Shift: {shiftLabel(m.shiftPoints)}</p>
+            <p className="mt-2 text-base">Shift: {shiftLabel(m.shiftPoints)}</p>
 
             <div className="mt-3 border-y border-border">
-              <table className="w-full table-fixed text-sm">
+              <table className="w-full table-fixed text-base">
                 <thead className="bg-tint">
                   <tr>
                     <th scope="col" className="w-1/4 break-words px-2 py-2 text-left font-semibold sm:px-3">

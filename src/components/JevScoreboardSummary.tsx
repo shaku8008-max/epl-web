@@ -33,21 +33,21 @@ export default function JevScoreboardSummary({
 }: JevScoreboardSummaryProps) {
   return (
     <section className="mt-6 border-y border-border py-6">
-      <h2 className="font-heading text-xl font-semibold">How much data</h2>
-      <p className="mt-2">
-        <span className="font-semibold tabular-nums">{summary.count}</span>{" "}
+      <h2 className="font-heading text-2xl font-semibold">How much data</h2>
+      <p className="mt-2 text-lg">
+        <span className="font-semibold font-tabular">{summary.count}</span>{" "}
         finished {summary.count === 1 ? "match" : "matches"}
       </p>
-      <p className="mt-1 text-sm text-muted">{dataNote(summary.count)}</p>
+      <p className="mt-1 text-base text-muted">{dataNote(summary.count)}</p>
       {summary.scored < summary.count && (
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-base text-muted">
           {summary.count - summary.scored} finished{" "}
           {summary.count - summary.scored === 1 ? "match" : "matches"} could
           not be scored because a probability was missing.
         </p>
       )}
       {summary.promptVersions.length > 1 && (
-        <p className="mt-2 border-y border-border bg-tint p-3 text-sm text-ink">
+        <p className="mt-2 border-y border-border bg-tint p-3 text-base text-ink">
           This comparison mixes results from more than one prompt version (
           {summary.promptVersions.join(", ")}), so it is not a clean
           like-for-like test.
@@ -62,8 +62,8 @@ export default function JevScoreboardSummary({
               key={v.key}
               className="min-w-0 p-3"
             >
-              <p className="text-sm font-semibold">{v.label}</p>
-              <dl className="mt-2 space-y-1 text-sm">
+              <p className="text-base font-semibold">{v.label}</p>
+              <dl className="mt-2 space-y-1 text-base">
                 <div className="flex items-baseline justify-between gap-2">
                   <dt className="text-muted">Log loss (lower is better)</dt>
                   <dd className="font-semibold tabular-nums">
@@ -82,10 +82,10 @@ export default function JevScoreboardSummary({
         })}
       </div>
 
-      <h3 className="mt-6 font-heading text-base font-semibold">
+      <h3 className="mt-6 font-heading text-lg font-semibold">
         Head to head with the model
       </h3>
-      <div className="mt-2 grid divide-y divide-border border-y border-border text-sm sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+      <div className="mt-2 grid divide-y divide-border border-y border-border text-base sm:grid-cols-2 sm:divide-x sm:divide-y-0">
         <p className="py-2 sm:pr-4">
           <span className="font-semibold">Jev half shift:</span>{" "}
           {headToHead(summary.half)}

@@ -13,7 +13,7 @@ type TeamPickerProps = {
 };
 
 const selectClasses =
-  "mt-1 min-h-11 w-full rounded-card border border-border bg-surface px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "mt-1 min-h-12 w-full rounded-card border border-border bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 export default function TeamPicker({
   teams,
@@ -26,7 +26,7 @@ export default function TeamPicker({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
       <div className="flex-1">
-        <label htmlFor="home-team" className="block text-sm font-medium">
+          <label htmlFor="home-team" className="block text-base font-medium">
           Home team
         </label>
         <select
@@ -47,13 +47,13 @@ export default function TeamPicker({
         variant="secondary"
         onClick={onSwap}
         aria-label="Swap home and away"
-        className="!rounded-card !border-border !bg-surface !text-ink w-full sm:mb-1 sm:w-auto"
+        className="!rounded-card !border-border !bg-white !text-ink w-full sm:mb-1 sm:w-auto"
       >
         Swap
       </Button>
 
       <div className="flex-1">
-        <label htmlFor="away-team" className="block text-sm font-medium">
+          <label htmlFor="away-team" className="block text-base font-medium">
           Away team
         </label>
         <select

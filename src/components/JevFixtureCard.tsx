@@ -17,10 +17,10 @@ export default function JevFixtureCard({ fixture }: JevFixtureCardProps) {
 
   return (
     <section className="border-t border-border py-8">
-      <h2 className="font-heading text-xl font-semibold">
+      <h2 className="font-heading text-3xl font-semibold lg:text-5xl">
         {fixture.home} v {fixture.away}
       </h2>
-      <div className="mt-2 space-y-1 text-sm text-muted">
+      <div className="mt-2 space-y-1 text-base text-muted">
         <p>{formatFixtureDate(fixture.fixture_date)}</p>
         <p>News fetched {formatMelbourne(fixture.generated_at)}</p>
       </div>
@@ -29,7 +29,7 @@ export default function JevFixtureCard({ fixture }: JevFixtureCardProps) {
         <div className="space-y-5">
           <JevProbabilityBar label="Model" pHome={fixture.p_home} pDraw={fixture.p_draw} pAway={fixture.p_away} />
           <JevProbabilityBar label="Jev" pHome={fixture.adj_home} pDraw={fixture.adj_draw} pAway={fixture.adj_away} />
-          {shift && <p className="text-sm font-medium">{shift}</p>}
+          {shift && <p className="text-base font-medium">{shift}</p>}
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
           <JevTeamNews teamName={fixture.home} news={fixture.news?.home ?? null} />
