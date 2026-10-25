@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
-// Content container: rounded, soft border and shadow. Use variant="white" for
-// a white surface or variant="tint" (the default) for the light green-grey tint.
+// Content container: a flat surface with a restrained border.
 type CardProps = {
   children: ReactNode;
   variant?: "tint" | "white";
@@ -13,7 +12,7 @@ export default function Card({
   variant = "tint",
   className = "",
 }: CardProps) {
-  const background = variant === "white" ? "bg-surface shadow-card" : "bg-tint";
+  const background = variant === "white" ? "bg-surface" : "bg-tint";
   return (
     <div
       className={`rounded-card border border-border p-6 ${background} ${className}`}

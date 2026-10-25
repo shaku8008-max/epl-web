@@ -3,42 +3,48 @@
 /* Design tokens (Tailwind v4 style: configured here, not in a config file).
    Each --color-* below generates utilities like bg-primary / text-muted;
    --font-* generates font-heading / font-body; --radius-card generates
-   rounded-card; --shadow-card generates shadow-card. */
+   rounded-card. */
 @theme {
-  /* Brand greens: deep pitch green + a lighter green for hovers/highlights */
-  --color-primary: #14532d;
-  --color-primary-light: #166534;
+  /* Terrace palette: ink is the brand base, amber is the single accent. */
+  --color-primary: #14201b;
+  --color-primary-light: #26332c;
+  --color-accent: #e6b23a;
 
-  /* Surfaces, borders and text */
-  --color-surface: #ffffff;
-  --color-tint: #f3f7f4;
-  --color-border: #dbe5de;
-  --color-ink: #0f1a14;
-  --color-muted: #55655c;
+  /* Surfaces, borders and text. */
+  --color-surface: #f7f7f2;
+  --color-tint: #eeeee7;
+  --color-border: #d4d6cc;
+  --color-ink: #14201b;
+  --color-muted: #59635d;
 
   /* Outcome colours: home win / draw / away win. Always shown together with a
      text label, so colour is never the only signal. */
-  --color-home: #14532d;
-  --color-draw: #64748b;
-  --color-away: #1e4e79;
+  --color-home: #1f6b4f;
+  --color-draw: #63727a;
+  --color-away: #24527e;
   --color-out: #b91c1c;
   --color-doubtful: #b45309;
 
-  /* Fonts. The font files load with next/font in layout.tsx, which defines
-     --font-space-grotesk and --font-inter on the <html> element. */
-  --font-heading: var(--font-space-grotesk), ui-sans-serif, sans-serif;
-  --font-body: var(--font-inter), ui-sans-serif, sans-serif;
+  /* Fonts. Archivo carries both display and body text; mono is for data. */
+  --font-heading: var(--font-archivo), ui-sans-serif, sans-serif;
+  --font-body: var(--font-archivo), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
 
-  /* Shape and depth */
-  --radius-card: 0.75rem;
-  --shadow-card: 0 1px 2px rgba(15, 26, 20, 0.05), 0 8px 24px rgba(15, 26, 20, 0.06);
+  /* One restrained radius scale. Surfaces stay flat. */
+  --radius-card: 0.5rem;
 }
 
-/* Light mode only: no prefers-color-scheme switch, so the site stays white. */
+/* The product is intentionally chalk-and-ink rather than system-themed. */
 body {
   background: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-body);
+}
+
+/* Data values remain aligned when digits change. */
+.font-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Fade-in for swapped text on the Predict page (see lib/animate.ts).

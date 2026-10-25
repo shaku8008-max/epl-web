@@ -13,7 +13,7 @@ type AppErrorProps = {
 export default function AppError({ error, reset }: AppErrorProps) {
   return (
     <section>
-      <h1 className="font-heading text-3xl font-bold text-primary">
+        <h1 className="font-heading text-3xl font-bold text-ink">
         Something went wrong
       </h1>
       <p className="mt-3 max-w-2xl text-lg">

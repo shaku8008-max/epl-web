@@ -1,5 +1,5 @@
 // Small original pitch mark, drawn as inline SVG (not a club badge or league
-// logo). Uses currentColor so it inherits the colour of its surroundings.
+// logo). Uses currentColor so the shell can apply an approved token colour.
 type PitchIconProps = {
   className?: string;
 };

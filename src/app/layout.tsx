@@ -1,22 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Archivo, DM_Mono } from "next/font/google";
 import "./globals.css";
 import PitchIcon from "@/components/PitchIcon";
 import Tabs from "@/components/Tabs";
 import { getLatestRun } from "@/lib/data";
 import { formatMelbourne } from "@/lib/format";
 
-// Load fonts with next/font (no external stylesheet). Both fonts are variable
-// fonts, so no weight list is needed. The .variable properties put the two
-// CSS custom properties on <html>, where the tokens in globals.css pick them up.
-const headingFont = Space_Grotesk({
-  variable: "--font-space-grotesk",
+// Load fonts with next/font (no external stylesheet). Archivo is shared by
+// headings and body copy; DM Mono is reserved for compact data values.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 });
 
-const bodyFont = Inter({
-  variable: "--font-inter",
+const dmMono = DM_Mono({
+  variable: "--font-dm-mono",
   subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -31,9 +31,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Green browser chrome on mobile (viewport export is where themeColor lives).
 export const viewport: Viewport = {
-  themeColor: "#166534",
+  themeColor: "#14201B",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -44,14 +43,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en-AU"
-      className={`${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
+      className={`${archivo.variable} ${dmMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-dvh flex-col bg-surface font-body text-ink">
-        <header className="bg-gradient-to-b from-primary-light to-primary text-white shadow-sm">
-          <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
-            <div className="flex items-center gap-2.5">
-              <PitchIcon className="h-7 w-7" />
-              <span className="font-heading text-xl font-bold tracking-tight">
+        <header className="bg-primary text-white">
+          <div className="mx-auto flex min-h-16 w-full max-w-4xl items-center justify-between gap-2 px-3 py-2 sm:px-6">
+            <div className="flex min-w-0 shrink items-center gap-1.5">
+              <PitchIcon className="h-6 w-6 shrink-0 text-accent" />
+              <span className="whitespace-nowrap font-heading text-lg font-bold tracking-tight sm:text-xl">
                 EPL Predictor
               </span>
             </div>
