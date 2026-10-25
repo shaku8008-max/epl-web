@@ -358,7 +358,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
             finishes in ~700 ms. Group headers render from the same pass. */}
         {STAT_GROUPS.map((group) => (
           <div role="rowgroup" key={group}>
-            <div role="row" className="stats-row pb-1 pt-4">
+            <div role="row" className="stats-row stats-group-row pb-1 pt-4">
               <div
                 role="columnheader"
                 aria-colspan={3}

@@ -2,6 +2,7 @@
 // bar and equal-width percentage columns without its counting animation.
 
 import { toWholePercentages } from "@/lib/format";
+import OutcomeKey from "@/components/OutcomeKey";
 
 type JevProbabilityBarProps = {
   label: string;
@@ -29,9 +30,10 @@ export default function JevProbabilityBar({
         <div className="mt-2 grid min-w-0 grid-cols-3 gap-2" aria-label={`${label} probabilities unavailable`}>
           {SEGMENTS.map((s) => (
             <div key={s.key} className="min-w-0 text-center">
-              <div className={`h-1 ${s.color}`} />
               <span className="mt-2 block font-tabular text-3xl leading-none text-muted lg:text-4xl">-</span>
-              <span className="mt-1 block text-sm text-muted">{s.barLabel}</span>
+              <span className="mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-muted">
+                <OutcomeKey label={s.barLabel} color={s.color} />
+              </span>
             </div>
           ))}
         </div>
@@ -60,11 +62,12 @@ export default function JevProbabilityBar({
       <div className="mt-3 grid min-w-0 grid-cols-3 gap-2" aria-hidden="true">
         {SEGMENTS.map((s, i) => (
           <div key={s.key} className="min-w-0 text-center">
-            <div className={`h-1 ${s.color}`} />
             <span className="mt-2 block font-tabular text-3xl leading-none text-ink lg:text-4xl">
               {values[i]}%
             </span>
-            <span className="mt-1 block text-sm text-muted">{s.barLabel}</span>
+            <span className="mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-muted">
+              <OutcomeKey label={s.barLabel} color={s.color} />
+            </span>
           </div>
         ))}
       </div>

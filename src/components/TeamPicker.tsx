@@ -24,9 +24,10 @@ export default function TeamPicker({
   onSwap,
 }: TeamPickerProps) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-      <div className="flex-1">
-          <label htmlFor="home-team" className="block text-base font-medium">
+    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
+      <div className="min-w-0">
+        <label htmlFor="home-team" className="flex items-center gap-2 text-base font-medium">
+          <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-home" />
           Home team
         </label>
         <select
@@ -46,14 +47,28 @@ export default function TeamPicker({
       <Button
         variant="secondary"
         onClick={onSwap}
-        aria-label="Swap home and away"
-        className="!rounded-card !border-border !bg-white !text-ink w-full sm:mb-1 sm:w-auto"
+        aria-label="Swap home and away teams"
+        title="Swap home and away teams"
+        className="!h-12 !min-h-12 !min-w-12 !w-12 !shrink-0 !rounded-card !border-border !bg-white !p-0 !text-ink justify-self-center self-center sm:self-end"
       >
-        Swap
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-5 w-5 rotate-90 sm:rotate-0"
+        >
+          <path d="M4 8h14l-3-3" />
+          <path d="M20 16H6l3 3" />
+        </svg>
       </Button>
 
-      <div className="flex-1">
-          <label htmlFor="away-team" className="block text-base font-medium">
+      <div className="min-w-0">
+        <label htmlFor="away-team" className="flex items-center gap-2 text-base font-medium">
+          <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-away" />
           Away team
         </label>
         <select

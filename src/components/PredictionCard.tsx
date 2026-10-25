@@ -6,6 +6,7 @@
 
 import { memo } from "react";
 import Card from "@/components/Card";
+import OutcomeKey from "@/components/OutcomeKey";
 import { ANIM_EASE_CSS, ANIM_MS, fadeInStyle, useAnimatedNumber, useHasChanged } from "@/lib/animate";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
 import type { Prediction } from "@/lib/types";
@@ -100,13 +101,15 @@ export default function PredictionCard({
         <Card variant="white">
           <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
             <span className="min-w-0">
-              <span className="block text-sm font-normal text-muted">home</span>
+              <OutcomeKey label="Home" color="bg-home" />
               <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
                 <FadeText text={home} animate={animate} />
               </span>
             </span>
             <span className="min-w-0 text-right">
-              <span className="block text-sm font-normal text-muted">away</span>
+              <span className="flex justify-end">
+                <OutcomeKey label="Away" color="bg-away" />
+              </span>
               <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
                 <FadeText text={away} animate={animate} />
               </span>
@@ -159,14 +162,16 @@ export default function PredictionCard({
       <Card variant="white">
         <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
           <span className="min-w-0">
-              <span className="block text-sm font-normal text-muted">home</span>
-              <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
+            <OutcomeKey label="Home" color="bg-home" />
+            <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
               <FadeText text={home} animate={animate} />
             </span>
           </span>
           <span className="min-w-0 text-right">
-              <span className="block text-sm font-normal text-muted">away</span>
-              <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
+            <span className="flex justify-end">
+              <OutcomeKey label="Away" color="bg-away" />
+            </span>
+            <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
               <FadeText text={away} animate={animate} />
             </span>
           </span>
@@ -192,7 +197,6 @@ export default function PredictionCard({
             const isMostLikely = o.key === mostLikely.key;
             return (
               <div key={o.key} className="min-w-0 text-center">
-                <div className={`h-1 ${o.color}`} />
                 <span
                   key={mostLikely.key}
                    className={`mt-2 block font-tabular text-4xl leading-none lg:text-6xl ${isMostLikely ? "font-semibold text-ink" : "text-muted"}${animate ? " epl-anim" : ""}`}
@@ -203,7 +207,7 @@ export default function PredictionCard({
                 <span
                    className={`mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm ${isMostLikely ? "font-semibold text-ink" : "text-muted"}`}
                 >
-                  <span className="whitespace-nowrap">{o.barLabel}</span>
+                  <OutcomeKey label={o.barLabel} color={o.color} />
                   {isMostLikely && (
                     <span className="shrink-0 whitespace-nowrap rounded-full bg-accent px-2 py-0.5 text-sm font-semibold text-white">
                       Most likely
