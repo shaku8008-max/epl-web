@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import NextRoundList from "@/components/NextRoundList";
 import PredictionCard from "@/components/PredictionCard";
+import StatsWaterfall from "@/components/StatsWaterfall";
 import TeamPicker from "@/components/TeamPicker";
 import TeamStatsCard from "@/components/TeamStatsCard";
 import type { Fixture, Prediction, TeamStats } from "@/lib/types";
@@ -96,6 +97,8 @@ export default function MatchupTool({
       <div>
         <NextRoundList predictions={predictions} onSelect={selectFixture} />
       </div>
+
+      <StatsWaterfall home={pair.home} away={pair.away} />
     </div>
   );
 }
