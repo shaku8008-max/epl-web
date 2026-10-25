@@ -65,7 +65,7 @@ const CountedStat = memo(function CountedStat({
       <span
         key={flipKey}
         aria-hidden="true"
-        className={`inline-block tabular-nums${animate ? " epl-anim" : ""}`}
+         className={`inline-block font-tabular${animate ? " epl-anim" : ""}`}
         style={fadeInStyle(animate)}
       >
         {dash}
@@ -86,7 +86,7 @@ const CountedStat = memo(function CountedStat({
     <span
       key={flipKey}
       aria-hidden="true"
-      className={`inline-block tabular-nums${animate ? " epl-anim" : ""}`}
+      className={`inline-block font-tabular${animate ? " epl-anim" : ""}`}
       style={fadeInStyle(animate)}
     >
       {text}
@@ -247,7 +247,7 @@ const StatRow = memo(function StatRow({
       </span>
       <div
         role="cell"
-        className={`relative z-10 px-2 py-2 text-center tabular-nums ${homeClasses}`}
+        className={`relative z-10 px-2 py-2 text-center font-tabular ${homeClasses}`}
       >
         <CountedStat
           def={def}
@@ -265,7 +265,7 @@ const StatRow = memo(function StatRow({
       </div>
       <div
         role="cell"
-        className={`relative z-10 px-2 py-2 text-center tabular-nums ${awayClasses}`}
+        className={`relative z-10 px-2 py-2 text-center font-tabular ${awayClasses}`}
       >
         <CountedStat
           def={def}
@@ -362,7 +362,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
               <div
                 role="columnheader"
                 aria-colspan={3}
-                className="col-span-3 px-1 text-left font-heading text-xs font-semibold uppercase tracking-wide text-muted"
+                className="col-span-3 px-1 text-left font-heading text-xs font-semibold text-muted"
               >
                 {group}
               </div>
@@ -394,7 +394,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
           </li>
           <li>
             Per game, last 5/10: averages over the team&apos;s most recent 5 or
-            10 Premier League matches — never season totals.
+             10 Premier League matches - never season totals.
           </li>
           <li>
             xG (expected goals): how many goals a team&apos;s chances would

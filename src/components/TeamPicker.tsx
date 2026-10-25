@@ -47,7 +47,7 @@ export default function TeamPicker({
         variant="secondary"
         onClick={onSwap}
         aria-label="Swap home and away"
-        className="w-full sm:mb-1 sm:w-auto"
+        className="!rounded-card !border-border !bg-surface !text-ink w-full sm:mb-1 sm:w-auto"
       >
         Swap
       </Button>

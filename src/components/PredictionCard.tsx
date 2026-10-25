@@ -23,7 +23,7 @@ const CountedPercent = memo(function CountedPercent({ value }: { value: number }
   const [display] = useAnimatedNumber(value);
   const shown = display === null ? value : Math.round(display);
   return (
-    <span aria-hidden="true" className="tabular-nums">
+    <span aria-hidden="true" className="font-tabular">
       {shown}%
     </span>
   );
@@ -92,18 +92,29 @@ export default function PredictionCard({
   // Animate only after the first selection change, never on page load.
   const pairKey = prediction ? `${home}|${away}` : "missing";
   const animate = useHasChanged(pairKey);
-  const heading = `${home} (home) v ${away} (away)`;
+  const heading = `${home} at home against ${away}`;
 
   if (!prediction) {
     return (
       <div id="prediction-card" className="scroll-mt-4">
         <Card variant="white">
-          <h2 className="font-heading text-xl font-semibold">
-            <FadeText text={heading} animate={animate} />
-            <span className="sr-only" role="status">
-              {heading}
+          <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
+            <span className="min-w-0">
+              <span className="block text-xs font-normal text-muted">home</span>
+              <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+                <FadeText text={home} animate={animate} />
+              </span>
+            </span>
+            <span className="min-w-0 text-right">
+              <span className="block text-xs font-normal text-muted">away</span>
+              <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+                <FadeText text={away} animate={animate} />
+              </span>
             </span>
           </h2>
+          <span className="sr-only" role="status">
+            {heading}
+          </span>
           <p className="mt-2 text-muted">No prediction found for this pairing.</p>
         </Card>
       </div>
@@ -146,13 +157,23 @@ export default function PredictionCard({
   return (
     <div id="prediction-card" className={`scroll-mt-4${animate ? " epl-anim" : ""}`}>
       <Card variant="white">
-        <h2 className="font-heading text-xl font-semibold">
-          <FadeText text={heading} animate={animate} />
+        <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
+          <span className="min-w-0">
+            <span className="block text-xs font-normal text-muted">home</span>
+            <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+              <FadeText text={home} animate={animate} />
+            </span>
+          </span>
+          <span className="min-w-0 text-right">
+            <span className="block text-xs font-normal text-muted">away</span>
+            <span className="block break-words text-2xl font-semibold leading-tight lg:text-4xl">
+              <FadeText text={away} animate={animate} />
+            </span>
+          </span>
         </h2>
-
         {/* One bar split into three segments, home/draw/away. Widths slide;
             in-segment labels fade and count along with the list below. */}
-        <div className="mt-4 flex h-10 overflow-hidden rounded-full" aria-hidden="true">
+        <div className="mt-4 flex h-14 overflow-hidden rounded-full lg:h-16" aria-hidden="true">
           {outcomes.map((o) => (
             <BarSegment
               key={o.key}
@@ -164,35 +185,35 @@ export default function PredictionCard({
           ))}
         </div>
 
-        {/* All three outcomes with their percentages. The most likely one is
-            bold and tagged, so colour is never the only difference. The tag
-            and bold fade via a keyed wrapper instead of jumping. */}
-        <ul className="mt-3 grid gap-2 sm:grid-cols-3">
+        {/* Equal columns keep every percentage legible, even when one ribbon
+            segment is very small. */}
+        <div className="mt-3 grid min-w-0 grid-cols-3 gap-2" aria-hidden="true">
           {outcomes.map((o) => {
             const isMostLikely = o.key === mostLikely.key;
             return (
-              <li
-                key={o.key}
-                className={isMostLikely ? "font-semibold text-ink" : "text-muted"}
-              >
+              <div key={o.key} className="min-w-0 text-center">
+                <div className={`h-1 ${o.color}`} />
                 <span
                   key={mostLikely.key}
-                  className={`flex flex-wrap items-center gap-x-2 gap-y-1${animate ? " epl-anim" : ""}`}
+                  className={`mt-2 block font-tabular text-3xl leading-none lg:text-5xl ${isMostLikely ? "font-semibold text-ink" : "text-muted"}${animate ? " epl-anim" : ""}`}
                   style={fadeInStyle(animate)}
                 >
-                  <span className="whitespace-nowrap">
-                    {o.label} <CountedPercent value={o.value} />
-                  </span>
+                  <CountedPercent value={o.value} />
+                </span>
+                <span
+                  className={`mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs ${isMostLikely ? "font-semibold text-ink" : "text-muted"}`}
+                >
+                  <span className="whitespace-nowrap">{o.barLabel}</span>
                   {isMostLikely && (
-                    <span className="shrink-0 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-white">
+                    <span className="shrink-0 whitespace-nowrap rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-primary">
                       Most likely
                     </span>
                   )}
                 </span>
-              </li>
+              </div>
             );
           })}
-        </ul>
+        </div>
 
         <p className="mt-4 text-sm text-muted">
           <FadeText text={fixtureText} animate={animate} />
