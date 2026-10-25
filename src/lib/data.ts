@@ -61,3 +61,18 @@ export async function getJevPredictions(): Promise<JevPrediction[]> {
   if (error) throw new Error(`jev_predictions: ${error.message}`);
   return (data ?? []) as JevPrediction[];
 }
+
+// Settled Jev fixtures (result already filled in), newest first. Only finished
+// matches are useful for the scoreboard. Public client only; throws with the
+// Supabase error message so the calling page can report it.
+export async function getJevSettledPredictions(): Promise<JevPrediction[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("jev_predictions")
+    .select("*")
+    .not("result", "is", null)
+    .order("fixture_date", { ascending: false })
+    .order("home", { ascending: true });
+  if (error) throw new Error(`jev_predictions: ${error.message}`);
+  return (data ?? []) as JevPrediction[];
+}

@@ -132,4 +132,10 @@ export type JevPrediction = {
   jev_model: string | null;
   prompt_version: string | null;
   generated_at: string;
+  // Result columns: filled in by the Python job once the match has finished.
+  // All null until then.
+  home_goals: number | null;
+  away_goals: number | null;
+  result: "H" | "D" | "A" | null;
+  settled_at: string | null;
 };
