@@ -177,12 +177,14 @@ export default function PredictionCard({
               >
                 <span
                   key={mostLikely.key}
-                  className={`inline-block${animate ? " epl-anim" : ""}`}
+                  className={`flex flex-wrap items-center gap-x-2 gap-y-1${animate ? " epl-anim" : ""}`}
                   style={fadeInStyle(animate)}
                 >
-                  {o.label} <CountedPercent value={o.value} />
+                  <span className="whitespace-nowrap">
+                    {o.label} <CountedPercent value={o.value} />
+                  </span>
                   {isMostLikely && (
-                    <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-white">
+                    <span className="shrink-0 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-white">
                       Most likely
                     </span>
                   )}
