@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { href: "/", label: "Predict" },
-  { href: "/neural", label: "Neural" },
   { href: "/jev", label: "Jev" },
   { href: "/journal", label: "Journal" },
   { href: "/refresh", label: "Refresh" },
@@ -20,13 +19,13 @@ export default function Tabs() {
   return (
     <nav aria-label="Main" className="flex shrink-0 items-center gap-0.5">
       {tabs.map((tab) => {
-        // "/" must match exactly so it does not light up on every page.
+        // Predict owns both model pages; the other tabs match their URL prefix.
         const active =
-          tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
-          // Keep the five labels comfortable at narrow phone widths. Neural
-          // uses the same compact treatment as the existing utility tabs.
-          const utility =
-            tab.href === "/neural" || tab.href === "/journal" || tab.href === "/refresh";
+          tab.href === "/"
+            ? pathname === "/" || pathname.startsWith("/neural")
+            : pathname.startsWith(tab.href);
+        // Keep utility labels compact at narrow phone widths.
+        const utility = tab.href === "/journal" || tab.href === "/refresh";
         return (
           <Link
             key={tab.href}
