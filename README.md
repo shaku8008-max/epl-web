@@ -5,9 +5,10 @@ Supabase. The model lives in the separate `epl-predictor/` Python project; this
 website never runs the model, it only reads rows that the job uploads.
 
 Pages: `/` (Predict: team picker, probabilities, team-stats comparison and the
-next round), `/refresh` (triggers the predictor workflow on GitHub Actions and
-polls until the new data arrives), `/status` (Supabase troubleshooting, not
-indexed by search engines).
+next round), `/neural` (neural-network predictions and expected goals), `/jev`
+(news-adjusted predictions), `/journal` (bet journal), `/refresh` (triggers the
+predictor workflow on GitHub Actions and polls until the new data arrives), and
+`/status` (Supabase troubleshooting, not indexed by search engines).
 
 ## Setup
 
@@ -39,4 +40,3 @@ token would ship to visitors:
 - `GITHUB_REPO` — repository name.
 - `GITHUB_WORKFLOW` — workflow file name.
 - `GITHUB_REF` — git ref the workflow runs on.
-

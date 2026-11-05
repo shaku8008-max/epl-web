@@ -2,13 +2,15 @@
 // of Supabase imports, so client components can use them without pulling the
 // database client into the browser bundle.
 
-import type { Fixture, Prediction } from "@/lib/types";
+import type { Prediction } from "@/lib/types";
 
 // Upcoming fixtures (rows with a fixture date), sorted by date, then by home
 // team alphabetically.
-export function upcomingFixtures(predictions: Prediction[]): Fixture[] {
+export function upcomingFixtures<T extends Prediction>(
+  predictions: T[]
+): (T & { fixture_date: string })[] {
   return predictions
-    .filter((p): p is Fixture => p.fixture_date !== null)
+    .filter((p): p is T & { fixture_date: string } => p.fixture_date !== null)
     .sort((a, b) =>
       a.fixture_date === b.fixture_date
         ? a.home.localeCompare(b.home)
@@ -18,7 +20,9 @@ export function upcomingFixtures(predictions: Prediction[]): Fixture[] {
 
 // "The next round": fixtures whose date is within four days of the earliest
 // upcoming fixture. Empty when there are no upcoming fixtures.
-export function nextRoundFixtures(predictions: Prediction[]): Fixture[] {
+export function nextRoundFixtures<T extends Prediction>(
+  predictions: T[]
+): (T & { fixture_date: string })[] {
   const upcoming = upcomingFixtures(predictions);
   if (upcoming.length === 0) return [];
 

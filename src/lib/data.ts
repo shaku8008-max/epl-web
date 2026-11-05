@@ -1,5 +1,12 @@
 import { getSupabaseClient } from "@/lib/supabase";
-import type { JevPrediction, Prediction, Run, TeamStats } from "@/lib/types";
+import type {
+  JevPrediction,
+  NnPrediction,
+  NnTeamStats,
+  Prediction,
+  Run,
+  TeamStats,
+} from "@/lib/types";
 
 // Latest prediction-job run, or null if there is no run yet or the query
 // fails. Returns null instead of throwing so the footer can show
@@ -30,6 +37,15 @@ export async function getPredictions(): Promise<Prediction[]> {
   return (data ?? []) as Prediction[];
 }
 
+// All neural-network prediction rows, including expected goals. Throws with
+// the Supabase error message so the calling page can show it to the user.
+export async function getNnPredictions(): Promise<NnPrediction[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase.from("nn_predictions").select("*");
+  if (error) throw new Error(`nn_predictions: ${error.message}`);
+  return (data ?? []) as NnPrediction[];
+}
+
 // All 20 full team_stats rows (one per team), ordered alphabetically by team.
 // One query serves both the picker names and the comparison card, so
 // the browser never refetches when the selection changes. Throws with the
@@ -42,6 +58,20 @@ export async function getTeamStats(): Promise<TeamStats[]> {
     .order("team");
   if (error) throw new Error(`team_stats: ${error.message}`);
   return ((data ?? []) as TeamStats[]).sort((a, b) =>
+    a.team.localeCompare(b.team)
+  );
+}
+
+// All 20 neural model team-stat rows, ordered alphabetically by team. The
+// neural page falls back to no stats when this optional table is unavailable.
+export async function getNnTeamStats(): Promise<NnTeamStats[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("nn_team_stats")
+    .select("*")
+    .order("team");
+  if (error) throw new Error(`nn_team_stats: ${error.message}`);
+  return ((data ?? []) as NnTeamStats[]).sort((a, b) =>
     a.team.localeCompare(b.team)
   );
 }

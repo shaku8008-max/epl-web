@@ -25,17 +25,14 @@ export type ExplainDisplay = {
   steps: ExplainStep[];
 };
 
-const MAPPED_KEYS = new Set([
-  "elo",
-  "xg_for_last5",
-  "xg_for_last10",
-  "xg_against_last5",
-  "xg_against_last10",
-  "xg_diff_ewm20",
-  "xg_diff_ewm40",
-]);
+export type ExplainStepDefinition = {
+  key: string;
+  label: string;
+  subLabel?: string;
+  keys: readonly string[];
+};
 
-const STEP_DEFINITIONS = [
+const STEP_DEFINITIONS: readonly ExplainStepDefinition[] = [
   {
     key: "elo",
     label: "Elo rating",
@@ -60,6 +57,45 @@ const STEP_DEFINITIONS = [
     keys: ["xg_diff_ewm20", "xg_diff_ewm40"],
   },
 ] as const;
+
+export const NN_STEP_DEFINITIONS: readonly ExplainStepDefinition[] = [
+  {
+    key: "elo",
+    label: "Team strength (Elo)",
+    subLabel: "How strong each team has been compared with its opponents.",
+    keys: ["elo"],
+  },
+  {
+    key: "recent_form",
+    label: "Recent results",
+    subLabel: "How each team has performed in its most recent matches.",
+    keys: ["recent_form"],
+  },
+  {
+    key: "shots",
+    label: "Shots and shots on target",
+    subLabel: "How often each team shoots and tests the goalkeeper.",
+    keys: ["shots"],
+  },
+  {
+    key: "goal_difference",
+    label: "Longer-run goal difference",
+    subLabel: "The balance between goals scored and conceded over time.",
+    keys: ["goal_difference"],
+  },
+  {
+    key: "venue_form",
+    label: "Home and away form",
+    subLabel: "How each team has performed in its usual home or away setting.",
+    keys: ["venue_form"],
+  },
+  {
+    key: "rest_days",
+    label: "Days of rest",
+    subLabel: "The gap since each team last played.",
+    keys: ["rest_days"],
+  },
+];
 
 function roundTenths(value: number): number {
   return Math.round(value * 10);
@@ -90,7 +126,21 @@ export async function getPredictionExplain(
   return (data ?? null) as PredictionExplain | null;
 }
 
-export function mergeExplainRow(row: PredictionExplain): ExplainDisplay | null {
+export async function getNnPredictionExplain(): Promise<PredictionExplain[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("nn_prediction_explain")
+    .select("home, away, start_pct, end_pct, steps, model, model_version, updated_at");
+
+  if (error) throw new Error(`nn_prediction_explain: ${error.message}`);
+  return (data ?? []) as PredictionExplain[];
+}
+
+export function mergeExplainRow(
+  row: PredictionExplain,
+  definitions: readonly ExplainStepDefinition[] = STEP_DEFINITIONS,
+  endPercent?: number
+): ExplainDisplay | null {
   const start = formatKeyValue(row.start_pct);
   const end = formatKeyValue(row.end_pct);
   if (start === null || end === null || !isRecord(row.steps)) return null;
@@ -105,7 +155,7 @@ export function mergeExplainRow(row: PredictionExplain): ExplainDisplay | null {
   const rawTotal = Array.from(values.values()).reduce((sum, value) => sum + value, 0);
   if (Math.abs(rawTotal - (end - start)) > 0.005) return null;
 
-  const steps: ExplainStep[] = STEP_DEFINITIONS.map((definition) => ({
+  const steps: ExplainStep[] = definitions.map((definition) => ({
     key: definition.key,
     label: definition.label,
     subLabel: "subLabel" in definition ? definition.subLabel : undefined,
@@ -113,8 +163,9 @@ export function mergeExplainRow(row: PredictionExplain): ExplainDisplay | null {
     tenths: 0,
   }));
 
+  const mappedKeys = new Set(definitions.flatMap((definition) => definition.keys));
   const otherRaw = Array.from(values.entries())
-    .filter(([key]) => !MAPPED_KEYS.has(key))
+    .filter(([key]) => !mappedKeys.has(key))
     .reduce((sum, [, value]) => sum + value, 0);
   const otherTenths = roundTenths(otherRaw);
   if (otherTenths !== 0) {
@@ -129,7 +180,7 @@ export function mergeExplainRow(row: PredictionExplain): ExplainDisplay | null {
   for (const step of steps) step.tenths = roundTenths(step.raw);
 
   const startTenths = roundTenths(start);
-  const endTenths = roundTenths(end);
+  const endTenths = roundTenths(endPercent ?? end);
   const displayedStepTotal = steps.reduce((sum, step) => sum + step.tenths, 0);
   const leftover = endTenths - startTenths - displayedStepTotal;
 

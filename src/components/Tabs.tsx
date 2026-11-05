@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { href: "/", label: "Predict" },
+  { href: "/neural", label: "Neural" },
   { href: "/jev", label: "Jev" },
   { href: "/journal", label: "Journal" },
   { href: "/refresh", label: "Refresh" },
@@ -22,7 +23,10 @@ export default function Tabs() {
         // "/" must match exactly so it does not light up on every page.
         const active =
           tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
-        const utility = tab.href === "/journal" || tab.href === "/refresh";
+          // Keep the five labels comfortable at narrow phone widths. Neural
+          // uses the same compact treatment as the existing utility tabs.
+          const utility =
+            tab.href === "/neural" || tab.href === "/journal" || tab.href === "/refresh";
         return (
           <Link
             key={tab.href}

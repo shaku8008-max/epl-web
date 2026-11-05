@@ -4,6 +4,8 @@ import { startTransition, useEffect, useState } from "react";
 import {
   getPredictionExplain,
   mergeExplainRow,
+  type ExplainStepDefinition,
+  type PredictionExplain,
   type ExplainDisplay,
   type ExplainStep,
 } from "@/lib/explain";
@@ -11,6 +13,11 @@ import {
 type StatsWaterfallProps = {
   home: string;
   away: string;
+  explainRows?: PredictionExplain[];
+  stepDefinitions?: readonly ExplainStepDefinition[];
+  endPercent?: number;
+  description?: string;
+  note?: string;
 };
 
 type WaterfallState =
@@ -87,17 +94,31 @@ function StepRow({
   );
 }
 
-export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
+export default function StatsWaterfall({
+  home,
+  away,
+  explainRows,
+  stepDefinitions,
+  endPercent,
+  description,
+  note,
+}: StatsWaterfallProps) {
   const [state, setState] = useState<WaterfallState>({ status: "loading" });
 
   useEffect(() => {
     let cancelled = false;
     startTransition(() => setState({ status: "loading" }));
 
-    getPredictionExplain(home, away)
+    const rowPromise = explainRows === undefined
+      ? getPredictionExplain(home, away)
+      : Promise.resolve(
+          explainRows.find((candidate) => candidate.home === home && candidate.away === away) ?? null
+        );
+
+    rowPromise
       .then((row) => {
         if (cancelled) return;
-        const display = row ? mergeExplainRow(row) : null;
+        const display = row ? mergeExplainRow(row, stepDefinitions, endPercent) : null;
         setState(display ? { status: "ready", display } : { status: "unavailable" });
       })
       .catch(() => {
@@ -107,7 +128,7 @@ export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
     return () => {
       cancelled = true;
     };
-  }, [home, away]);
+  }, [away, endPercent, explainRows, home, stepDefinitions]);
 
   if (state.status === "loading") {
     return (
@@ -137,7 +158,7 @@ export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
         How the stats move the home win chance
       </h2>
       <p className="mt-3 max-w-2xl text-lg leading-relaxed">
-        The chart starts from the home win chance for an average home team against an average visiting team ({formatTenths(display.startTenths)}%). Each step shows how much one group of stats moves that chance for this pairing, using each team&apos;s current numbers. The last bar is the model&apos;s home win chance, shown to one decimal place; the ribbon above rounds it to a whole number, so the two can differ slightly. This shows how the model weighs its inputs, not proof of what causes a result. Points and goals in the table above are not used by the model, so they do not appear here.
+        {description ?? `The chart starts from the home win chance for an average home team against an average visiting team (${formatTenths(display.startTenths)}%). Each step shows how much one group of stats moves that chance for this pairing, using each team's current numbers. The last bar is the model's home win chance, shown to one decimal place; the ribbon above rounds it to a whole number, so the two can differ slightly. This shows how the model weighs its inputs, not proof of what causes a result. Points and goals in the table above are not used by the model, so they do not appear here.`}
       </p>
 
       <div className="waterfall-chart mt-6" aria-hidden="true">
@@ -177,6 +198,8 @@ export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
           <p className="waterfall-summary-value text-right font-tabular text-[28px] font-semibold leading-none text-ink">{formatTenths(display.endTenths)}%</p>
         </div>
       </div>
+
+      {note && <p className="mt-4 text-sm text-muted">{note}</p>}
 
       <ol className="sr-only">
         <li>Average match: home win chance {formatTenths(display.startTenths)} percent.</li>

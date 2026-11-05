@@ -17,6 +17,13 @@ export type Prediction = {
   predicted_at: string;
 };
 
+// Table `nn_predictions`: the neural network's prediction for each ordered
+// team pair, including expected goals for the home and away teams.
+export type NnPrediction = Prediction & {
+  xg_home: number;
+  xg_away: number;
+};
+
 // A prediction row that is a real upcoming fixture (fixture_date is set).
 export type Fixture = Prediction & { fixture_date: string };
 
@@ -36,6 +43,30 @@ export type TeamStats = {
   xg_against_last10: number | null;
   xg_diff_ewm20: number | null;
   xg_diff_ewm40: number | null;
+  updated_at: string | null;
+};
+
+// Table `nn_team_stats`: the neural network's input statistics, one row per
+// team. Numeric values are nullable when there is not enough recent history.
+export type NnTeamStats = {
+  team: string;
+  elo: number | null;
+  points_last5: number | null;
+  goals_for_last5: number | null;
+  goals_against_last5: number | null;
+  shots_for_last5: number | null;
+  shots_against_last5: number | null;
+  sot_for_last5: number | null;
+  sot_against_last5: number | null;
+  goal_diff_ewm20: number | null;
+  goal_diff_ewm40: number | null;
+  home_points_venue5: number | null;
+  home_goals_for_venue5: number | null;
+  home_goals_against_venue5: number | null;
+  away_points_venue5: number | null;
+  away_goals_for_venue5: number | null;
+  away_goals_against_venue5: number | null;
+  rest_days: number | null;
   updated_at: string | null;
 };
 
