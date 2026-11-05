@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import {
   getPredictionExplain,
   mergeExplainRow,
@@ -92,7 +92,7 @@ export default function StatsWaterfall({ home, away }: StatsWaterfallProps) {
 
   useEffect(() => {
     let cancelled = false;
-    setState({ status: "loading" });
+    startTransition(() => setState({ status: "loading" }));
 
     getPredictionExplain(home, away)
       .then((row) => {
