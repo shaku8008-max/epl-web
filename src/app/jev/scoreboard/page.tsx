@@ -76,6 +76,7 @@ export default async function JevScoreboardPage() {
         Does Jev&apos;s news-based shift make the model&apos;s predictions
         better or worse? This page only counts matches that have finished.
       </p>
+      <p className="mt-3 text-sm text-muted">Green = better than the model, red = worse, grey = identical.</p>
 
       <div className="mt-4 max-w-2xl space-y-2 text-base text-muted">
         <p>

@@ -5,7 +5,15 @@
 // signal. Server component: pure display.
 
 import { formatFixtureDate } from "@/lib/format";
-import { logLoss, type MatchView } from "@/lib/jevScore";
+import { shiftGlyph, shiftTone } from "@/lib/jev";
+import {
+  bestMatchVersion,
+  logLoss,
+  matchTone,
+  type MatchView,
+  type MetricTone,
+  type VersionKey,
+} from "@/lib/jevScore";
 
 type JevScoreboardListProps = {
   matches: MatchView[];
@@ -43,6 +51,16 @@ function shiftLabel(shift: number | null): string {
   return `${sign}${Math.abs(shift).toFixed(1)} points ${direction}`;
 }
 
+function toneClasses(tone: MetricTone | "draw"): string {
+  if (tone === "better") return "bg-better-soft text-better";
+  if (tone === "worse") return "bg-worse-soft text-worse";
+  return "bg-draw-soft text-draw";
+}
+
+function bestLabel(key: VersionKey, best: VersionKey | null): string {
+  return key === best ? "Best" : "";
+}
+
 export default function JevScoreboardList({
   matches,
 }: JevScoreboardListProps) {
@@ -50,8 +68,9 @@ export default function JevScoreboardList({
     <div className="mt-6">
       {matches.map((m) => {
         const score = `${m.homeGoals ?? "-"}-${m.awayGoals ?? "-"}`;
+        const best = bestMatchVersion({ plain: m.plain, half: m.half, full: m.full });
         return (
-          <section key={m.key} className="border-t border-border py-6">
+          <section key={m.key} className="mt-4 first:mt-0 rounded-card border border-border bg-white p-4 sm:p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-heading text-2xl font-semibold">
                 {m.home} v {m.away}
@@ -62,9 +81,9 @@ export default function JevScoreboardList({
             </div>
             <div className="mt-1 space-y-1 text-base text-muted">
               <p>{formatFixtureDate(m.fixtureDate)}</p>
-              <p>{RESULT_WORDS[m.result]}</p>
+              <p className={m.result === "H" ? "text-better" : m.result === "A" ? "text-worse" : "text-draw"}>{RESULT_WORDS[m.result]}</p>
             </div>
-            <p className="mt-2 text-base">Shift: {shiftLabel(m.shiftPoints)}</p>
+            <p className="mt-2 text-base">Shift: <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm font-semibold ${toneClasses(shiftTone(m.shiftPoints))}`}><span aria-hidden="true">{shiftGlyph(m.shiftPoints)}</span>{shiftLabel(m.shiftPoints)}</span></p>
 
             <div className="mt-3 border-y border-border">
               <table className="w-full table-fixed text-base">
@@ -96,9 +115,9 @@ export default function JevScoreboardList({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-t border-border">
+                  <tr className={`border-t border-border ${best === "plain" ? "bg-better-soft" : ""}`}>
                     <th scope="row" className="break-words px-2 py-2 text-left font-medium sm:px-3">
-                      Model
+                      Model {bestLabel("plain", best) && <span className="ml-1 text-xs font-semibold text-better">Best</span>}
                     </th>
                     <td className="break-words px-2 py-2 text-right font-tabular sm:px-3">
                       {formatProb(m.plain)}
@@ -106,13 +125,13 @@ export default function JevScoreboardList({
                     <td className="break-words px-2 py-2 text-right font-tabular sm:px-3">
                       {formatLoss(m.plain)}
                     </td>
-                    <td className="break-words px-2 py-2 text-right text-muted sm:px-3">
-                      baseline
+                    <td className="break-words px-2 py-2 text-right sm:px-3">
+                      <span className="inline-flex rounded-full bg-draw-soft px-2 py-0.5 text-xs font-semibold text-draw">baseline</span>
                     </td>
                   </tr>
-                  <tr className="border-t border-border">
+                  <tr className={`border-t border-border ${best === "half" ? "bg-better-soft" : ""}`}>
                     <th scope="row" className="break-words px-2 py-2 text-left font-medium sm:px-3">
-                      Jev half
+                      Jev half {bestLabel("half", best) && <span className="ml-1 text-xs font-semibold text-better">Best</span>}
                     </th>
                     <td className="break-words px-2 py-2 text-right font-tabular sm:px-3">
                       {formatProb(m.half)}
@@ -121,12 +140,12 @@ export default function JevScoreboardList({
                       {formatLoss(m.half)}
                     </td>
                     <td className="break-words px-2 py-2 text-right font-tabular sm:px-3">
-                      {diffLabel(m.plain, m.half)}
+                      <span className={`inline-flex max-w-full rounded-full px-2 py-0.5 text-xs font-semibold ${toneClasses(matchTone(m.plain, m.half))}`}>{diffLabel(m.plain, m.half)}</span>
                     </td>
                   </tr>
-                  <tr className="border-t border-border">
+                  <tr className={`border-t border-border ${best === "full" ? "bg-better-soft" : ""}`}>
                     <th scope="row" className="break-words px-2 py-2 text-left font-medium sm:px-3">
-                      Jev full
+                      Jev full {bestLabel("full", best) && <span className="ml-1 text-xs font-semibold text-better">Best</span>}
                     </th>
                     <td className="break-words px-2 py-2 text-right font-tabular sm:px-3">
                       {formatProb(m.full)}
@@ -135,7 +154,7 @@ export default function JevScoreboardList({
                       {formatLoss(m.full)}
                     </td>
                     <td className="break-words px-2 py-2 text-right font-tabular sm:px-3">
-                      {diffLabel(m.plain, m.full)}
+                      <span className={`inline-flex max-w-full rounded-full px-2 py-0.5 text-xs font-semibold ${toneClasses(matchTone(m.plain, m.full))}`}>{diffLabel(m.plain, m.full)}</span>
                     </td>
                   </tr>
                 </tbody>

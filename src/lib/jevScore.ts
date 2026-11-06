@@ -10,6 +10,8 @@ import type { JevPrediction } from "@/lib/types";
 
 export type Result = "H" | "D" | "A";
 export type VersionKey = "plain" | "half" | "full";
+export type MetricKey = "logLoss" | "accuracy";
+export type MetricTone = "better" | "worse" | "neutral";
 
 export type Probs = { home: number; draw: number; away: number };
 
@@ -99,6 +101,68 @@ export type Scoreboard = {
   summary: ScoreSummary;
   matches: MatchView[];
 };
+
+function metricValue(score: VersionScore, metric: MetricKey): number | null {
+  const value = score[metric];
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+// A tie does not imply a winner or loser. The unique best/worst value can be
+// tinted, while tied cards remain neutral so colour never overstates precision.
+export function metricTone(
+  summary: ScoreSummary,
+  metric: MetricKey,
+  version: VersionKey
+): MetricTone {
+  const values = (Object.keys(summary) as string[])
+    .filter((key): key is VersionKey => key === "plain" || key === "half" || key === "full")
+    .map((key) => metricValue(summary[key], metric))
+    .filter((value): value is number => value !== null);
+  const value = metricValue(summary[version], metric);
+  if (value === null || values.length < 3) return "neutral";
+
+  const target = metric === "logLoss" ? Math.min(...values) : Math.max(...values);
+  const opposite = metric === "logLoss" ? Math.max(...values) : Math.min(...values);
+  if (target === opposite) return "neutral";
+  const targetCount = values.filter((candidate) => candidate === target).length;
+  const oppositeCount = values.filter((candidate) => candidate === opposite).length;
+  if (value === target && targetCount === 1) return "better";
+  if (value === opposite && oppositeCount === 1) return "worse";
+  return "neutral";
+}
+
+export function isBestMetric(
+  summary: ScoreSummary,
+  metric: MetricKey,
+  version: VersionKey
+): boolean {
+  return metricTone(summary, metric, version) === "better";
+}
+
+export function matchTone(
+  plain: number | null,
+  version: number | null
+): MetricTone {
+  if (plain === null || version === null) return "neutral";
+  const diff = logLoss(plain) - logLoss(version);
+  if (diff > SAME) return "better";
+  if (diff < -SAME) return "worse";
+  return "neutral";
+}
+
+export function bestMatchVersion(
+  values: Record<VersionKey, number | null>
+): VersionKey | null {
+  const available = (Object.keys(values) as VersionKey[]).filter(
+    (key) => values[key] !== null && Number.isFinite(values[key])
+  );
+  if (available.length === 0) return null;
+  const best = Math.min(...available.map((key) => logLoss(values[key] as number)));
+  const winners = available.filter(
+    (key) => Math.abs(logLoss(values[key] as number) - best) <= SAME
+  );
+  return winners.length === 1 ? winners[0] : null;
+}
 
 function hasProbabilities(row: JevPrediction): boolean {
   return (
