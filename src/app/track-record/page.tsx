@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Card from "@/components/Card";
 import ModelTabs from "@/components/ModelTabs";
+import TrackRecordChart from "@/components/TrackRecordChart";
 import { getTrackRecord } from "@/lib/data";
 import { formatDateOnly } from "@/lib/format";
+import { trackRecordSeries } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -113,6 +115,11 @@ export default async function TrackRecordPage() {
             Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.
           </p>
 
+          <Card className="mt-8" variant="white">
+            <h2 className="font-heading text-2xl font-semibold">Log loss over time</h2>
+            <div className="mt-4"><TrackRecordChart series={trackRecordSeries(result)} /></div>
+          </Card>
+
           <Card className="mt-8 p-0" variant="white">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[60rem] text-left text-sm">
@@ -131,7 +138,7 @@ export default async function TrackRecordPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {result.map((row, index) => (
-                    <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`}>
+                    <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} className="transition-colors hover:bg-tint focus-within:bg-tint">
                       <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
                       <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
                       <td className="px-4 py-3">{modelName(row.model_key)}</td>

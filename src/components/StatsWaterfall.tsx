@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import {
   getPredictionExplain,
   mergeExplainRow,
@@ -41,7 +41,7 @@ function direction(tenths: number): "raises" | "lowers" | "no change" {
   return "no change";
 }
 
-function stepDescription(step: ExplainStep): string {
+function stepDescription(step: Pick<ExplainStep, "label" | "tenths">): string {
   const value = formatTenths(Math.abs(step.tenths));
   const move = direction(step.tenths);
   if (move === "no change") return `${step.label}: home win chance ${value} points, no change.`;
@@ -56,22 +56,45 @@ function stepTextColour(tenths: number): string {
   return movementColour(tenths, true);
 }
 
+function HoverCard({ value, sentence, colour }: { value: string; sentence: string; colour: string }) {
+  return (
+    <div className="pointer-events-none absolute right-0 top-1/2 z-20 w-[min(14rem,calc(100vw-2rem))] -translate-y-1/2 rounded-card border border-border bg-white p-3 shadow-sm">
+      <p className={`font-heading text-2xl font-bold leading-none ${colour}`}>{value}</p>
+      <p className="mt-2 text-xs leading-snug text-muted">{sentence}</p>
+    </div>
+  );
+}
+
 function StepRow({
   label,
   subLabel,
   value,
   scale,
+  active,
+  onActivate,
+  onDismiss,
 }: {
   label: string;
   subLabel?: string;
   value: number;
   scale: number;
+  active: boolean;
+  onActivate: () => void;
+  onDismiss: () => void;
 }) {
   const width = Math.min(50, (Math.abs(value / 10) / scale) * 50);
   const move = direction(value);
 
   return (
-    <div className="waterfall-step waterfall-row">
+    <div
+      className={`relative waterfall-step waterfall-row focus-visible:outline-2 focus-visible:outline-accent ${active ? "bg-tint" : ""}`}
+      tabIndex={0}
+      onPointerEnter={onActivate}
+      onPointerDown={onActivate}
+      onPointerLeave={onDismiss}
+      onFocus={onActivate}
+      onBlur={onDismiss}
+    >
       <div className="waterfall-step-label min-w-0">
         <p className="font-medium">{label}</p>
         {subLabel && <p className="mt-0.5 text-sm text-muted">{subLabel}</p>}
@@ -87,6 +110,7 @@ function StepRow({
         <p className="font-tabular text-[22px] font-semibold leading-none">{signedValue(value)}</p>
         <p className="text-sm">{move}</p>
       </div>
+      {active && <HoverCard value={`${signedValue(value)} points`} sentence={stepDescription({ label, tenths: value })} colour={stepTextColour(value)} />}
     </div>
   );
 }
@@ -101,6 +125,16 @@ export default function StatsWaterfall({
   note,
 }: StatsWaterfallProps) {
   const [state, setState] = useState<WaterfallState>({ status: "loading" });
+  const [activeKey, setActiveKey] = useState<string | null>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const dismiss = (event: PointerEvent) => {
+      if (!chartRef.current?.contains(event.target as Node)) setActiveKey(null);
+    };
+    document.addEventListener("pointerdown", dismiss);
+    return () => document.removeEventListener("pointerdown", dismiss);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -158,14 +192,23 @@ export default function StatsWaterfall({
         {description ?? `The chart starts from the home win chance for an average home team against an average visiting team (${formatTenths(display.startTenths)}%). Each step shows how much one group of stats moves that chance for this pairing, using each team's current numbers. The last bar is the model's home win chance, shown to one decimal place; the ribbon above rounds it to a whole number, so the two can differ slightly. This shows how the model weighs its inputs, not proof of what causes a result. Points and goals in the table above are not used by the model, so they do not appear here.`}
       </p>
 
-      <div className="waterfall-chart mt-6" aria-hidden="true">
-        <div className="waterfall-summary waterfall-row">
+      <div ref={chartRef} className="waterfall-chart mt-6" aria-hidden="true">
+        <div
+          className={`relative waterfall-summary waterfall-row focus-visible:outline-2 focus-visible:outline-accent ${activeKey === "average" ? "bg-tint" : ""}`}
+          tabIndex={0}
+          onPointerEnter={() => setActiveKey("average")}
+          onPointerDown={() => setActiveKey("average")}
+          onPointerLeave={() => setActiveKey(null)}
+          onFocus={() => setActiveKey("average")}
+          onBlur={() => setActiveKey(null)}
+        >
           <div>
             <p className="font-medium">Average match</p>
             <p className="mt-0.5 text-sm text-muted">Starting point: an average home team against an average visitor</p>
           </div>
           <div />
           <p className="waterfall-summary-value text-right font-tabular text-[28px] font-semibold leading-none text-ink">{formatTenths(display.startTenths)}%</p>
+          {activeKey === "average" && <HoverCard value={`${formatTenths(display.startTenths)}%`} sentence="The starting home win chance for an average match." colour="text-ink" />}
         </div>
 
         <div className="waterfall-direction-row text-sm text-muted">
@@ -185,14 +228,26 @@ export default function StatsWaterfall({
               subLabel={step.subLabel}
               value={step.tenths}
               scale={stepScale}
+              active={activeKey === step.key}
+              onActivate={() => setActiveKey(step.key)}
+              onDismiss={() => setActiveKey(null)}
             />
           );
         })}
 
-        <div className="waterfall-model waterfall-row">
+        <div
+          className={`relative waterfall-model waterfall-row focus-visible:outline-2 focus-visible:outline-accent ${activeKey === "model" ? "bg-tint" : ""}`}
+          tabIndex={0}
+          onPointerEnter={() => setActiveKey("model")}
+          onPointerDown={() => setActiveKey("model")}
+          onPointerLeave={() => setActiveKey(null)}
+          onFocus={() => setActiveKey("model")}
+          onBlur={() => setActiveKey(null)}
+        >
           <p className="font-medium">Model</p>
           <div />
           <p className="waterfall-summary-value text-right font-tabular text-[28px] font-semibold leading-none text-ink">{formatTenths(display.endTenths)}%</p>
+          {activeKey === "model" && <HoverCard value={`${formatTenths(display.endTenths)}%`} sentence="The model's final home win chance for this pairing." colour="text-ink" />}
         </div>
       </div>
 
