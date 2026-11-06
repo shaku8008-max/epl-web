@@ -2,6 +2,7 @@
 // fixture date so a long list stays scannable on a phone.
 
 import OutcomeKey from "@/components/OutcomeKey";
+import { probabilityColour } from "@/lib/colour";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
 import type { NnPrediction } from "@/lib/types";
 
@@ -23,10 +24,11 @@ export default function NnLaterFixtures({ fixtures }: NnLaterFixturesProps) {
         Later fixtures
       </summary>
       <div className="pb-5">
+        <p className="mb-3 text-xs text-muted">Green = home, red = away, grey = draw.</p>
         <div className="mb-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted">
-          <OutcomeKey label="H" color="bg-home" />
+           <OutcomeKey label="H" color="bg-better" />
           <OutcomeKey label="D" color="bg-draw" />
-          <OutcomeKey label="A" color="bg-away" />
+           <OutcomeKey label="A" color="bg-worse" />
         </div>
         {[...groups.entries()].map(([date, dateFixtures]) => (
           <div key={date} className="border-t border-border py-4 first:border-t-0">
@@ -47,8 +49,10 @@ export default function NnLaterFixtures({ fixtures }: NnLaterFixturesProps) {
                       <span className="block break-words font-medium">
                         {fixture.home} v {fixture.away}
                       </span>
-                      <span className="mt-1 block font-tabular text-sm text-muted">
-                        H {pct.home}% &nbsp; D {pct.draw}% &nbsp; A {pct.away}%
+                       <span className="mt-1 block font-tabular text-sm text-ink">
+                         <span className={probabilityColour("home", pct.home, pct.draw, pct.away)}>H {pct.home}%</span>{" "}
+                         <span className={probabilityColour("draw", pct.home, pct.draw, pct.away)}>D {pct.draw}%</span>{" "}
+                         <span className={probabilityColour("away", pct.home, pct.draw, pct.away)}>A {pct.away}%</span>
                       </span>
                     </span>
                     <span className="self-center whitespace-nowrap font-tabular text-sm text-muted">

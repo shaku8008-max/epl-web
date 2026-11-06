@@ -6,6 +6,7 @@
 import { memo, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import Card from "@/components/Card";
+import { statColour } from "@/lib/colour";
 import {
   ANIM_EASE_CSS,
   ANIM_MS,
@@ -212,7 +213,7 @@ const StatRow = memo(function StatRow({
   // on that side rather than sliding across from the old one.
   const pillVisible = leader !== null || targetLeader !== null;
   const pillSide = targetLeader ?? leader;
-  const pillColor = pillSide === "home" ? "bg-home/25" : "bg-away/25";
+  const pillColor = pillSide === "home" ? "bg-better/25" : "bg-worse/25";
   const pillStyle: CSSProperties = {
     transform:
       pillSide === "away"
@@ -228,8 +229,8 @@ const StatRow = memo(function StatRow({
 
   // Bold carries the meaning; the pill is decoration only so colour is never
   // the only signal.
-  const homeClasses = leader === "home" ? "font-bold text-ink" : "text-muted";
-  const awayClasses = leader === "away" ? "font-bold text-ink" : "text-muted";
+  const homeClasses = `${statColour(leader, "home", homeValue)}${leader === "home" ? " font-bold" : ""}`;
+  const awayClasses = `${statColour(leader, "away", awayValue)}${leader === "away" ? " font-bold" : ""}`;
 
   return (
     <div
@@ -325,6 +326,7 @@ export default function TeamStatsCard({ home, away, teamStats }: TeamStatsCardPr
   return (
     <Card variant="white">
       <h2 className="font-heading text-xl font-semibold">Team stats</h2>
+      <p className="mt-1 text-xs text-muted">Green = better value, red = worse value.</p>
 
       {/* A grid of divs with table roles: the layout is a CSS grid (needed for
           the absolutely positioned highlight) and the roles keep it readable

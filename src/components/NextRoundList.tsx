@@ -4,6 +4,7 @@
 
 import { nextRoundFixtures } from "@/lib/fixtures";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
+import { probabilityColour } from "@/lib/colour";
 import type { Fixture, Prediction } from "@/lib/types";
 
 type NextRoundListProps = {
@@ -25,6 +26,7 @@ export default function NextRoundList({
       <h2 id="next-round-heading" className="font-heading text-2xl font-semibold lg:text-3xl">
         Next round
       </h2>
+      <p className="mt-1 text-xs text-muted">Green = home, red = away, grey = draw.</p>
       <ul className="mt-2 divide-y divide-border border-y border-border">
         <li
           aria-hidden="true"
@@ -37,7 +39,9 @@ export default function NextRoundList({
         </li>
         {fixtures.map((f) => {
           const pct = toWholePercentages(f.p_home, f.p_draw, f.p_away);
-          const highest = Math.max(pct.home, pct.draw, pct.away);
+           const homeColour = probabilityColour("home", pct.home, pct.draw, pct.away);
+           const drawColour = probabilityColour("draw", pct.home, pct.draw, pct.away);
+           const awayColour = probabilityColour("away", pct.home, pct.draw, pct.away);
           return (
             <li key={`${f.home}|${f.away}`}>
               <button
@@ -52,21 +56,21 @@ export default function NextRoundList({
                     {formatFixtureDate(f.fixture_date)}
                   </span>
                 </span>
-                <span className="text-right font-tabular text-base text-muted">
-                  <span className="sr-only">Home </span>
-                  <span className={pct.home === highest ? "font-semibold text-ink" : undefined}>
+                 <span className="text-right font-tabular text-base text-ink">
+                   <span className="sr-only">Home </span>
+                   <span className={homeColour}>
                     H {pct.home}%
                   </span>{" "}
                 </span>
-                <span className="text-right font-tabular text-base text-muted">
-                  <span className="sr-only">Draw </span>
-                  <span className={pct.draw === highest ? "font-semibold text-ink" : undefined}>
+                 <span className="text-right font-tabular text-base text-ink">
+                   <span className="sr-only">Draw </span>
+                   <span className={drawColour}>
                     D {pct.draw}%
                   </span>
                 </span>
-                <span className="text-right font-tabular text-base text-muted">
-                  <span className="sr-only">Away </span>
-                  <span className={pct.away === highest ? "font-semibold text-ink" : undefined}>
+                 <span className="text-right font-tabular text-base text-ink">
+                   <span className="sr-only">Away </span>
+                   <span className={awayColour}>
                     A {pct.away}%
                   </span>
                 </span>

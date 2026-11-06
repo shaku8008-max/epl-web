@@ -9,6 +9,7 @@ import {
   type ExplainDisplay,
   type ExplainStep,
 } from "@/lib/explain";
+import { movementColour } from "@/lib/colour";
 
 type StatsWaterfallProps = {
   home: string;
@@ -48,15 +49,11 @@ function stepDescription(step: ExplainStep): string {
 }
 
 function stepColour(tenths: number): string {
-  if (tenths > 0) return "bg-home";
-  if (tenths < 0) return "bg-away";
-  return "bg-muted";
+  return movementColour(tenths);
 }
 
 function stepTextColour(tenths: number): string {
-  if (tenths > 0) return "text-home";
-  if (tenths < 0) return "text-away";
-  return "text-muted";
+  return movementColour(tenths, true);
 }
 
 function StepRow({
