@@ -87,6 +87,11 @@ export function toWholePercentages(
   return { home: result[0], draw: result[1], away: result[2] };
 }
 
+// Expected goals may be missing for a neural prediction row.
+export function formatXg(value: number | null | undefined): string {
+  return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "-";
+}
+
 // Formats a timestamptz ISO string, e.g. "Mon 12 Oct, 4:17 pm".
 export function formatMelbourne(iso: string): string {
   const date = new Date(iso);

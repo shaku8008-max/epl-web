@@ -3,7 +3,7 @@
 
 import OutcomeKey from "@/components/OutcomeKey";
 import { probabilityColour } from "@/lib/colour";
-import { formatFixtureDate, toWholePercentages } from "@/lib/format";
+import { formatFixtureDate, formatXg, toWholePercentages } from "@/lib/format";
 import type { NnPrediction } from "@/lib/types";
 
 type NnLaterFixturesProps = {
@@ -56,7 +56,7 @@ export default function NnLaterFixtures({ fixtures }: NnLaterFixturesProps) {
                       </span>
                     </span>
                     <span className="self-center whitespace-nowrap font-tabular text-sm text-muted">
-                      {fixture.xg_home.toFixed(1)} &ndash; {fixture.xg_away.toFixed(1)} xG
+                      {formatXg(fixture.xg_home)} &ndash; {formatXg(fixture.xg_away)} xG
                     </span>
                   </li>
                 );

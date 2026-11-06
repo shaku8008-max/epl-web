@@ -20,8 +20,8 @@ export type Prediction = {
 // Table `nn_predictions`: the neural network's prediction for each ordered
 // team pair, including expected goals for the home and away teams.
 export type NnPrediction = Prediction & {
-  xg_home: number;
-  xg_away: number;
+  xg_home: number | null;
+  xg_away: number | null;
 };
 
 // A prediction row that is a real upcoming fixture (fixture_date is set).

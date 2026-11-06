@@ -13,7 +13,7 @@ import PredictionCard from "@/components/PredictionCard";
 import StatsWaterfall from "@/components/StatsWaterfall";
 import TeamPicker from "@/components/TeamPicker";
 import { NN_STEP_DEFINITIONS, type PredictionExplain } from "@/lib/explain";
-import { toWholePercentages } from "@/lib/format";
+import { formatXg, toWholePercentages } from "@/lib/format";
 import type { Fixture, NnPrediction, NnTeamStats, Prediction } from "@/lib/types";
 
 type NnMatchupToolProps = {
@@ -123,21 +123,21 @@ export default function NnMatchupTool({
       </div>
 
       {prediction && (
-        <>
-          <Card variant="white">
+        <div className="grid min-w-0 gap-6 lg:col-span-2 lg:grid-cols-2 lg:items-stretch">
+          <Card className="h-full min-w-0" variant="white">
             <h2 className="font-heading text-2xl font-semibold">Expected goals</h2>
             <div className="mt-6 grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted">{pair.home}</p>
                 <p className="mt-1 font-tabular text-4xl font-semibold">
-                  {prediction.xg_home.toFixed(1)}
+                  {formatXg(prediction.xg_home)}
                 </p>
                 <p className="text-sm text-muted">goals</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted">{pair.away}</p>
                 <p className="mt-1 font-tabular text-4xl font-semibold">
-                  {prediction.xg_away.toFixed(1)}
+                  {formatXg(prediction.xg_away)}
                 </p>
                 <p className="text-sm text-muted">goals</p>
               </div>
@@ -147,7 +147,7 @@ export default function NnMatchupTool({
             </p>
           </Card>
 
-          <Card variant="white">
+          <Card className="h-full min-w-0" variant="white">
             <h2 className="font-heading text-2xl font-semibold">
               Neural net vs main model
             </h2>
@@ -183,7 +183,7 @@ export default function NnMatchupTool({
               <p className="mt-6 text-sm text-muted">Main model: n/a</p>
             )}
           </Card>
-        </>
+        </div>
       )}
 
       <div>
