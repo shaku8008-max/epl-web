@@ -6,7 +6,6 @@
 
 import { useState, useTransition } from "react";
 import Button from "@/components/Button";
-import Card from "@/components/Card";
 import { deleteEntry, settleEntry } from "@/lib/journal";
 import { formatFixtureDate } from "@/lib/format";
 import type { JournalEntry as JournalEntryType } from "@/lib/types";
@@ -22,10 +21,10 @@ const aud = new Intl.NumberFormat("en-AU", {
 });
 
 const STATUS_STYLES: Record<JournalEntryType["status"], string> = {
-  open: "bg-draw text-white",
-  won: "bg-primary text-white",
-  lost: "bg-out text-white",
-  void: "bg-muted text-white",
+  open: "bg-open-soft text-open",
+  won: "bg-better-soft text-better",
+  lost: "bg-worse-soft text-worse",
+  void: "bg-draw-soft text-draw",
 };
 
 const STATUS_LABELS: Record<JournalEntryType["status"], string> = {

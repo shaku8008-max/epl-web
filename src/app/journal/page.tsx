@@ -4,14 +4,15 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import Card from "@/components/Card";
 import AddBetForm from "@/components/AddBetForm";
 import JournalEntry from "@/components/JournalEntry";
 import JournalSummary from "@/components/JournalSummary";
+import HistoryChart from "@/components/HistoryChart";
 import { getPredictions } from "@/lib/data";
 import { upcomingFixtures } from "@/lib/fixtures";
 import { toWholePercentages } from "@/lib/format";
 import { autoSettle, getJournalEntries } from "@/lib/journal";
+import { cumulativeSeries } from "@/lib/history";
 import type { Fixture, JournalEntry as JournalEntryType, Prediction } from "@/lib/types";
 
 // Request-time render: settle + query fresh on every load.
@@ -96,6 +97,7 @@ export default async function JournalPage() {
   }
 
   const { entries, fixtures, modelProbs } = result;
+  const series = cumulativeSeries(entries);
 
   return (
     <section>
@@ -116,6 +118,11 @@ export default async function JournalPage() {
 
       <div className="mt-8">
         <JournalSummary entries={entries} />
+      </div>
+
+      <div className="mt-8 border-y border-border py-6">
+        <h2 className="font-heading text-2xl font-semibold">Profit / loss over time</h2>
+        <div className="mt-4"><HistoryChart series={series} /></div>
       </div>
 
       <div className="mt-6">

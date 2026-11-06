@@ -26,6 +26,11 @@
   --color-away: #24527e;
   --color-better: #1f6b4f;
   --color-worse: #b91c1c;
+  --color-better-soft: #e5f3ec;
+  --color-worse-soft: #fbe9e8;
+  --color-draw-soft: #edf1f2;
+  --color-open: #80652a;
+  --color-open-soft: #f5efe1;
   --color-out: #b91c1c;
   --color-doubtful: #b45309;
 

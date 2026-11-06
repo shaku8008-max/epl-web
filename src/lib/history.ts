@@ -41,3 +41,44 @@ export function cumulativeSeries(entries: JournalEntry[]): HistoryPoint[] {
 export function newestFirst(series: HistoryPoint[]): HistoryPoint[] {
   return [...series].reverse();
 }
+
+export function settledEntries(entries: JournalEntry[]): SettledEntry[] {
+  return entries.filter(isSettled);
+}
+
+export function betProfit(entries: JournalEntry[]): number {
+  return settledEntries(entries).reduce((total, entry) => total + profitFor(entry), 0);
+}
+
+export function returnOnInvestment(entries: JournalEntry[]): number | null {
+  const bets = settledEntries(entries).filter((entry) => entry.status !== "void");
+  const staked = bets.reduce((total, entry) => total + entry.stake, 0);
+  return staked > 0 ? (betProfit(entries) / staked) * 100 : null;
+}
+
+export function winRate(entries: JournalEntry[]): number | null {
+  const bets = settledEntries(entries).filter((entry) => entry.status !== "void");
+  return bets.length > 0
+    ? (bets.filter((entry) => entry.status === "won").length / bets.length) * 100
+    : null;
+}
+
+// The implied break-even probability is the mean of each valid decimal odds'
+// implied probability. Invalid odds contribute no data rather than infinity.
+export function breakEvenRate(entries: JournalEntry[]): number | null {
+  const bets = settledEntries(entries).filter(
+    (entry) => entry.status !== "void" && Number.isFinite(entry.odds) && entry.odds > 0
+  );
+  if (bets.length === 0) return null;
+  return (bets.reduce((total, entry) => total + 1 / entry.odds, 0) / bets.length) * 100;
+}
+
+export function valueColour(value: number | null): "better" | "worse" | "draw" {
+  if (value === null || value === 0) return "draw";
+  return value > 0 ? "better" : "worse";
+}
+
+export function nearestPoint(series: HistoryPoint[], index: number): number {
+  if (series.length === 0) return -1;
+  return Math.max(0, Math.min(series.length - 1, Math.round(index)));
+}

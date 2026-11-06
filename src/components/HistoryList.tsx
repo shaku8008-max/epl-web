@@ -14,8 +14,8 @@ const aud = new Intl.NumberFormat("en-AU", {
   currency: "AUD",
 });
 
-const GREEN = "var(--color-primary)";
-const RED = "var(--color-out)";
+const GREEN = "var(--color-better)";
+const RED = "var(--color-worse)";
 
 function pickLabel(p: HistoryPoint): string {
   const { home, away, pick } = p.entry;

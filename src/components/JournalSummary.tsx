@@ -1,68 +1,85 @@
-// Summary of the journal: profit/loss, return on investment and win rate.
-// Pure display, no interactivity, so it stays a server component.
-
-import Card from "@/components/Card";
 import type { JournalEntry } from "@/lib/types";
+import {
+  betProfit,
+  breakEvenRate,
+  returnOnInvestment,
+  settledEntries,
+  valueColour,
+  winRate,
+} from "@/lib/history";
 
-// AUD currency, e.g. "$12.50" or "-$8.00".
-const aud = new Intl.NumberFormat("en-AU", {
-  style: "currency",
-  currency: "AUD",
-});
+const aud = new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" });
 
-type JournalSummaryProps = {
-  entries: JournalEntry[];
+type JournalSummaryProps = { entries: JournalEntry[] };
+
+const colourClasses = {
+  better: { text: "text-better", border: "border-better", bg: "bg-better-soft" },
+  worse: { text: "text-worse", border: "border-worse", bg: "bg-worse-soft" },
+  draw: { text: "text-draw", border: "border-draw", bg: "bg-draw-soft" },
 };
 
-export default function JournalSummary({ entries }: JournalSummaryProps) {
-  const settled = entries.filter((e) => e.status === "won" || e.status === "lost");
-  const won = settled.filter((e) => e.status === "won");
-  const lost = settled.filter((e) => e.status === "lost");
-
-  // Void bets return the stake and are excluded from P/L and ROI.
-  const profit = settled.reduce(
-    (sum, e) => sum + (e.status === "won" ? e.stake * (e.odds - 1) : -e.stake),
-    0
+function StatCard({ label, value, colour, caption }: {
+  label: string;
+  value: string;
+  colour: keyof typeof colourClasses;
+  caption?: string;
+}) {
+  const styles = colourClasses[colour];
+  return (
+    <div className={`rounded-card border border-border border-l-4 ${styles.border} ${styles.bg} p-4 sm:p-5`}>
+      <dt className="text-sm font-medium text-muted">{label}</dt>
+      <dd className={`mt-2 font-heading text-4xl font-bold leading-none tracking-tight tabular-nums sm:text-5xl ${styles.text}`}>
+        {value}
+      </dd>
+      {caption && <p className="mt-2 text-xs leading-snug text-muted">{caption}</p>}
+    </div>
   );
-  const staked = settled.reduce((sum, e) => sum + e.stake, 0);
-  const roi = staked > 0 ? (profit / staked) * 100 : null;
-  const winRate = settled.length > 0 ? (won.length / settled.length) * 100 : null;
+}
 
-  const openCount = entries.filter((e) => e.status === "open").length;
-  const voidCount = entries.filter((e) => e.status === "void").length;
+export default function JournalSummary({ entries }: JournalSummaryProps) {
+  const settled = settledEntries(entries);
+  const scored = settled.filter((entry) => entry.status !== "void");
+  const profit = betProfit(entries);
+  const roi = returnOnInvestment(entries);
+  const rate = winRate(entries);
+  const breakEven = breakEvenRate(entries);
+  const rateColour = rate === null || breakEven === null ? "draw" : valueColour(rate - breakEven);
+  const counts = [
+    ["won", entries.filter((entry) => entry.status === "won").length, "bg-better-soft text-better"],
+    ["lost", entries.filter((entry) => entry.status === "lost").length, "bg-worse-soft text-worse"],
+    ["void", entries.filter((entry) => entry.status === "void").length, "bg-draw-soft text-draw"],
+    ["open", entries.filter((entry) => entry.status === "open").length, "bg-open-soft text-open"],
+  ] as const;
 
   return (
-    <div className="border-y border-border py-6">
+    <div>
       <h2 className="font-heading text-2xl font-semibold">Summary</h2>
-      <dl className="mt-4 grid grid-cols-2 divide-x divide-border sm:grid-cols-3">
-        <div>
-          <dt className="text-base text-muted">Profit / loss</dt>
-          <dd
-            className={`mt-1 text-2xl font-semibold font-tabular ${
-              profit > 0 ? "text-primary" : profit < 0 ? "text-out" : "text-ink"
-            }`}
-          >
-            {aud.format(profit)}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-base text-muted">ROI</dt>
-          <dd className="mt-1 text-2xl font-semibold font-tabular">
-            {roi === null ? "-" : `${roi >= 0 ? "+" : ""}${roi.toFixed(1)}%`}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-base text-muted">Win rate</dt>
-          <dd className="mt-1 text-2xl font-semibold font-tabular">
-            {winRate === null ? "-" : `${winRate.toFixed(0)}%`}
-          </dd>
-        </div>
+      <dl className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard
+          label="Profit / loss"
+          value={profit > 0 ? `▲ +${aud.format(profit)}` : profit < 0 ? `▼ −${aud.format(Math.abs(profit))}` : aud.format(0)}
+          colour={valueColour(profit)}
+        />
+        <StatCard
+          label="ROI"
+          value={roi === null ? "-" : `${roi > 0 ? "▲ +" : roi < 0 ? "▼ −" : ""}${Math.abs(roi).toFixed(1)}%`}
+          colour={valueColour(roi)}
+        />
+        <StatCard
+          label="Win rate"
+          value={rate === null ? "-" : `${rate >= (breakEven ?? Infinity) ? "▲ " : "▼ "}${rate.toFixed(0)}%`}
+          colour={rateColour}
+          caption={breakEven === null ? "Break-even needs valid odds" : `Break-even is about ${breakEven.toFixed(0)}% at your odds`}
+        />
+        <StatCard label="Bets settled" value={String(scored.length)} colour="draw" />
       </dl>
-      <p className="mt-4 text-base text-muted">
-        {settled.length} settled ({won.length} won, {lost.length} lost)
-        {voidCount > 0 ? `, ${voidCount} void` : ""}
-        {openCount > 0 ? `, ${openCount} open` : ""}.
-      </p>
+      <div className="mt-4 flex flex-wrap gap-2" aria-label="Bet counts">
+        {counts.map(([label, count, styles]) => (
+          <span key={label} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${styles}`}>
+            {count} {label}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

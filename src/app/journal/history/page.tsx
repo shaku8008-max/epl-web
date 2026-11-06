@@ -3,7 +3,6 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import Card from "@/components/Card";
 import HistoryChart from "@/components/HistoryChart";
 import HistoryList from "@/components/HistoryList";
 import { cumulativeSeries, newestFirst } from "@/lib/history";
@@ -58,7 +57,7 @@ export default async function HistoryPage() {
           </h2>
           <span
             className={`text-2xl font-semibold tabular-nums ${
-              total > 0 ? "text-primary" : total < 0 ? "text-out" : "text-ink"
+              total > 0 ? "text-better" : total < 0 ? "text-worse" : "text-draw"
             }`}
           >
             {total > 0 ? "+" : total < 0 ? "−" : ""}
