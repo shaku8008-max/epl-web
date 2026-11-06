@@ -87,7 +87,28 @@ export type Run = {
   model: string;
   model_version: string;
   xg_ok: boolean;
+  xg_through: string | null;
   status: string;
+};
+
+// View `track_record`: one row per prediction that has been scored.
+export type TrackRecord = {
+  model_key: "lean" | "nn" | string;
+  model: string | null;
+  model_version: string | null;
+  home: string | null;
+  away: string | null;
+  fixture_date: string | null;
+  predicted_at: string | null;
+  p_home: number | null;
+  p_draw: number | null;
+  p_away: number | null;
+  home_goals: number | null;
+  away_goals: number | null;
+  result: "H" | "D" | "A" | null;
+  predicted_result: "H" | "D" | "A" | null;
+  correct: boolean | null;
+  log_loss: number | null;
 };
 
 // Table `results`: one row per played match, uploaded by the Python project.

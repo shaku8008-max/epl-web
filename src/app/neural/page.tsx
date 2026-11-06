@@ -3,6 +3,7 @@
 
 import type { Metadata } from "next";
 import Card from "@/components/Card";
+import ModelTabs from "@/components/ModelTabs";
 import NnMatchupTool from "@/components/NnMatchupTool";
 import NnLaterFixtures from "@/components/NnLaterFixtures";
 import {
@@ -57,6 +58,7 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
   if ("error" in result) {
     return (
       <section>
+        <ModelTabs />
         <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Neural</h1>
         <p className="mt-3 max-w-2xl text-lg leading-relaxed">
           A second model that predicts goals and turns them into match probabilities.
@@ -82,6 +84,7 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
   if (neural.length === 0 || latest === null) {
     return (
       <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
+        <ModelTabs />
         <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Neural</h1>
         <p className="mt-3 max-w-2xl text-lg leading-relaxed">
           A second model that predicts goals and turns them into match probabilities.
@@ -109,6 +112,7 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
 
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
+      <ModelTabs />
       <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Neural</h1>
       <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         A second model that predicts how many goals each team might score, then turns those goals into match probabilities.
