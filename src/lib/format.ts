@@ -38,10 +38,23 @@ const fixtureDayMonth = new Intl.DateTimeFormat("en-AU", {
   month: "short",
 });
 
+const dateOnlyDayMonth = new Intl.DateTimeFormat("en-AU", {
+  timeZone: "UTC",
+  day: "numeric",
+  month: "short",
+});
+
 // e.g. "Sat 17 Oct"
 export function formatFixtureDate(date: string): string {
   const d = new Date(`${date}T00:00:00Z`);
   return `${fixtureWeekday.format(d)} ${fixtureDayMonth.format(d)}`;
+}
+
+// Formats a date-only database value without shifting it across time zones.
+export function formatDateOnly(date: string): string {
+  const parsed = new Date(`${date}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return "unavailable";
+  return dateOnlyDayMonth.format(parsed);
 }
 
 // Turns the three probabilities into whole-number percentages that always add

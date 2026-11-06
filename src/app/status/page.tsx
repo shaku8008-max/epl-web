@@ -7,7 +7,7 @@
 
 import type { Metadata } from "next";
 import { getSupabaseClient } from "@/lib/supabase";
-import { formatMelbourne } from "@/lib/format";
+import { formatDateOnly, formatMelbourne } from "@/lib/format";
 import type { Run } from "@/lib/types";
 
 // Render on every request instead of at build time, so the queries run fresh
@@ -131,6 +131,14 @@ export default async function StatusPage() {
           <li className="flex flex-wrap justify-between gap-3 py-3">
             <span>data_as_of</span>
             <span>{formatMelbourne(run.data_as_of)} (Melbourne time)</span>
+          </li>
+          <li className="flex flex-wrap justify-between gap-3 py-3">
+            <span>xg_through</span>
+            <span>{run.xg_through ? formatDateOnly(run.xg_through) : "unknown"}</span>
+          </li>
+          <li className="flex flex-wrap justify-between gap-3 py-3">
+            <span>xg_ok</span>
+            <span>{run.xg_ok ? "true" : "false"}</span>
           </li>
           <li className="flex flex-wrap justify-between gap-3 py-3">
             <span>status</span>

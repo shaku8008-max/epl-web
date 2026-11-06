@@ -5,9 +5,10 @@ import type { Metadata } from "next";
 import Card from "@/components/Card";
 import MatchupTool from "@/components/MatchupTool";
 import ModelTabs from "@/components/ModelTabs";
-import { getPredictions, getTeamStats } from "@/lib/data";
+import { getLatestRun, getPredictions, getTeamStats } from "@/lib/data";
 import { resolveInitialPair } from "@/lib/fixtures";
-import type { Prediction, TeamStats } from "@/lib/types";
+import { formatDateOnly } from "@/lib/format";
+import type { Prediction, Run, TeamStats } from "@/lib/types";
 
 // Request-time render: queries run fresh on every load, never at build time.
 export const dynamic = "force-dynamic";
@@ -21,13 +22,19 @@ export const metadata: Metadata = {
 // Plain loader with no JSX, so query problems can be caught and reported
 // instead of crashing the page (the linter forbids JSX inside try/catch).
 async function loadPredictPage(): Promise<
-  | { predictions: Prediction[]; teamStats: TeamStats[]; teams: string[] }
+  | {
+      predictions: Prediction[];
+      teamStats: TeamStats[];
+      teams: string[];
+      latestRun: Run | null;
+    }
   | { error: string }
 > {
   try {
-    const [predictions, teamStats] = await Promise.all([
+    const [predictions, teamStats, latestRun] = await Promise.all([
       getPredictions(),
       getTeamStats(),
+      getLatestRun(),
     ]);
     // Team names come from the same team_stats rows, so teams need no query
     // of their own. Sorted here because the DB order is only a fallback.
@@ -38,7 +45,7 @@ async function loadPredictPage(): Promise<
           "The database returned no rows (expected 380 predictions and 20 teams).",
       };
     }
-    return { predictions, teamStats, teams };
+    return { predictions, teamStats, teams, latestRun };
   } catch (err) {
     return { error: err instanceof Error ? err.message : String(err) };
   }
@@ -71,10 +78,20 @@ export default async function PredictPage(props: PageProps<"/">) {
     result.predictions,
     result.teams
   );
+  const latestRun = result.latestRun;
+  const xgNote =
+    latestRun?.xg_ok === false && latestRun.xg_through !== null
+      ? `xG form data runs through ${formatDateOnly(latestRun.xg_through)}. The xG feed has stopped updating, so xG-based form is out of date. Elo and match results are current.`
+      : null;
 
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <ModelTabs />
+      {xgNote && (
+        <p className="mb-6 rounded-card bg-tint px-4 py-3 text-base text-muted">
+          {xgNote}
+        </p>
+      )}
       <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Predict</h1>
       <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         Pick any two Premier League teams to see the home, draw and away
