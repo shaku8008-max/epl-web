@@ -8,6 +8,7 @@ import { memo } from "react";
 import Card from "@/components/Card";
 import OutcomeKey from "@/components/OutcomeKey";
 import { ANIM_EASE_CSS, ANIM_MS, fadeInStyle, useAnimatedNumber, useHasChanged } from "@/lib/animate";
+import { probabilityColour } from "@/lib/colour";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
 import type { Prediction } from "@/lib/types";
 
@@ -101,14 +102,14 @@ export default function PredictionCard({
         <Card variant="white">
           <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
             <span className="min-w-0">
-              <OutcomeKey label="Home" color="bg-home" />
+              <OutcomeKey label="Home" color="bg-better" />
               <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
                 <FadeText text={home} animate={animate} />
               </span>
             </span>
             <span className="min-w-0 text-right">
               <span className="flex justify-end">
-                <OutcomeKey label="Away" color="bg-away" />
+                <OutcomeKey label="Away" color="bg-worse" />
               </span>
               <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
                 <FadeText text={away} animate={animate} />
@@ -137,7 +138,7 @@ export default function PredictionCard({
       label: `${home} win`,
       barLabel: "Home",
       value: pct.home,
-      color: "bg-home",
+      color: "bg-better",
     },
     { key: "draw", label: "Draw", barLabel: "Draw", value: pct.draw, color: "bg-draw" },
     {
@@ -145,31 +146,33 @@ export default function PredictionCard({
       label: `${away} win`,
       barLabel: "Away",
       value: pct.away,
-      color: "bg-away",
+      color: "bg-worse",
     },
   ];
-  const mostLikely = outcomes.reduce((best, o) => (o.value > best.value ? o : best));
+  const highest = Math.max(...outcomes.map((outcome) => outcome.value));
+  const highestOutcomes = outcomes.filter((outcome) => outcome.value === highest);
+  const mostLikely = highestOutcomes.length === 1 ? highestOutcomes[0] : null;
   const fixtureText = prediction.fixture_date
     ? `Upcoming fixture: ${formatFixtureDate(prediction.fixture_date)}`
     : "Hypothetical matchup: if they played next, on current form.";
   // Final values only for the live region: intermediates stay silent.
   const liveSummary =
     `${heading}. ${outcomes.map((o) => `${o.label} ${o.value}%`).join(", ")}. ` +
-    `Most likely: ${mostLikely.label}. ${fixtureText}`;
+    `${mostLikely ? `Most likely: ${mostLikely.label}. ` : "No single most likely outcome. "}${fixtureText}`;
 
   return (
     <div id="prediction-card" className={`scroll-mt-4${animate ? " epl-anim" : ""}`}>
       <Card variant="white">
         <h2 aria-hidden="true" className="grid grid-cols-2 gap-4 font-heading">
           <span className="min-w-0">
-            <OutcomeKey label="Home" color="bg-home" />
+               <OutcomeKey label="Home" color="bg-better" />
             <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
               <FadeText text={home} animate={animate} />
             </span>
           </span>
           <span className="min-w-0 text-right">
             <span className="flex justify-end">
-              <OutcomeKey label="Away" color="bg-away" />
+                 <OutcomeKey label="Away" color="bg-worse" />
             </span>
             <span className="block break-words text-3xl font-semibold leading-tight lg:text-5xl">
               <FadeText text={away} animate={animate} />
@@ -194,18 +197,24 @@ export default function PredictionCard({
             segment is very small. */}
         <div className="mt-3 grid min-w-0 grid-cols-3 gap-2" aria-hidden="true">
           {outcomes.map((o) => {
-            const isMostLikely = o.key === mostLikely.key;
+            const isMostLikely = mostLikely !== null && o.key === mostLikely.key;
+            const outcomeColour = probabilityColour(
+              o.key as "home" | "draw" | "away",
+              pct.home,
+              pct.draw,
+              pct.away
+            );
             return (
               <div key={o.key} className="min-w-0 text-center">
                 <span
-                  key={mostLikely.key}
-                   className={`mt-2 block font-tabular text-4xl leading-none lg:text-6xl ${isMostLikely ? "font-semibold text-ink" : "text-muted"}${animate ? " epl-anim" : ""}`}
+                   key={o.key}
+                   className={`mt-2 block font-tabular text-4xl leading-none lg:text-6xl ${outcomeColour || "text-ink"}${isMostLikely ? " font-semibold" : ""}${animate ? " epl-anim" : ""}`}
                   style={fadeInStyle(animate)}
                 >
                   <CountedPercent value={o.value} />
                 </span>
                 <span
-                   className={`mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm ${isMostLikely ? "font-semibold text-ink" : "text-muted"}`}
+                    className={`mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm ${outcomeColour || "text-ink"}${isMostLikely ? " font-semibold" : ""}`}
                 >
                   <OutcomeKey label={o.barLabel} color={o.color} />
                   {isMostLikely && (
@@ -219,7 +228,10 @@ export default function PredictionCard({
           })}
         </div>
 
-        <p className="mt-4 text-base text-muted">
+         <p className="mt-4 text-xs text-muted">
+           Green = home, red = away, grey = draw.
+         </p>
+         <p className="mt-2 text-base text-muted">
           <FadeText text={fixtureText} animate={animate} />
         </p>
 

@@ -6,6 +6,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Card from "@/components/Card";
+import { probabilityColour } from "@/lib/colour";
 import NextRoundList from "@/components/NextRoundList";
 import NnTeamStatsCard from "@/components/NnTeamStatsCard";
 import PredictionCard from "@/components/PredictionCard";
@@ -98,9 +99,9 @@ export default function NnMatchupTool({
     : null;
   const comparisonRows = neuralPercentages && mainPercentages
     ? [
-        { label: "Home", neural: neuralPercentages.home, main: mainPercentages.home },
-        { label: "Draw", neural: neuralPercentages.draw, main: mainPercentages.draw },
-        { label: "Away", neural: neuralPercentages.away, main: mainPercentages.away },
+         { key: "home" as const, label: "Home", neural: neuralPercentages.home, main: mainPercentages.home },
+         { key: "draw" as const, label: "Draw", neural: neuralPercentages.draw, main: mainPercentages.draw },
+         { key: "away" as const, label: "Away", neural: neuralPercentages.away, main: mainPercentages.away },
       ]
     : [];
 
@@ -150,7 +151,7 @@ export default function NnMatchupTool({
             <h2 className="font-heading text-2xl font-semibold">
               Neural net vs main model
             </h2>
-            {mainPercentages ? (
+            {mainPercentages && neuralPercentages ? (
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full min-w-[20rem] text-left text-sm">
                   <thead>
@@ -167,8 +168,8 @@ export default function NnMatchupTool({
                       return (
                         <tr key={row.label} className="border-b border-border last:border-0">
                           <th scope="row" className="py-3 pr-3 font-medium">{row.label}</th>
-                          <td className="px-2 py-3 text-right font-tabular">{row.neural}%</td>
-                          <td className="px-2 py-3 text-right font-tabular">{row.main}%</td>
+                           <td className={`px-2 py-3 text-right font-tabular ${probabilityColour(row.key, neuralPercentages.home, neuralPercentages.draw, neuralPercentages.away) || "text-ink"}`}>{row.neural}%</td>
+                           <td className={`px-2 py-3 text-right font-tabular ${probabilityColour(row.key, mainPercentages.home, mainPercentages.draw, mainPercentages.away) || "text-ink"}`}>{row.main}%</td>
                           <td className="py-3 pl-2 text-right font-tabular">
                             {difference >= 0 ? "+" : ""}{difference} pp
                           </td>

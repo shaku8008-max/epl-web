@@ -7,6 +7,7 @@
 import { memo, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import Card from "@/components/Card";
+import { statColour } from "@/lib/colour";
 import {
   ANIM_EASE_CSS,
   ANIM_MS,
@@ -155,7 +156,7 @@ const StatRow = memo(function StatRow({
   const leader = animate ? shownLeader : targetLeader;
   const pillVisible = leader !== null || targetLeader !== null;
   const pillSide = targetLeader ?? leader;
-  const pillColor = pillSide === "home" ? "bg-home/25" : "bg-away/25";
+  const pillColor = pillSide === "home" ? "bg-better/25" : "bg-worse/25";
   const pillStyle: CSSProperties = {
     transform:
       pillSide === "away"
@@ -168,8 +169,8 @@ const StatRow = memo(function StatRow({
         `background-color ${ANIM_MS}ms ${ANIM_EASE_CSS} ${delayMs}ms`
       : undefined,
   };
-  const homeClasses = leader === "home" ? "font-bold text-ink" : "text-muted";
-  const awayClasses = leader === "away" ? "font-bold text-ink" : "text-muted";
+  const homeClasses = `${statColour(leader, "home", homeValue)}${leader === "home" ? " font-bold" : ""}`;
+  const awayClasses = `${statColour(leader, "away", awayValue)}${leader === "away" ? " font-bold" : ""}`;
 
   return (
     <div
@@ -252,6 +253,7 @@ export default function NnTeamStatsCard({
   return (
     <Card variant="white">
       <h2 className="font-heading text-xl font-semibold">Team stats</h2>
+      <p className="mt-1 text-xs text-muted">Green = better value, red = worse value.</p>
       <div
         role="table"
         aria-label={`Team stats comparison: ${home} at home, ${away} away`}
