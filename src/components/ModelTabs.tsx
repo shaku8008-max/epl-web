@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 const models = [
   { href: "/", label: "Lean" },
   { href: "/neural", label: "Neural network" },
+  { href: "/track-record", label: "Track record" },
 ];
 
 export default function ModelTabs() {

@@ -5,6 +5,7 @@ import type {
   NnTeamStats,
   Prediction,
   Run,
+  TrackRecord,
   TeamStats,
 } from "@/lib/types";
 
@@ -74,6 +75,18 @@ export async function getNnTeamStats(): Promise<NnTeamStats[]> {
   return ((data ?? []) as NnTeamStats[]).sort((a, b) =>
     a.team.localeCompare(b.team)
   );
+}
+
+// Scored predictions from the public track_record view, newest fixture first.
+// The view owns the before-match-day filtering and scoring logic.
+export async function getTrackRecord(): Promise<TrackRecord[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("track_record")
+    .select("*")
+    .order("fixture_date", { ascending: false });
+  if (error) throw new Error(`track_record: ${error.message}`);
+  return (data ?? []) as TrackRecord[];
 }
 
 // Upcoming Jev fixtures, oldest first. "Today" is the UTC date (fixture dates
