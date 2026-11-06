@@ -2,6 +2,7 @@
 // site's main model. It reads only public Supabase rows and never runs a model.
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import Card from "@/components/Card";
 import ModelTabs from "@/components/ModelTabs";
 import NnMatchupTool from "@/components/NnMatchupTool";
@@ -118,6 +119,7 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
         A second model that predicts how many goals each team might score, then turns those goals into match probabilities.
       </p>
       <p className="mt-2 max-w-2xl text-base text-muted">For fun only. Not betting advice.</p>
+      <p className="mt-3 text-sm font-semibold"><Link className="text-accent underline decoration-accent/40 underline-offset-4 hover:text-accent-dark" href="/neural/outlook">See the season outlook</Link></p>
 
       {stale && (
         <div className="mt-6 border-y border-border bg-tint p-6 text-ink">

@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 const models = [
   { href: "/", label: "Lean" },
   { href: "/neural", label: "Neural network" },
+  { href: "/neural/outlook", label: "Season outlook" },
   { href: "/track-record", label: "Track record" },
 ];
 
@@ -17,8 +18,9 @@ export default function ModelTabs() {
   return (
     <nav aria-label="Models" className="mb-6 flex flex-wrap gap-1">
       {models.map((model) => {
-        // Lean is only active at the homepage; Neural stays active on its sub-pages.
-        const active = model.href === "/" ? pathname === "/" : pathname.startsWith(model.href);
+        // Each model entry owns its exact route; the outlook is not also the
+        // parent Neural tab.
+        const active = model.href === "/" ? pathname === "/" : pathname === model.href || (model.href === "/track-record" && pathname.startsWith(model.href));
         return (
           <Link
             key={model.href}

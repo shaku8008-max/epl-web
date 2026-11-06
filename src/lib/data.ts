@@ -5,9 +5,20 @@ import type {
   NnTeamStats,
   Prediction,
   Run,
+  SeasonOutlook,
   TrackRecord,
   TeamStats,
 } from "@/lib/types";
+
+function finiteNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function validPositionProbabilities(value: unknown): number[] | null {
+  return Array.isArray(value) && value.length === 20 && value.every((item) => typeof item === "number" && Number.isFinite(item))
+    ? value
+    : null;
+}
 
 // Latest prediction-job run, or null if there is no run yet or the query
 // fails. Returns null instead of throwing so the footer can show
@@ -75,6 +86,38 @@ export async function getNnTeamStats(): Promise<NnTeamStats[]> {
   return ((data ?? []) as NnTeamStats[]).sort((a, b) =>
     a.team.localeCompare(b.team)
   );
+}
+
+// The public simulation summary, sorted by expected points. A malformed JSON
+// distribution only removes the mini-chart for that team; the table remains
+// useful.
+export async function getSeasonOutlook(): Promise<SeasonOutlook[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("nn_season_outlook")
+    .select("*")
+    .order("expected_points", { ascending: false });
+  if (error) throw new Error(`nn_season_outlook: ${error.message}`);
+
+  return (data ?? []).map((row) => {
+    const value = row as Record<string, unknown>;
+    return {
+      team: typeof value.team === "string" ? value.team : null,
+      played: finiteNumber(value.played),
+      points: finiteNumber(value.points),
+      goal_diff: finiteNumber(value.goal_diff),
+      expected_points: finiteNumber(value.expected_points),
+      expected_position: finiteNumber(value.expected_position),
+      p_title: finiteNumber(value.p_title),
+      p_top4: finiteNumber(value.p_top4),
+      p_relegation: finiteNumber(value.p_relegation),
+      position_probs: validPositionProbabilities(value.position_probs),
+      simulations: finiteNumber(value.simulations),
+      model: typeof value.model === "string" ? value.model : null,
+      model_version: typeof value.model_version === "string" ? value.model_version : null,
+      updated_at: typeof value.updated_at === "string" ? value.updated_at : null,
+    } satisfies SeasonOutlook;
+  });
 }
 
 // Scored predictions from the public track_record view, newest fixture first.

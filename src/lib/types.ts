@@ -70,6 +70,25 @@ export type NnTeamStats = {
   updated_at: string | null;
 };
 
+// Table `nn_season_outlook`: one simulation summary per team. The position
+// distribution may be unavailable for an individual row if its JSON is bad.
+export type SeasonOutlook = {
+  team: string | null;
+  played: number | null;
+  points: number | null;
+  goal_diff: number | null;
+  expected_points: number | null;
+  expected_position: number | null;
+  p_title: number | null;
+  p_top4: number | null;
+  p_relegation: number | null;
+  position_probs: number[] | null;
+  simulations: number | null;
+  model: string | null;
+  model_version: string | null;
+  updated_at: string | null;
+};
+
 // Table `prediction_history`: next-round fixtures with results filled in once
 // played. Same columns as `predictions` plus the three below.
 // Primary key (home, away, fixture_date).
