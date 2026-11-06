@@ -75,7 +75,7 @@ export default async function JevPage() {
       </p>
 
       {stale && (
-        <div className="mt-6 border-y border-border bg-tint p-6 text-ink">
+        <div className="mt-6 rounded-card border-l-4 border-open bg-open-soft p-6 text-ink">
           <p className="font-semibold">News may be out of date</p>
           <p className="mt-1 text-sm text-muted">
             The latest news was fetched more than two days ago.

@@ -3,6 +3,7 @@
 
 import { toWholePercentages } from "@/lib/format";
 import OutcomeKey from "@/components/OutcomeKey";
+import { probabilityColour } from "@/lib/colour";
 
 type JevProbabilityBarProps = {
   label: string;
@@ -48,7 +49,7 @@ export default function JevProbabilityBar({
   return (
     <div>
       <p className="text-base font-medium">{label}</p>
-      <div className="mt-2 flex h-8 overflow-hidden rounded-full lg:h-10" aria-hidden="true">
+      <div className="mt-2 flex h-14 overflow-hidden rounded-full lg:h-16" aria-hidden="true">
         {SEGMENTS.map((s, i) => (
           <div
             key={s.key}
@@ -62,7 +63,7 @@ export default function JevProbabilityBar({
       <div className="mt-3 grid min-w-0 grid-cols-3 gap-2" aria-hidden="true">
         {SEGMENTS.map((s, i) => (
           <div key={s.key} className="min-w-0 text-center">
-            <span className="mt-2 block font-tabular text-3xl leading-none text-ink lg:text-4xl">
+              <span className={`mt-2 block font-tabular text-4xl leading-none ${probabilityColour(s.key as "home" | "draw" | "away", pct.home, pct.draw, pct.away) || "text-ink"} lg:text-6xl`}>
               {values[i]}%
             </span>
             <span className="mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-muted">
