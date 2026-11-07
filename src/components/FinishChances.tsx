@@ -29,7 +29,7 @@ export default function FinishChances({ probabilities, team }: FinishChancesProp
             id={`${team}-finish-${index}`}
             type="button"
             aria-label={`${ordinal(index + 1)}: ${(probability * 100).toFixed(1)}%`}
-            className={`relative min-w-1 flex-1 rounded-t-sm bg-accent/45 outline-offset-2 transition-colors hover:bg-accent focus:bg-accent focus-visible:outline-2 focus-visible:outline-accent ${index === 0 || index === 3 || index >= 17 ? "before:absolute before:inset-y-0 before:-left-px before:border-l before:border-rule-strong/60" : ""}`}
+            className={`relative min-w-1 flex-1 rounded-t-sm outline-offset-2 transition-[filter] hover:brightness-90 focus:brightness-75 focus-visible:outline-2 focus-visible:outline-accent ${index < 4 ? "bg-better" : index >= 17 ? "bg-worse" : "bg-rule-strong"} ${index === 4 || index === 17 ? "before:absolute before:inset-y-0 before:-left-px before:border-l before:border-rule-strong" : ""}`}
             style={{ height: `${Math.max(heights[index], probability > 0 ? 5 : 2)}%` }}
             onFocus={() => setActive(index)}
             onBlur={() => setActive(null)}

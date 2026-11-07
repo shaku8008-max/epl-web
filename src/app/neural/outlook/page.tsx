@@ -35,6 +35,10 @@ function expectedPoints(value: number | null): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "–";
 }
 
+function chanceCellClass(value: number | null): string {
+  return `px-3 py-3 font-tabular text-ink ${value !== null && Number.isFinite(value) && value >= 0.5 ? "font-semibold" : ""}`;
+}
+
 export default async function SeasonOutlookPage() {
   const result = await loadOutlook();
   const rows = "error" in result ? [] : result;
@@ -87,18 +91,32 @@ export default async function SeasonOutlookPage() {
                     <th scope="row" className="sticky left-12 z-10 bg-white px-3 py-3 font-semibold group-hover:bg-tint">{row.team ?? "Team unavailable"}</th>
                     <td className="px-3 py-3 font-tabular">{wholeNumber(row.played)}</td>
                     <td className="px-3 py-3 font-tabular">{wholeNumber(row.points)}</td>
-                    <td className={`px-3 py-3 font-tabular ${row.goal_diff === null ? "text-muted" : row.goal_diff > 0 ? "text-better" : row.goal_diff < 0 ? "text-worse" : "text-muted"}`}>{signedGoalDifference(row.goal_diff)}</td>
+                    <td className={`px-3 py-3 font-tabular font-semibold ${row.goal_diff === null ? "text-muted" : row.goal_diff > 0 ? "text-better" : row.goal_diff < 0 ? "text-worse" : "text-muted"}`}>{signedGoalDifference(row.goal_diff)}</td>
                     <td className="px-3 py-3 font-tabular">{expectedPoints(row.expected_points)}</td>
-                    <td className="px-3 py-3 font-tabular" style={{ backgroundColor: tintForChance(row.p_title, "better") }}>{formatChance(row.p_title)}</td>
-                    <td className="px-3 py-3 font-tabular" style={{ backgroundColor: tintForChance(row.p_top4, "better") }}>{formatChance(row.p_top4)}</td>
-                    <td className="px-3 py-3 font-tabular" style={{ backgroundColor: tintForChance(row.p_relegation, "worse") }}>{formatChance(row.p_relegation)}</td>
+                    <td className={chanceCellClass(row.p_title)} style={{ backgroundColor: tintForChance(row.p_title, "better") }}>{formatChance(row.p_title)}</td>
+                    <td className={chanceCellClass(row.p_top4)} style={{ backgroundColor: tintForChance(row.p_top4, "better") }}>{formatChance(row.p_top4)}</td>
+                    <td className={chanceCellClass(row.p_relegation)} style={{ backgroundColor: tintForChance(row.p_relegation, "worse") }}>{formatChance(row.p_relegation)}</td>
                     <td className="px-3 py-3"><FinishChances probabilities={row.position_probs} team={row.team ?? `team-${index}`} /></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="px-4 py-3 text-xs text-muted">Faint dividers mark 1st (title), 4th (top 4), and 18th–20th (bottom 3).</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-xs text-muted" aria-label="Finish chance colour legend">
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-better" />
+              Title and top 4
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-rule-strong" />
+              Mid-table
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-worse" />
+              Bottom 3
+            </span>
+            <span>Darker cell = higher chance.</span>
+          </div>
         </Card>
       )}
       <p className="mt-3 text-sm text-muted">Last updated: {latest ? formatMelbourne(latest) : "unavailable"}</p>

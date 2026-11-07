@@ -9,8 +9,10 @@ export function formatChance(value: number | null): string {
 
 export function tintForChance(value: number | null, tone: ChanceTone): string {
   const chance = typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
-  const token = tone === "better" ? "var(--color-better-soft)" : "var(--color-worse-soft)";
-  return `color-mix(in srgb, ${token} ${18 + chance * 48}%, white)`;
+  if (chance === 0) return "transparent";
+  const token = tone === "better" ? "var(--color-better)" : "var(--color-worse)";
+  const mix = 8 + Math.sqrt(chance) * 52;
+  return `color-mix(in srgb, ${token} ${mix}%, white)`;
 }
 
 export function barHeights(values: number[] | null): number[] {
