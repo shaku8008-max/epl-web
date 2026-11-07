@@ -1,0 +1,161 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import Card from "@/components/Card";
+
+export const metadata: Metadata = {
+  title: "How it works",
+  description:
+    "A plain-English guide to the data, models, predictions and limits behind EPL Predictor.",
+};
+
+const models = [
+  {
+    name: "Lean",
+    description:
+      "A combination of several standard statistical and machine-learning models, which learn patterns from past matches, using team form and expected goals (xG).",
+  },
+  {
+    name: "Neural network",
+    description:
+      "Ten small neural networks, or pattern-finding programs, predict how many goals each team will score. Those goal predictions are turned into win, draw and loss chances.",
+  },
+  {
+    name: "Fallback",
+    description:
+      "The same general idea as Lean, but without xG. It is used when xG is missing.",
+  },
+];
+
+export default function DocumentationPage() {
+  return (
+    <article className="max-w-3xl">
+      <header className="border-b border-border pb-8">
+        <p className="font-tabular text-sm text-accent">A plain-English guide</p>
+        <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary sm:text-5xl">
+          How it works
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
+          What the numbers mean, where they come from, and how much confidence to place in them.
+        </p>
+      </header>
+
+      <div className="divide-y divide-border">
+        <section className="py-8" aria-labelledby="what-this-site-does">
+          <h2 id="what-this-site-does" className="font-heading text-2xl font-semibold">
+            What this site does
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            EPL Predictor estimates the chances of a home win, draw or away win for upcoming Premier League matches. The predictions are updated daily as new results, fixtures and team information become available.
+          </p>
+        </section>
+
+        <section className="py-8" aria-labelledby="where-data-comes-from">
+          <h2 id="where-data-comes-from" className="font-heading text-2xl font-semibold">
+            Where the data comes from
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            The site uses past results and bookmaker odds from{" "}
+            <a className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="https://www.football-data.co.uk/" target="_blank" rel="noreferrer">football-data.co.uk</a>, fixtures and injury news from the official Fantasy Premier League data, and expected goals (xG) from{" "}
+            <a className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="https://understat.com/" target="_blank" rel="noreferrer">Understat</a>. xG is an estimate of how likely a shot was to become a goal, based on things such as its position and situation.
+          </p>
+        </section>
+
+        <section className="py-8" aria-labelledby="the-models">
+          <h2 id="the-models" className="font-heading text-2xl font-semibold">
+            The models
+          </h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {models.map((model) => (
+              <Card key={model.name} variant="white" className="p-5">
+                <h3 className="font-heading text-xl font-semibold">{model.name}</h3>
+                <p className="mt-2 text-base leading-relaxed text-muted">{model.description}</p>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="py-8" aria-labelledby="read-the-numbers">
+          <h2 id="read-the-numbers" className="font-heading text-2xl font-semibold">
+            How to read the numbers
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            Percentages are chances, not certainties: the highest of home, draw and away is colour-coded, but a 60% chance still loses 4 times in 10. The waterfall shows which factors push the estimate toward the home or away team. On team stats, “better” and “worse” colours compare the two teams for that particular measure; they do not mean a team is simply good or bad overall.
+          </p>
+        </section>
+
+        <section className="py-8" aria-labelledby="season-outlook">
+          <h2 id="season-outlook" className="font-heading text-2xl font-semibold">
+            Season outlook
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            The <Link className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="/neural/outlook">season outlook</Link> plays out 10,000 possible seasons using the Neural network&apos;s expected goals, then shows how often each team finishes in each position. The finish-chance bars show those percentages at a glance. Ties are settled first by goal difference, then by goals scored.
+          </p>
+        </section>
+
+        <section className="py-8" aria-labelledby="track-record">
+          <h2 id="track-record" className="font-heading text-2xl font-semibold">
+            Track record
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            The <Link className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="/track-record">track record</Link> uses log loss: a score that rewards a model for giving a high chance to what happened and penalises it for being confidently wrong, so lower is better. The honesty rule is simple: only predictions made before the match day count.
+          </p>
+        </section>
+
+        <section className="py-8" aria-labelledby="jev">
+          <h2 id="jev" className="font-heading text-2xl font-semibold">
+            Jev
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            Jev is an experimental layer that reads team news, including injuries and doubtful players, and nudges the model&apos;s probabilities. It is shown separately from the main models and has its own scoreboard, so it can be judged on its own.
+          </p>
+        </section>
+
+        <section className="py-8" aria-labelledby="honest-limits">
+          <Card variant="white" className="border-rule-strong bg-tint p-6 sm:p-7">
+            <h2 id="honest-limits" className="font-heading text-2xl font-semibold">
+              Honest limits
+            </h2>
+            <ul className="mt-4 list-disc space-y-3 pl-5 leading-relaxed text-muted">
+              <li>On 760 test matches from 2024-25 and 2025-26, the two main models are statistically tied, and none beats the bookmaker.</li>
+              <li>The xG data source has been unavailable since late October. The site keeps the last saved copy and retries daily. Tests on past seasons found no measurable difference from stale or missing xG, but you should know this limitation exists.</li>
+              <li>The live track record is still small, so it says little yet.</li>
+              <li>The season outlook assumes team strength stays at today&apos;s values and ignores injuries and model error, so extreme percentages are probably overconfident.</li>
+              <li>This is a learning project, not betting advice.</li>
+            </ul>
+
+            <div className="mt-6 overflow-hidden rounded-card border border-border bg-white">
+              <table className="w-full text-left text-sm">
+                <caption className="sr-only">Backtest log loss comparison</caption>
+                <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">Approach</th>
+                    <th scope="col" className="px-4 py-3 text-right">Log loss</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr>
+                    <th scope="row" className="px-4 py-3 font-medium">Lean</th>
+                    <td className="px-4 py-3 text-right font-tabular">1.0037</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" className="px-4 py-3 font-medium">Neural network</th>
+                    <td className="px-4 py-3 text-right font-tabular">1.0069</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" className="px-4 py-3 font-medium">Fallback</th>
+                    <td className="px-4 py-3 text-right font-tabular">1.0096</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" className="px-4 py-3 font-medium">Bookmaker odds</th>
+                    <td className="px-4 py-3 text-right font-tabular">0.9947</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3 text-sm text-muted">Lower log loss is better. These figures are from the 760-match test, not the small live record.</p>
+          </Card>
+        </section>
+      </div>
+    </article>
+  );
+}
