@@ -62,16 +62,14 @@ export default async function JevPage() {
         An experiment: Jev adjusts the model&apos;s win chances using only injury
         and suspension news from the Fantasy Premier League feed.
       </p>
-      <p className="mt-2 max-w-2xl text-base text-muted">
-        For fun only. Not betting advice.
-      </p>
-      <p className="mt-3">
+      <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted">
+        Jev is experimental. It is judged on the{" "}
         <Link
           href="/jev/scoreboard"
           className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          See how Jev is doing
-        </Link>
+          scoreboard
+        </Link>, and with few settled matches no verdict is possible yet.
       </p>
 
       {stale && (

@@ -2,7 +2,7 @@
 // model's probabilities next to Jev's adjusted ones, the shift in points, and
 // the team news for both sides. Server component: pure display.
 
-import JevProbabilityBar from "@/components/JevProbabilityBar";
+import JevComparisonBars from "@/components/JevComparisonBars";
 import JevTeamNews from "@/components/JevTeamNews";
 import { formatFixtureDate, formatMelbourne } from "@/lib/format";
 import { shiftGlyph, shiftLabel, shiftTone } from "@/lib/jev";
@@ -34,11 +34,10 @@ export default function JevFixtureCard({ fixture }: JevFixtureCardProps) {
       </p>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-10">
-        <div className="space-y-5 rounded-card border-l-4 border-better bg-better-soft p-4 sm:p-5">
-          <JevProbabilityBar label="Model" pHome={fixture.p_home} pDraw={fixture.p_draw} pAway={fixture.p_away} />
-          <JevProbabilityBar label="Jev" pHome={fixture.adj_home} pDraw={fixture.adj_draw} pAway={fixture.adj_away} />
+        <div className="rounded-card border-l-4 border-better bg-better-soft p-4 sm:p-5">
+          <JevComparisonBars fixture={fixture} />
           {shift && (
-            <p className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${shiftClasses[tone]}`}>
+            <p className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${shiftClasses[tone]}`}>
               {shiftGlyph(fixture.shift_points) && <span aria-hidden="true">{shiftGlyph(fixture.shift_points)}</span>}
               {shift}
             </p>
