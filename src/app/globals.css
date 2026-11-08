@@ -127,6 +127,17 @@ body {
   }
 }
 
+@keyframes epl-team-dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .epl-rise,
   .epl-sequence > *,
@@ -162,6 +173,10 @@ body {
   .epl-model-detail-enter {
     animation: epl-model-detail-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
+
+  .epl-team-dropdown-enter {
+    animation: epl-team-dropdown-enter 220ms ease-out both;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -180,6 +195,10 @@ body {
   }
 
   .epl-model-detail-enter {
+    animation: none;
+  }
+
+  .epl-team-dropdown-enter {
     animation: none;
   }
 }

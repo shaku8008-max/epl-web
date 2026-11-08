@@ -13,6 +13,8 @@
 - **CTA layering:** the dot lives in the label row and the fill is a `clip-path` layer anchored to that dot slot, so the dot cannot overlap text.
 - **Typography:** Archivo is used for text and headings. DM Mono with tabular numbers is used for figures.
 - **Motion:** Existing 200–700ms ease-out transitions and animations remain, with capped stagger. `prefers-reduced-motion` overrides are respected.
+- **Team pickers:** Use the custom searchable combobox dropdown with neutral 3-letter badges. The opposite side's team is disabled with a `Playing away` or `Playing home` tag; only one panel is open at a time, and the panel uses `z-30`.
+- **Team picker motion:** Keep dropdown animation and reduced-motion media queries flat at the top level. Never nest `@media` rules.
 - **Mobile:** Design for about 380px first. Interactive controls target 48px. Wide tables scroll sideways rather than compressing their columns.
 - **Tone:** Honest and hedged. This is a learning project, not betting advice; never imply a model beats the bookmaker.
 - **Model navigation:** A fixed ModelStack sits at the vertical middle of the left edge (`top: calc(50dvh - 7rem)`) at `2xl` and up, hidden below `2xl` and under 560px viewport height. Its placement uses Tailwind utilities with flat, non-nested media queries; it shows live counts, marks the current model page, and links to `/lean`, `/neural`, and `/goals` with no rank labels. The documentation page is static again.
