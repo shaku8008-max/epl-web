@@ -184,12 +184,15 @@ body {
   }
 }
 
-/* The documentation stack is a compact visual index, not a ranked list. The
-   face is counter-skewed so the fan can stay expressive without bending copy. */
-.model-stack {
-  position: relative;
-  flex: 0 0 21rem;
-  min-height: 13.5rem;
+/* Fixed model navigation sits in the wide-screen margin and never captures
+   clicks outside its links. Structural placement lives in reliable utilities. */
+.model-stack__label {
+  margin: 0 0 0.5rem 0.25rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.025em;
+  line-height: 1.25;
+  text-transform: uppercase;
 }
 
 .model-stack-card {
@@ -197,52 +200,48 @@ body {
   top: 0;
   left: 0;
   display: block;
-  width: 16.5rem;
+  width: 13.5rem;
   border: 1px solid var(--color-edge);
   border-radius: var(--radius-card);
   background: white;
   color: var(--color-ink);
   outline: 2px solid transparent;
-  outline-offset: 3px;
-  transform: translate(0, 0) skew(-5deg);
+  outline-offset: 2px;
+  transform: translate(0, 0) skew(-7deg);
   transition: transform 400ms ease-out, opacity 400ms ease-out;
   will-change: transform;
-}
-
-/* Keep the shared epl-rise hook without animating over each card's fan offset. */
-@media (prefers-reduced-motion: no-preference) {
-  .model-stack-card.epl-rise {
-    animation: model-stack-fade-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
+  pointer-events: auto;
 }
 
 .model-stack-card__face {
   position: relative;
   display: block;
-  min-height: 8rem;
-  padding: 1rem;
-  transform: skew(5deg);
+  height: 7rem;
+  padding: 0.75rem;
+  transform: skew(7deg);
 }
 
 .model-stack-card__title-row {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.5rem;
   min-height: 1.5rem;
-  white-space: nowrap;
 }
 
-.model-stack-card__dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  flex: 0 0 0.625rem;
+.model-stack-card__icon {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  align-items: center;
+  justify-content: center;
   border-radius: 9999px;
 }
 
-.model-stack-card__rule {
-  display: block;
-  margin-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
+.model-stack-card__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
 }
 
 .model-stack-card__record {
@@ -250,7 +249,15 @@ body {
   margin-top: 0.75rem;
   color: var(--color-ink);
   font-size: 0.875rem;
-  line-height: 1.45;
+  line-height: 1.35;
+}
+
+.model-stack-card__open {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  line-height: 1.25;
 }
 
 .model-stack-card__veil {
@@ -265,45 +272,56 @@ body {
 
 .model-stack-card--back {
   z-index: 1;
-  transform: translate(0, 0) skew(-5deg);
+  transform: translate(0, 0) skew(-7deg);
 }
 
 .model-stack-card--middle {
   z-index: 2;
-  transform: translate(2rem, 2.5rem) skew(-5deg);
+  transform: translate(1.25rem, 2.5rem) skew(-7deg);
 }
 
 .model-stack-card--front {
   z-index: 3;
-  transform: translate(4rem, 5rem) skew(-5deg);
+  transform: translate(2.5rem, 5rem) skew(-7deg);
+}
+
+.model-stack-card--current {
+  border-width: 2px;
 }
 
 .model-stack-card:focus-visible {
   outline-color: var(--color-edge);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  /* The shared epl-rise hook remains on each card; fade only so fan offsets survive. */
+  .model-stack-card.epl-rise {
+    animation: model-stack-fade-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .model-stack-card:is(:hover, :focus-visible) {
     z-index: 4;
-    transform: translate(var(--stack-x, 0), calc(var(--stack-y, 0) - var(--stack-lift, 1rem))) skew(-5deg);
+    transform: translate(var(--stack-x, 0), calc(var(--stack-y, 0) - var(--stack-lift, 0.75rem))) skew(-7deg);
   }
 
   .model-stack-card--back:is(:hover, :focus-visible) {
     --stack-x: 0;
     --stack-y: 0;
-    --stack-lift: 2.5rem;
+    --stack-lift: 2rem;
   }
 
   .model-stack-card--middle:is(:hover, :focus-visible) {
-    --stack-x: 2rem;
+    --stack-x: 1.25rem;
     --stack-y: 2.5rem;
-    --stack-lift: 1.5rem;
+    --stack-lift: 1.25rem;
   }
 
   .model-stack-card--front:is(:hover, :focus-visible) {
-    --stack-x: 4rem;
+    --stack-x: 2.5rem;
     --stack-y: 5rem;
-    --stack-lift: 1rem;
+    --stack-lift: 0.75rem;
   }
 
   .model-stack-card:is(:hover, :focus-visible) .model-stack-card__veil {
@@ -311,18 +329,14 @@ body {
   }
 }
 
-/* Touch has no hover reveal, so spread the cards far enough to read in place. */
+/* Touch devices have no hover reveal, so spread the stack to keep every row readable. */
 @media (hover: none), (pointer: coarse) {
-  .model-stack {
-    min-height: 21rem;
-  }
-
   .model-stack-card--middle {
-    transform: translate(2rem, 6.5rem) skew(-5deg);
+    transform: translate(1.25rem, 6rem) skew(-7deg);
   }
 
   .model-stack-card--front {
-    transform: translate(4rem, 13rem) skew(-5deg);
+    transform: translate(2.5rem, 12rem) skew(-7deg);
   }
 
   .model-stack-card__veil {
@@ -334,6 +348,18 @@ body {
   .model-stack-card,
   .model-stack-card__veil {
     transition: none;
+  }
+}
+
+@media (max-height: 560px) {
+  .model-stack {
+    display: none;
+  }
+}
+
+@media print {
+  .model-stack {
+    display: none;
   }
 }
 

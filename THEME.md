@@ -15,5 +15,5 @@
 - **Motion:** Existing 200–700ms ease-out transitions and animations remain, with capped stagger. `prefers-reduced-motion` overrides are respected.
 - **Mobile:** Design for about 380px first. Interactive controls target 48px. Wide tables scroll sideways rather than compressing their columns.
 - **Tone:** Honest and hedged. This is a learning project, not betting advice; never imply a model beats the bookmaker.
-- **Model stack:** The documentation page shows a desktop/tablet-only live-count ModelStack with fanned cards linking to the Lean, Neural network, and Linear goals pages. It has no rank labels, and uses model colours only through `modelColour()`.
+- **Model navigation:** A fixed ModelStack sits at the vertical middle of the left edge (`top: calc(50dvh - 7rem)`) at `2xl` and up, hidden below `2xl` and under 560px viewport height. Its placement uses Tailwind utilities with flat, non-nested media queries; it shows live counts, marks the current model page, and links to `/lean`, `/neural`, and `/goals` with no rank labels. The documentation page is static again.
 - **Do:** Keep labels beside colour signals, preserve data roles, and use the shared button styles. **Don’t:** add violet, make colour the only signal, recolour outcome/model colours, add a featured/best model badge, or imply predictive superiority.
