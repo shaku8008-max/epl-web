@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Card from "@/components/Card";
 import RefreshControls from "@/components/RefreshControls";
 import { loadRefreshStatus } from "@/app/api/refresh/route";
 import { formatMelbourne } from "@/lib/format";

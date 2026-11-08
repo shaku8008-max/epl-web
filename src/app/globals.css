@@ -2,19 +2,20 @@
 
 /* Design tokens (Tailwind v4 style: configured here, not in a config file).
    Each --color-* below generates utilities like bg-primary / text-muted;
-   --font-* generates font-heading / font-body; --radius-card generates
-   rounded-card. */
+   --font-* generates font-heading / font-body; --radius-card and
+   --radius-button generate rounded-card and rounded-button. */
 @theme {
-  /* Daylight palette: ink is the text base and violet is the single accent. */
+  /* Accent now means ink; button hover goes lighter, not darker. */
   --color-primary: #1b2433;
   --color-primary-light: #edf1f7;
-  --color-accent: #6d4ae0;
-  --color-accent-dark: #5b3bc4;
+  --color-accent: #1b2433;
+  --color-accent-dark: #323d50;
 
   /* Surfaces, borders and text. */
   --color-surface: #f6f8fb;
   --color-tint: #edf1f7;
   --color-border: #d9e0ea;
+  --color-edge: #1b2433;
   --color-rule-strong: #aeb9ca;
   --color-ink: #1b2433;
   --color-muted: #536174;
@@ -48,7 +49,8 @@
   --font-mono: var(--font-dm-mono), ui-monospace, monospace;
 
   /* One restrained radius scale. Surfaces stay flat. */
-  --radius-card: 0.5rem;
+  --radius-card: 1rem;
+  --radius-button: 0.625rem;
 }
 
 /* The product uses a light daylight surface rather than system theming. */
@@ -258,7 +260,7 @@ body {
 /* Stats waterfall chart: signed steps share a centre line rather than a
    running-total scale, so each movement remains legible. */
 .waterfall-chart {
-  color: #1b2433;
+  color: var(--color-ink);
 }
 
 .waterfall-row {
@@ -269,8 +271,8 @@ body {
 }
 
 .waterfall-summary {
-  border-top: 1px solid #d9e0ea;
-  border-bottom: 1px solid #d9e0ea;
+  border-top: 1px solid var(--color-edge);
+  border-bottom: 1px solid var(--color-edge);
   padding: 0.875rem 0;
 }
 
@@ -287,7 +289,7 @@ body {
 }
 
 .waterfall-step {
-  border-bottom: 1px solid #d9e0ea;
+  border-bottom: 1px solid var(--color-border);
   padding: 0.875rem 0;
 }
 
@@ -297,7 +299,7 @@ body {
   bottom: 0;
   left: 50%;
   width: 1px;
-  background: #aeb9ca;
+  background: var(--color-rule-strong);
 }
 
 .waterfall-bar-fill {
@@ -320,7 +322,7 @@ body {
 }
 
 .waterfall-model {
-  border-top: 2px solid #aeb9ca;
+  border-top: 2px solid var(--color-edge);
   padding: 1rem 0;
 }
 

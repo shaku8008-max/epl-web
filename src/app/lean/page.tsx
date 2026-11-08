@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Card from "@/components/Card";
 import MatchupTool from "@/components/MatchupTool";
 import ModelTabs from "@/components/ModelTabs";
+import LinkButton from "@/components/LinkButton";
 import { getLatestRun, getPredictions, getTeamStats } from "@/lib/data";
 import { resolveInitialPair } from "@/lib/fixtures";
 import { formatDateOnly } from "@/lib/format";
@@ -63,10 +64,11 @@ export default async function LeanPage(props: PageProps<"/lean">) {
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <ModelTabs />
-      {xgNote && <p className="mb-6 rounded-card bg-tint px-4 py-3 text-base text-muted">{xgNote}</p>}
+      {xgNote && <p className="mb-6 rounded-button bg-tint px-4 py-3 text-base text-muted">{xgNote}</p>}
       <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Predict</h1>
       <p className="mt-3 max-w-2xl text-lg leading-relaxed">Pick any two Premier League teams to see the home, draw and away probabilities from the model, plus recent stats for both teams.</p>
-      <MatchupTool predictions={result.predictions} teams={result.teams} teamStats={result.teamStats} initialHome={initialPair.home} initialAway={initialPair.away} />
-    </section>
+       <MatchupTool predictions={result.predictions} teams={result.teams} teamStats={result.teamStats} initialHome={initialPair.home} initialAway={initialPair.away} />
+       <LinkButton href="/track-record" variant="secondary" className="mt-10">See how this model has done</LinkButton>
+     </section>
   );
 }

@@ -33,9 +33,9 @@ function logLoss(value: number | null): string {
 }
 
 function SelectFilter({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
-  return <label className={`flex min-w-[calc(50%-0.5rem)] flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-0 ${value !== "all" ? "text-accent" : "text-muted"}`}>
+  return <label className={`flex min-w-[calc(50%-0.5rem)] flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-0 ${value !== "all" ? "text-ink" : "text-muted"}`}>
     <span>{label}</span>
-    <select value={value} onChange={(event) => onChange(event.target.value)} className={`min-h-11 rounded-card border bg-white px-3 py-2 font-body text-base font-normal text-ink focus-visible:outline-2 focus-visible:outline-accent ${value !== "all" ? "border-accent bg-tint" : "border-border"}`}>
+    <select value={value} onChange={(event) => onChange(event.target.value)} className={`min-h-11 rounded-button border border-edge bg-white px-3 py-2 font-body text-base font-normal text-ink focus-visible:outline-2 focus-visible:outline-ink ${value !== "all" ? "bg-tint" : ""}`}>
       {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
     </select>
   </label>;
@@ -65,7 +65,7 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
         <SelectFilter label="Actual" value={actual} onChange={(value) => setActual(value as Filter)} options={outcomeOptions} />
         <SelectFilter label="Correct" value={correct} onChange={setCorrect} options={[{ value: "all", label: "All" }, { value: "correct", label: "Correct" }, { value: "incorrect", label: "Incorrect" }]} />
         <span className="pb-2 text-sm font-semibold text-muted">Showing {filteredRows.length} of {rows.length} scored matches</span>
-        {active && <button type="button" onClick={clear} className="min-h-11 rounded-card border border-border bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-accent">Clear filters</button>}
+        {active && <button type="button" onClick={clear} className="min-h-11 rounded-button border border-edge bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-ink">Clear filters</button>}
       </div>
       <p className="mt-3 text-sm text-muted">Filters change the table only; charts and win rates always use every scored match.</p>
     </div>
@@ -76,11 +76,11 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
         <tbody className="divide-y divide-border">{filteredRows.map((row, index) => <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
           <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
           <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
-          <td className="px-4 py-3"><span className={`rounded-card px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>
+          <td className="px-4 py-3"><span className={`rounded-button px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>
           <td className="whitespace-nowrap px-4 py-3 tabular-nums">{probabilityCells(row)}</td>
-          <td className="px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${outcomeTreatment(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</span></td>
-          <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${outcomeTreatment(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</span></td>
-          <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${row.correct === true ? "bg-better-soft text-better" : row.correct === false ? "bg-worse-soft text-worse" : "bg-tint text-muted"}`}>{row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}</span></td>
+          <td className="px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${outcomeTreatment(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</span></td>
+          <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${outcomeTreatment(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</span></td>
+          <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${row.correct === true ? "bg-better-soft text-better" : row.correct === false ? "bg-worse-soft text-worse" : "bg-tint text-muted"}`}>{row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}</span></td>
           <td className="px-4 py-3 tabular-nums">{logLoss(row.log_loss)}</td>
         </tr>)}</tbody>
       </table>

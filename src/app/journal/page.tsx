@@ -110,7 +110,7 @@ export default async function JournalPage() {
       <p className="mt-4">
         <Link
           href="/journal/history"
-          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="font-medium text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           View history
         </Link>

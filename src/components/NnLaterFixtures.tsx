@@ -20,7 +20,7 @@ export default function NnLaterFixtures({ fixtures }: NnLaterFixturesProps) {
 
   return (
     <details className="mt-10 border-y border-border">
-      <summary className="flex min-h-12 cursor-pointer items-center py-3 font-heading text-2xl font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <summary className="flex min-h-12 cursor-pointer items-center py-3 font-heading text-2xl font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
         Later fixtures
       </summary>
       <div className="pb-5">

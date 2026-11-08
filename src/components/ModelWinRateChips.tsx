@@ -39,7 +39,7 @@ export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecor
           return (
             <span
               key={model.key}
-              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-card border border-border px-3 py-2.5 text-sm ${colours.tint} ${colours.text} sm:px-4`}
+              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-button border border-edge px-3 py-2.5 text-sm ${colours.tint} ${colours.text} sm:px-4`}
             >
               <span className="font-semibold">{modelLabel(model.key)}:</span>
               {modelRows.length === 0 || scored < 0.5

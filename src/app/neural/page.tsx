@@ -7,6 +7,7 @@ import Card from "@/components/Card";
 import ModelTabs from "@/components/ModelTabs";
 import NnMatchupTool from "@/components/NnMatchupTool";
 import NnLaterFixtures from "@/components/NnLaterFixtures";
+import LinkButton from "@/components/LinkButton";
 import {
   getNnPredictions,
   getNnTeamStats,
@@ -67,8 +68,9 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
         <Card className="mt-8">
           <p className="font-semibold">Neural predictions are unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{result.error}</p>
-        </Card>
-      </section>
+       </Card>
+       <LinkButton href="/track-record" variant="secondary" className="mt-6">See how this model has done</LinkButton>
+     </section>
     );
   }
 
@@ -119,7 +121,7 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
         A second model that predicts how many goals each team might score, then turns those goals into match probabilities.
       </p>
       <p className="mt-2 max-w-2xl text-base text-muted">For fun only. Not betting advice.</p>
-      <p className="mt-3 text-sm font-semibold"><Link className="text-accent underline decoration-accent/40 underline-offset-4 hover:text-accent-dark" href="/neural/outlook">See the season outlook</Link></p>
+       <p className="mt-3 text-sm font-semibold"><Link className="text-ink underline decoration-ink/40 underline-offset-4 hover:decoration-ink" href="/neural/outlook">See the season outlook</Link></p>
 
       {stale && (
         <div className="mt-6 border-y border-border bg-tint p-6 text-ink">

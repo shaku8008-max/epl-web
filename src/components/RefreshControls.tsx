@@ -219,7 +219,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
         <p className="mt-3">
           <Link
             href="/track-record"
-            className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="font-medium text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           >
             View the new predictions
           </Link>

@@ -46,10 +46,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${archivo.variable} ${dmMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-dvh flex-col bg-surface font-body text-ink">
-        <header className="border-b border-border bg-white text-ink">
+        <header className="border-b border-edge bg-white text-ink">
           <div className="mx-auto flex min-h-16 w-full max-w-4xl items-center justify-between gap-2 px-3 py-2 sm:px-6">
             <div className="flex min-w-0 shrink items-center gap-1.5">
-              <PitchIcon className="h-6 w-6 shrink-0 text-accent" />
+              <PitchIcon className="h-6 w-6 shrink-0 text-ink" />
               <span className="whitespace-nowrap font-heading text-xl font-bold tracking-tight sm:text-2xl">
                 EPL Predictor
               </span>
@@ -62,7 +62,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
 
-        <footer className="border-t border-border bg-tint">
+        <footer className="border-t border-edge bg-tint">
           <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-6 text-base text-muted sm:px-6">
             <p>
               <span className="font-medium text-ink">Data as of:</span>{" "}

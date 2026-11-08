@@ -26,7 +26,7 @@ function StatCard({ label, value, colour, caption }: {
 }) {
   const styles = colourClasses[colour];
   return (
-    <div className={`rounded-card border border-border border-l-4 ${styles.border} ${styles.bg} p-4 sm:p-5`}>
+    <div className={`rounded-card border border-edge border-l-4 ${styles.border} ${styles.bg} p-4 sm:p-5`}>
       <dt className="text-sm font-medium text-muted">{label}</dt>
       <dd className={`mt-2 font-heading text-4xl font-bold leading-none tracking-tight tabular-nums sm:text-5xl ${styles.text}`}>
         {value}

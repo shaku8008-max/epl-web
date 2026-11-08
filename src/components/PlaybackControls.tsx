@@ -16,13 +16,13 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
   const total = timeline.dates.length;
 
   return (
-    <div className="mt-4 rounded-card border border-border bg-tint/60 p-3 sm:p-4">
+    <div className="mt-4 rounded-button border border-edge bg-tint/60 p-3 sm:p-4">
       <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-sm font-semibold text-muted">Replay correct picks</span>
         <button
           type="button"
           onClick={timeline.playPause}
-          className="inline-flex min-h-11 items-center rounded-card bg-accent px-4 py-2 text-sm font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="inline-flex min-h-11 items-center rounded-button border border-edge bg-accent px-4 py-2 text-sm font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           aria-label={playing ? "Pause playback" : "Play playback"}
         >
           {playing ? "Pause" : "Play"}
@@ -30,7 +30,7 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
         <button
           type="button"
           onClick={timeline.restart}
-          className="inline-flex min-h-11 items-center rounded-card border border-border bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="inline-flex min-h-11 items-center rounded-button border border-edge bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           Restart
         </button>

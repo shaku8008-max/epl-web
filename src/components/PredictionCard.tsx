@@ -218,7 +218,7 @@ export default function PredictionCard({
                 >
                   <OutcomeKey label={o.barLabel} color={o.color} />
                   {isMostLikely && (
-                    <span className="shrink-0 whitespace-nowrap rounded-full bg-accent px-2 py-0.5 text-sm font-semibold text-white">
+                    <span className="shrink-0 whitespace-nowrap rounded-full bg-ink px-2 py-0.5 text-sm font-semibold text-white">
                       Most likely
                     </span>
                   )}

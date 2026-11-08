@@ -13,7 +13,7 @@ type TeamPickerProps = {
 };
 
 const selectClasses =
-  "mt-1 min-h-12 w-full rounded-card border border-border bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "mt-1 min-h-12 w-full rounded-button border border-edge bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 export default function TeamPicker({
   teams,
@@ -49,7 +49,7 @@ export default function TeamPicker({
         onClick={onSwap}
         aria-label="Swap home and away teams"
         title="Swap home and away teams"
-        className="!h-12 !min-h-12 !min-w-12 !w-12 !shrink-0 !rounded-card !border-border !bg-white !p-0 !text-ink justify-self-center self-center sm:self-end"
+        className="!h-12 !min-h-12 !min-w-12 !w-12 !shrink-0 !rounded-button !border-edge !bg-white !p-0 !text-ink justify-self-center self-center sm:self-end"
       >
         <svg
           aria-hidden="true"

@@ -123,7 +123,7 @@ export default function CorrectPicksChart({ rows, series, timeline }: CorrectPic
   return (
     <div
       ref={chartRef}
-      className="relative min-w-0 focus-visible:outline-2 focus-visible:outline-accent"
+      className="relative min-w-0 focus-visible:outline-2 focus-visible:outline-ink"
       tabIndex={0}
       role="img"
       aria-label="Cumulative correct picks compared with random guessing"
@@ -182,7 +182,7 @@ export default function CorrectPicksChart({ rows, series, timeline }: CorrectPic
         {dateTicks.map((fixture) => { const position = fixtures.indexOf(fixture); return <span key={`${fixture.fixture_date}-${fixture.home}-${fixture.away}`} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${(x(position) / WIDTH) * 100}%` }}>{formatDateOnly(fixture.fixture_date as string)}</span>; })}
       </div>
       {activePoint && activeSeries && active && (
-        <div className={`pointer-events-none absolute z-10 rounded-card border border-border bg-white p-3 shadow-sm ${guideX! / WIDTH > 0.65 ? "-translate-x-[calc(100%+0.75rem)]" : "translate-x-3"}`} style={{ left: `${(guideX! / WIDTH) * 100}%`, top: `${(guideY! / HEIGHT) * 100}%`, width: "min(380px, calc(100% - 1rem))", transform: `${guideX! / WIDTH > 0.65 ? "translateX(calc(-100% - 0.75rem))" : "translateX(0.75rem)"} translateY(-50%)` }}>
+         <div className={`pointer-events-none absolute z-10 rounded-button border border-edge bg-white p-3 shadow-sm ${guideX! / WIDTH > 0.65 ? "-translate-x-[calc(100%+0.75rem)]" : "translate-x-3"}`} style={{ left: `${(guideX! / WIDTH) * 100}%`, top: `${(guideY! / HEIGHT) * 100}%`, width: "min(380px, calc(100% - 1rem))", transform: `${guideX! / WIDTH > 0.65 ? "translateX(calc(-100% - 0.75rem))" : "translateX(0.75rem)"} translateY(-50%)` }}>
            <p className="font-heading text-xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>Correct so far: {activePoint.correct} of {activePoint.position + 1} ({Math.round((activePoint.correct / (activePoint.position + 1)) * 100)}%)</p>
            <p className="mt-2 text-xs font-semibold">{modelLabel(active.modelKey)}</p>
            <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>

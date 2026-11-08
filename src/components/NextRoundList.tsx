@@ -50,7 +50,7 @@ export default function NextRoundList<T extends Prediction>({
               <button
                 type="button"
                 onClick={() => onSelect(f)}
-                className="grid min-h-12 w-full grid-cols-[minmax(0,1fr)_repeat(3,3.25rem)] items-center gap-x-2 px-2 py-3 text-left transition-colors hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="grid min-h-12 w-full grid-cols-[minmax(0,1fr)_repeat(3,3.25rem)] items-center gap-x-2 px-2 py-3 text-left transition-colors hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                 aria-label={`Select ${f.home} at home against ${f.away}`}
               >
                 <span className="min-w-0">

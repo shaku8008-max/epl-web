@@ -120,7 +120,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
   return (
     <div
       ref={chartRef}
-      className="relative min-w-0 focus-visible:outline-2 focus-visible:outline-accent"
+      className="relative min-w-0 focus-visible:outline-2 focus-visible:outline-ink"
       tabIndex={0}
       role="img"
       aria-label="Running average log loss over scored matches"
@@ -191,7 +191,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
       </div>
       {activePoint && activeSeries && active && (
         <div
-          className="pointer-events-none absolute z-10 rounded-card border border-border bg-white p-3 shadow-sm"
+           className="pointer-events-none absolute z-10 rounded-button border border-edge bg-white p-3 shadow-sm"
           style={{ left: `${(guideX! / WIDTH) * 100}%`, top: `${(guideY! / HEIGHT) * 100}%`, width: "min(380px, calc(100% - 1rem))", transform: `${guideX! / WIDTH > 0.65 ? "translateX(calc(-100% - 0.75rem))" : "translateX(0.75rem)"} translateY(-50%)` }}
         >
            <p className="text-sm font-semibold" style={{ color: modelColour(active.modelKey).line }}>Running average log loss: {activePoint.average.toFixed(3)}</p>

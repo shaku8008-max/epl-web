@@ -3,7 +3,7 @@
 // table with the anon key only.
 
 import type { Metadata } from "next";
-import Link from "next/link";
+import LinkButton from "@/components/LinkButton";
 import JevFixtureCard from "@/components/JevFixtureCard";
 import { getJevPredictions } from "@/lib/data";
 import { isStale } from "@/lib/jev";
@@ -63,14 +63,9 @@ export default async function JevPage() {
         and suspension news from the Fantasy Premier League feed.
       </p>
       <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted">
-        Jev is experimental. It is judged on the{" "}
-        <Link
-          href="/jev/scoreboard"
-          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          scoreboard
-        </Link>, and with few settled matches no verdict is possible yet.
+        Jev is experimental. With few settled matches, no verdict is possible yet.
       </p>
+      <LinkButton href="/jev/scoreboard" variant="secondary" className="mt-4">View scoreboard</LinkButton>
 
       {stale && (
         <div className="mt-6 rounded-card border-l-4 border-open bg-open-soft p-6 text-ink">

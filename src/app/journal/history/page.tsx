@@ -85,7 +85,7 @@ export default async function HistoryPage() {
       <p className="mt-6">
         <Link
           href="/journal"
-          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="font-medium text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           Back to journal
         </Link>
