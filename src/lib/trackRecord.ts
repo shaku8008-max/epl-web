@@ -20,6 +20,35 @@ export function modelLabel(key: string): string {
   return trackedModels.find((model) => model.key === key)?.label ?? key;
 }
 
+// Win rate is correct / scored for that model, using the same track-record rows
+// as the live record lines (scored = rows, correct = rows with correct === true).
+// Models with scored matches sort by win rate descending, then scored matches
+// descending, then fixed Lean, Neural network, Linear goals order. Zero-scored
+// models sort after scored models in that same fixed order.
+export function sortModelsByWinRate<T extends { key: string }>(
+  models: readonly T[],
+  rows: TrackRecord[],
+): T[] {
+  return models
+    .map((model, index) => {
+      const modelRows = rows.filter((row) => row.model_key === model.key);
+      const correct = modelRows.filter((row) => row.correct === true).length;
+      return { model, index, scored: modelRows.length, correct };
+    })
+    .sort((a, b) => {
+      const aHasScore = a.scored > 0;
+      const bHasScore = b.scored > 0;
+      if (aHasScore !== bHasScore) return aHasScore ? -1 : 1;
+      if (aHasScore) {
+        const winRateDifference = b.correct / b.scored - a.correct / a.scored;
+        if (winRateDifference !== 0) return winRateDifference;
+        if (a.scored !== b.scored) return b.scored - a.scored;
+      }
+      return a.index - b.index;
+    })
+    .map(({ model }) => model);
+}
+
 export type TrackRecordPoint = {
   row: TrackRecord;
   average: number;

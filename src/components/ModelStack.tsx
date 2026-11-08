@@ -15,22 +15,18 @@ type ModelStackProps = {
   models: ModelStackItem[];
 };
 
-const cardPositions = ["back", "middle", "front"] as const;
-
 export default function ModelStack({ models }: ModelStackProps) {
   const pathname = usePathname();
 
   return (
     <nav
-      className="model-stack hidden 2xl:block fixed left-4 z-20 w-64 pointer-events-none print:hidden [@media(max-height:560px)]:hidden"
-      style={{ top: "calc(50dvh - 7rem)" }}
+      className="model-stack fixed left-4 top-1/2 z-20 hidden w-64 -translate-y-1/2 pointer-events-none 2xl:block print:hidden [@media(max-height:640px)]:hidden"
       aria-label="Models and live record"
     >
-      <p className="model-stack__label">Models · live record</p>
-      <div className="model-stack__cards relative h-48">
-        {models.map((model, index) => {
+      <p className="model-stack__label pointer-events-auto">Models · by win rate so far</p>
+      <div className="model-stack__cards epl-rise flex flex-col gap-2">
+        {models.map((model) => {
           const colour = modelColour(model.modelKey);
-          const position = cardPositions[index] ?? "front";
           const isCurrent = pathname === model.href;
 
           return (
@@ -39,13 +35,12 @@ export default function ModelStack({ models }: ModelStackProps) {
               href={model.href}
               aria-current={isCurrent ? "page" : undefined}
               aria-label={`${model.name}: ${model.line}. Open predictions`}
-              className={`model-stack-card model-stack-card--${position}${isCurrent ? " model-stack-card--current" : ""} epl-rise`}
+              className={`model-stack-card${isCurrent ? " model-stack-card--current" : ""}`}
             >
               <span className="model-stack-card__face">
                 <span className="model-stack-card__title-row">
                   <span
-                    className="model-stack-card__icon"
-                    style={{ background: colour.tint }}
+                    className={`model-stack-card__icon ${colour.tint}`}
                     aria-hidden="true"
                   >
                     <span
@@ -59,14 +54,12 @@ export default function ModelStack({ models }: ModelStackProps) {
                 </span>
                 <span className="model-stack-card__record font-tabular">{model.line}</span>
                 <span className="model-stack-card__open">Open predictions</span>
-                {position !== "front" && !isCurrent && (
-                  <span className="model-stack-card__veil" aria-hidden="true" />
-                )}
               </span>
             </Link>
           );
         })}
       </div>
+      <p className="model-stack__note">Small samples swing a lot.</p>
     </nav>
   );
 }
