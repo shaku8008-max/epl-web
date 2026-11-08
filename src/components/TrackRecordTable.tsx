@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { probabilityColour } from "@/lib/colour";
 import { formatDateOnly } from "@/lib/format";
-import { modelColour, modelLabel, trackedModels } from "@/lib/trackRecord";
+import { fixtureKey, modelColour, modelLabel, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 import Card from "@/components/Card";
 
@@ -73,7 +73,7 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
       <table className="w-full min-w-[60rem] text-left text-sm">
         <caption className="sr-only">Scored prediction matches, newest first</caption>
         <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted"><tr>{["Date", "Match", "Model", "Probabilities", "Predicted", "Actual", "Correct", "Log loss"].map((heading) => <th key={heading} className="px-4 py-3">{heading}</th>)}</tr></thead>
-        <tbody className="divide-y divide-border">{filteredRows.map((row, index) => <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
+       <tbody className="divide-y divide-border">{filteredRows.map((row, index) => <tr key={`${row.model_key}-${fixtureKey(row)}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
           <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
           <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
           <td className="px-4 py-3"><span className={`rounded-button px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>

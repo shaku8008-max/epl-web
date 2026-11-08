@@ -7,6 +7,7 @@ import {
   modelLabel,
   nearestTrackRecordPoint,
   orderedFixtures,
+  fixtureKey,
   type TrackRecordPoint,
   type TrackRecordSeries,
 } from "@/lib/trackRecord";
@@ -154,7 +155,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
                 <polyline className="epl-chart-line epl-chart-line--fade" points={points} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeDasharray={lineDashes[item.modelKey]} strokeLinejoin="round" strokeLinecap="round" />
                 {item.points.map((point, index) => (
                   <circle
-                    key={`${item.modelKey}-${point.row.fixture_date ?? index}`}
+                    key={`${item.modelKey}-${fixtureKey(point.row)}-${index}`}
                     cx={x(point.position)}
                     cy={y(point.average)}
                     r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3}
@@ -187,7 +188,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
          <span className="inline-flex items-center gap-1.5"><span className="inline-block w-5 border-t-2 border-dashed border-muted" />Random guessing</span>
        </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-10 h-4 text-[11px] text-muted" aria-hidden="true">
-        {dateTicks.map((fixture) => { const position = fixtures.indexOf(fixture); return <span key={`${fixture.fixture_date}-${fixture.home}-${fixture.away}`} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${(x(position) / WIDTH) * 100}%` }}>{formatDateOnly(fixture.fixture_date as string)}</span>; })}
+         {dateTicks.map((fixture, index) => { const position = fixtures.indexOf(fixture); return <span key={`${fixtureKey(fixture)}-${index}`} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${(x(position) / WIDTH) * 100}%` }}>{formatDateOnly(fixture.fixture_date as string)}</span>; })}
       </div>
       {activePoint && activeSeries && active && (
         <div
