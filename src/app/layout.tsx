@@ -6,7 +6,7 @@ import Tabs from "@/components/Tabs";
 import ModelStack, { type ModelStackItem } from "@/components/ModelStack";
 import { getLatestRun, getTrackRecord } from "@/lib/data";
 import { formatMelbourne } from "@/lib/format";
-import { trackedModels } from "@/lib/trackRecord";
+import { sortModelsByWinRate, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 // Load fonts with next/font (no external stylesheet). Archivo is shared by
@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // query cannot take down every page (see /status for troubleshooting).
   const run = await getLatestRun();
   const trackRecord = await loadTrackRecord();
-  const modelStack: ModelStackItem[] = trackedModels.map((model) => {
+  const modelStack: ModelStackItem[] = sortModelsByWinRate(trackedModels, trackRecord ?? []).map((model) => {
     const rows = trackRecord?.filter((row) => row.model_key === model.key) ?? [];
     const correct = rows.filter((row) => row.correct === true).length;
     const line =
