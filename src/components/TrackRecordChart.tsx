@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { formatDateOnly } from "@/lib/format";
 import {
   modelColour,
@@ -9,8 +9,10 @@ import {
   type TrackRecordPoint,
   type TrackRecordSeries,
 } from "@/lib/trackRecord";
+import PlaybackSvgLayer from "@/components/PlaybackSvgLayer";
+import type { PlaybackTimeline } from "@/components/PlaybackTimeline";
 
-type TrackRecordChartProps = { series: TrackRecordSeries[] };
+type TrackRecordChartProps = { series: TrackRecordSeries[]; timeline: PlaybackTimeline };
 type ActivePoint = { modelKey: string; index: number };
 
 const WIDTH = 600;
@@ -34,9 +36,23 @@ function pointDate(point: TrackRecordPoint): string {
   return point.row.fixture_date ? formatDateOnly(point.row.fixture_date) : "Date unavailable";
 }
 
-export default function TrackRecordChart({ series }: TrackRecordChartProps) {
+function nearestDatePoint(points: TrackRecordPoint[], timestamp: number): number {
+  let nearest = 0;
+  let distance = Infinity;
+  points.forEach((point, index) => {
+    const difference = Math.abs(new Date(point.row.fixture_date ?? 0).getTime() - timestamp);
+    if (difference < distance) {
+      nearest = index;
+      distance = difference;
+    }
+  });
+  return nearest;
+}
+
+export default function TrackRecordChart({ series, timeline }: TrackRecordChartProps) {
   const [active, setActive] = useState<ActivePoint | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
+  const clipId = `log-loss-${useId().replace(/:/g, "")}`;
 
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
@@ -51,21 +67,26 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
   }
 
   const allValues = series.flatMap((item) => item.points.map((point) => point.average));
+  const dates = series.flatMap((item) => item.points.map((point) => point.row.fixture_date)).filter((date): date is string => date !== null).sort();
+  const minTime = new Date(dates[0] ?? 0).getTime();
+  const maxTime = new Date(dates[dates.length - 1] ?? 0).getTime();
   const min = Math.min(0, ...allValues);
   const max = Math.max(RANDOM_LOG_LOSS, ...allValues);
   const range = max - min || 1;
   const plotWidth = WIDTH - LEFT - RIGHT;
   const plotHeight = HEIGHT - TOP - BOTTOM;
-  const x = (index: number, length: number) => LEFT + (index / Math.max(length - 1, 1)) * plotWidth;
+  const x = (date: string) => LEFT + ((new Date(date).getTime() - minTime) / (maxTime - minTime || 1)) * plotWidth;
+  const xAtTime = (timestamp: number) => LEFT + ((timestamp - minTime) / (maxTime - minTime || 1)) * plotWidth;
   const y = (value: number) => TOP + ((max - value) / range) * plotHeight;
   const gridValues = [max, RANDOM_LOG_LOSS, min].filter((value, index, values) => values.indexOf(value) === index);
 
   function activateAt(position: number) {
     let closest: ActivePoint | null = null;
     let closestDistance = Infinity;
+    const timestamp = minTime + ((position - LEFT) / plotWidth) * (maxTime - minTime || 1);
     for (const item of series) {
-      const index = nearestTrackRecordPoint(item.points, ((position - LEFT) / plotWidth) * (item.points.length - 1));
-      const distance = Math.abs(x(index, item.points.length) - position);
+      const index = nearestDatePoint(item.points, timestamp);
+      const distance = Math.abs(x(item.points[index].row.fixture_date ?? "") - position);
       if (distance < closestDistance) {
         closest = { modelKey: item.modelKey, index };
         closestDistance = distance;
@@ -90,7 +111,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
 
   const activeSeries = active ? series.find((item) => item.modelKey === active.modelKey) : null;
   const activePoint = activeSeries && active ? activeSeries.points[active.index] : null;
-  const guideX = activeSeries && active ? x(active.index, activeSeries.points.length) : null;
+  const guideX = activeSeries && active ? x(activeSeries.points[active.index].row.fixture_date ?? "") : null;
   const activeCorrect = activeSeries && active
     ? activeSeries.points.slice(0, active.index + 1).filter((point) => point.row.correct === true).length
     : 0;
@@ -128,26 +149,45 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
             </text>
           </g>
         ))}
-        <text x={WIDTH - RIGHT} y={y(RANDOM_LOG_LOSS) - 7} textAnchor="end" className="fill-muted text-[11px]">
-          Random guessing
-        </text>
-        {series.map((item) => {
-          const points = item.points.map((point, index) => `${x(index, item.points.length)},${y(point.average)}`).join(" ");
-          return (
-            <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
-              <polyline className="epl-chart-line epl-chart-line--fade" points={points} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeDasharray={lineDashes[item.modelKey]} strokeLinejoin="round" strokeLinecap="round" />
-              {item.points.map((point, index) => (
-                <circle
-                  key={`${item.modelKey}-${point.row.fixture_date ?? index}`}
-                  cx={x(index, item.points.length)}
-                  cy={y(point.average)}
-                  r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3}
-                  fill={modelColour(item.modelKey).line}
-                />
-              ))}
-            </g>
-          );
-        })}
+         <text x={WIDTH - RIGHT} y={y(RANDOM_LOG_LOSS) - 7} textAnchor="end" className="fill-muted text-[11px]">
+           Random guessing
+         </text>
+        <PlaybackSvgLayer
+          timeline={timeline}
+          clipId={clipId}
+          left={LEFT}
+          top={TOP}
+          plotWidth={plotWidth}
+          plotHeight={plotHeight}
+          minTime={minTime}
+          maxTime={maxTime}
+          xAtTime={xAtTime}
+          y={y}
+          lines={series.map((item) => ({
+            modelKey: item.modelKey,
+            colour: modelColour(item.modelKey).line,
+            points: item.points.map((point) => ({ timestamp: new Date(point.row.fixture_date ?? 0).getTime(), value: point.average })),
+          }))}
+        />
+        <g clipPath={`url(#${clipId})`}>
+          {series.map((item) => {
+            const points = item.points.map((point) => `${x(point.row.fixture_date ?? "")},${y(point.average)}`).join(" ");
+            return (
+              <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
+                <polyline className="epl-chart-line epl-chart-line--fade" points={points} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeDasharray={lineDashes[item.modelKey]} strokeLinejoin="round" strokeLinecap="round" />
+                {item.points.map((point, index) => (
+                  <circle
+                    key={`${item.modelKey}-${point.row.fixture_date ?? index}`}
+                    cx={x(point.row.fixture_date ?? "")}
+                    cy={y(point.average)}
+                    r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3}
+                    fill={modelColour(item.modelKey).line}
+                  />
+                ))}
+              </g>
+            );
+          })}
+        </g>
         {guideX !== null && <line x1={guideX} x2={guideX} y1={TOP} y2={HEIGHT - BOTTOM} stroke="var(--color-muted)" strokeWidth={1} />}
       </svg>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted" aria-hidden="true">

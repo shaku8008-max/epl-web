@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { formatDateOnly } from "@/lib/format";
 import {
   modelColour,
@@ -9,10 +9,13 @@ import {
   type CorrectPicksSeries,
 } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
+import PlaybackSvgLayer from "@/components/PlaybackSvgLayer";
+import type { PlaybackTimeline } from "@/components/PlaybackTimeline";
 
 type CorrectPicksChartProps = {
   rows: TrackRecord[];
   series: CorrectPicksSeries[];
+  timeline: PlaybackTimeline;
 };
 type ActivePoint = { modelKey: string; index: number };
 type ReferencePoint = { date: string; correct: number };
@@ -58,11 +61,12 @@ function nearestPoint(points: CorrectPicksPoint[], datePosition: number): number
   return nearest;
 }
 
-export default function CorrectPicksChart({ rows, series }: CorrectPicksChartProps) {
+export default function CorrectPicksChart({ rows, series, timeline }: CorrectPicksChartProps) {
   const drawableSeries = series.filter((item) => item.points.length >= 3);
   const collecting = series.filter((item) => item.points.length < 3);
   const [active, setActive] = useState<ActivePoint | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
+  const clipId = `correct-picks-${useId().replace(/:/g, "")}`;
 
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
@@ -87,6 +91,7 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
   const plotWidth = WIDTH - LEFT - RIGHT;
   const plotHeight = HEIGHT - TOP - BOTTOM;
   const x = (date: string) => LEFT + ((new Date(date).getTime() - minDate) / dateRange) * plotWidth;
+  const xAtTime = (timestamp: number) => LEFT + ((timestamp - minDate) / dateRange) * plotWidth;
   const y = (value: number) => TOP + ((max - value) / max) * plotHeight;
   const gridValues = [max, max / 2, 0].filter((value, index, values) => values.indexOf(value) === index);
 
@@ -140,20 +145,37 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
             <text x={LEFT - 8} y={y(value) + 4} textAnchor="end" className="fill-muted text-[11px]">{value.toFixed(value % 1 === 0 ? 0 : 1)}</text>
           </g>
         ))}
-        {reference.length > 0 && (
-          <>
+        <PlaybackSvgLayer
+          timeline={timeline}
+          clipId={clipId}
+          left={LEFT}
+          top={TOP}
+          plotWidth={plotWidth}
+          plotHeight={plotHeight}
+          minTime={minDate}
+          maxTime={maxDate}
+          xAtTime={xAtTime}
+          y={y}
+          lines={drawableSeries.map((item) => ({
+            modelKey: item.modelKey,
+            colour: modelColour(item.modelKey).line,
+            points: item.points.map((point) => ({ timestamp: new Date(point.row.fixture_date ?? 0).getTime(), value: point.correct })),
+          }))}
+        />
+        <g clipPath={`url(#${clipId})`}>
+          {reference.length > 0 && (
             <polyline points={reference.map((point) => `${x(point.date)},${y(point.correct)}`).join(" ")} fill="none" stroke="var(--color-muted)" strokeWidth={1.5} strokeDasharray="5 4" />
-            <text x={WIDTH - RIGHT} y={y(reference[reference.length - 1].correct) - 7} textAnchor="end" className="fill-muted text-[11px]">Random guessing</text>
-          </>
-        )}
-        {drawableSeries.map((item) => (
-          <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
-            <polyline pathLength={1} className="epl-chart-line epl-chart-line--draw" points={item.points.map((point) => `${x(point.row.fixture_date ?? "")},${y(point.correct)}`).join(" ")} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
-            {item.points.map((point, index) => (
-              <circle className="epl-chart-point" key={`${item.modelKey}-${point.row.fixture_date ?? index}`} cx={x(point.row.fixture_date ?? "")} cy={y(point.correct)} r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3} fill={modelColour(item.modelKey).line} />
-            ))}
-          </g>
-        ))}
+          )}
+          {drawableSeries.map((item) => (
+            <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
+              <polyline pathLength={1} className="epl-chart-line epl-chart-line--draw" points={item.points.map((point) => `${x(point.row.fixture_date ?? "")},${y(point.correct)}`).join(" ")} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+              {item.points.map((point, index) => (
+                <circle className="epl-chart-point" key={`${item.modelKey}-${point.row.fixture_date ?? index}`} cx={x(point.row.fixture_date ?? "")} cy={y(point.correct)} r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3} fill={modelColour(item.modelKey).line} />
+              ))}
+            </g>
+          ))}
+          {reference.length > 0 && <text x={WIDTH - RIGHT} y={y(reference[reference.length - 1].correct) - 7} textAnchor="end" className="fill-muted text-[11px]">Random guessing</text>}
+        </g>
         {guideX !== null && <line x1={guideX} x2={guideX} y1={TOP} y2={HEIGHT - BOTTOM} stroke="var(--color-muted)" strokeWidth={1} />}
       </svg>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted" aria-hidden="true">

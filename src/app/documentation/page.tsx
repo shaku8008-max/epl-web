@@ -1,35 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Card from "@/components/Card";
+import ModelExplorer from "@/components/ModelExplorer";
 
 export const metadata: Metadata = {
   title: "How it works",
   description:
     "A plain-English guide to the data, models, predictions and limits behind EPL Predictor.",
 };
-
-const models = [
-  {
-    name: "Lean",
-    description:
-      "A combination of several standard statistical and machine-learning models, which learn patterns from past matches, using team form and expected goals (xG).",
-  },
-  {
-    name: "Neural network",
-    description:
-      "Ten small neural networks, or pattern-finding programs, predict how many goals each team will score. Those goal predictions are turned into win, draw and loss chances.",
-  },
-  {
-    name: "Fallback",
-    description:
-      "The same general idea as Lean, but without xG. It is used when xG is missing.",
-  },
-  {
-    name: "Linear goals",
-    description:
-      "A linear model that estimates the expected goal difference, then turns it into home, draw and away probabilities.",
-  },
-];
 
 export default function DocumentationPage() {
   return (
@@ -69,14 +47,7 @@ export default function DocumentationPage() {
           <h2 id="the-models" className="font-heading text-2xl font-semibold">
             The models
           </h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {models.map((model) => (
-              <Card key={model.name} variant="white" className="p-5">
-                <h3 className="font-heading text-xl font-semibold">{model.name}</h3>
-                <p className="mt-2 text-base leading-relaxed text-muted">{model.description}</p>
-              </Card>
-            ))}
-          </div>
+          <ModelExplorer />
         </section>
 
         <section className="py-8" aria-labelledby="goals-model">

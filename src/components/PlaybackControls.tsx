@@ -1,33 +1,27 @@
 "use client";
 
 import { formatDateOnly } from "@/lib/format";
+import { useSyncExternalStore } from "react";
+import type { PlaybackTimeline } from "@/components/PlaybackTimeline";
 
 type PlaybackControlsProps = {
-  position: number;
-  total: number;
-  date: string | null;
-  playing: boolean;
-  onPlayPause: () => void;
-  onPositionChange: (position: number) => void;
-  onRestart: () => void;
+  timeline: PlaybackTimeline;
 };
 
-export default function PlaybackControls({
-  position,
-  total,
-  date,
-  playing,
-  onPlayPause,
-  onPositionChange,
-  onRestart,
-}: PlaybackControlsProps) {
+export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
+  useSyncExternalStore(timeline.subscribe, timeline.getSnapshot, timeline.getSnapshot);
+  const playing = useSyncExternalStore(timeline.subscribe, timeline.getPlayingSnapshot, timeline.getPlayingSnapshot);
+  const position = timeline.getPosition();
+  const date = timeline.getDate();
+  const total = timeline.dates.length;
+
   return (
     <div className="mt-4 rounded-card border border-border bg-tint/60 p-3 sm:p-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="mr-1 text-sm font-semibold text-muted">Replay both charts</span>
         <button
           type="button"
-          onClick={onPlayPause}
+          onClick={timeline.playPause}
           className="inline-flex min-h-11 items-center rounded-card bg-accent px-4 py-2 text-sm font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           aria-label={playing ? "Pause playback" : "Play playback"}
         >
@@ -35,7 +29,7 @@ export default function PlaybackControls({
         </button>
         <button
           type="button"
-          onClick={onRestart}
+          onClick={timeline.restart}
           className="inline-flex min-h-11 items-center rounded-card border border-border bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           Restart
@@ -52,7 +46,7 @@ export default function PlaybackControls({
           min={0}
           max={Math.max(total - 1, 0)}
           value={position}
-          onChange={(event) => onPositionChange(Number(event.target.value))}
+          onChange={(event) => timeline.setPosition(Number(event.target.value))}
           className="h-3 w-full accent-accent"
           aria-valuetext={date ? formatDateOnly(date) : "Latest"}
         />

@@ -105,6 +105,17 @@ body {
   }
 }
 
+@keyframes epl-model-detail-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .epl-rise,
   .epl-sequence > *,
@@ -136,6 +147,10 @@ body {
   .epl-chart-point {
     transition: opacity 220ms ease-out, r 220ms ease-out;
   }
+
+  .epl-model-detail-enter {
+    animation: epl-model-detail-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -151,6 +166,10 @@ body {
   .epl-chart-series,
   .epl-chart-point {
     transition: none;
+  }
+
+  .epl-model-detail-enter {
+    animation: none;
   }
 }
 
