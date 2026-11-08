@@ -1,24 +1,28 @@
 "use client";
 
-import { modelColour, modelLabel, trackedModels } from "@/lib/trackRecord";
+import { fixtureKey, modelColour, modelLabel, orderedFixtures, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 import { useSyncExternalStore } from "react";
 import type { PlaybackTimeline } from "@/components/PlaybackTimeline";
 
-function countAt(rows: TrackRecord[], dates: string[], dateIndex: number, correctOnly: boolean): number {
+function countAt(rows: TrackRecord[], fixtureIndexes: Map<string, number>, dateIndex: number, correctOnly: boolean): number {
   return rows.filter((row) => {
-    const index = dates.indexOf(row.fixture_date ?? "");
-    return index >= 0 && index <= dateIndex && (!correctOnly || row.correct === true);
+    const index = fixtureIndexes.get(fixtureKey(row));
+    return index !== undefined && index <= dateIndex && (!correctOnly || row.correct === true);
   }).length;
 }
 
-export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecord[]; timeline: PlaybackTimeline }) {
-  useSyncExternalStore(timeline.subscribe, timeline.getSnapshot, timeline.getSnapshot);
-  const position = timeline.getPosition();
+export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecord[]; timeline?: PlaybackTimeline }) {
+  const subscribe = timeline?.subscribe ?? (() => () => undefined);
+  const snapshot = timeline?.getSnapshot ?? (() => 0);
+  useSyncExternalStore(subscribe, snapshot, snapshot);
+  const fixtures = orderedFixtures(rows);
+  const fixtureIndexes = new Map(fixtures.map((row, index) => [fixtureKey(row), index]));
+  const position = timeline?.getPosition() ?? Math.max(fixtures.length - 1, 0);
   const currentIndex = Math.floor(position);
   const fraction = position - currentIndex;
-  const nextIndex = Math.min(currentIndex + 1, timeline.dates.length - 1);
-  const isInterpolating = timeline.isPlaying() || fraction > 0;
+  const nextIndex = Math.min(currentIndex + 1, fixtures.length - 1);
+  const isInterpolating = timeline ? timeline.isPlaying() || fraction > 0 : false;
   const displayCount = (value: number) => isInterpolating ? value.toFixed(1) : String(Math.round(value));
 
   return (
@@ -26,10 +30,10 @@ export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecor
       <div className="epl-chip-sequence flex max-w-full flex-wrap gap-2 sm:gap-3">
         {trackedModels.map((model) => {
           const modelRows = rows.filter((row) => row.model_key === model.key);
-          const scored = countAt(modelRows, timeline.dates, currentIndex, false) +
-            (countAt(modelRows, timeline.dates, nextIndex, false) - countAt(modelRows, timeline.dates, currentIndex, false)) * fraction;
-          const correct = countAt(modelRows, timeline.dates, currentIndex, true) +
-            (countAt(modelRows, timeline.dates, nextIndex, true) - countAt(modelRows, timeline.dates, currentIndex, true)) * fraction;
+          const scored = countAt(modelRows, fixtureIndexes, currentIndex, false) +
+            (countAt(modelRows, fixtureIndexes, nextIndex, false) - countAt(modelRows, fixtureIndexes, currentIndex, false)) * fraction;
+          const correct = countAt(modelRows, fixtureIndexes, currentIndex, true) +
+            (countAt(modelRows, fixtureIndexes, nextIndex, true) - countAt(modelRows, fixtureIndexes, currentIndex, true)) * fraction;
           const colours = modelColour(model.key);
 
           return (
@@ -40,7 +44,7 @@ export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecor
               <span className="font-semibold">{modelLabel(model.key)}:</span>
               {modelRows.length === 0 || scored < 0.5
                 ? <span>Collecting</span>
-                : <span><strong className="font-tabular text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)}</strong> correct <span className="font-tabular text-lg font-semibold">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
+                : <span className="tabular-nums"><strong className="text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)} correct</strong> <span className="text-lg font-semibold">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
             </span>
           );
         })}

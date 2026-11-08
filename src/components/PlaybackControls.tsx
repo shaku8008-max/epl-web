@@ -18,7 +18,7 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
   return (
     <div className="mt-4 rounded-card border border-border bg-tint/60 p-3 sm:p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-sm font-semibold text-muted">Replay both charts</span>
+          <span className="mr-1 text-sm font-semibold text-muted">Replay correct picks</span>
         <button
           type="button"
           onClick={timeline.playPause}
@@ -48,12 +48,12 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
           value={position}
           onChange={(event) => timeline.setPosition(Number(event.target.value))}
           className="h-3 w-full accent-accent"
-          aria-valuetext={date ? formatDateOnly(date) : "Latest"}
+           aria-valuetext={`Match ${Math.min(position + 1, total)} of ${total}${date ? `, ${formatDateOnly(date)}` : ""}`}
         />
       </label>
       <div className="mt-1 flex justify-between text-xs text-muted">
         <span>Beginning</span>
-        <span>{position + 1} of {total} dates</span>
+        <span>Match {Math.min(position + 1, total)} of {total}</span>
       </div>
     </div>
   );

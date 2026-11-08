@@ -23,6 +23,7 @@ export function modelLabel(key: string): string {
 export type TrackRecordPoint = {
   row: TrackRecord;
   average: number;
+  position: number;
 };
 
 export type TrackRecordSeries = {
@@ -33,6 +34,7 @@ export type TrackRecordSeries = {
 export type CorrectPicksPoint = {
   row: TrackRecord;
   correct: number;
+  position: number;
 };
 
 export type CorrectPicksSeries = {
@@ -44,15 +46,33 @@ function validLogLoss(row: TrackRecord): row is TrackRecord & { log_loss: number
   return typeof row.log_loss === "number" && Number.isFinite(row.log_loss);
 }
 
+export function fixtureKey(row: Pick<TrackRecord, "fixture_date" | "home" | "away">): string {
+  return `${row.fixture_date ?? ""}|${row.home ?? ""}|${row.away ?? ""}`;
+}
+
+export function orderedFixtures(rows: TrackRecord[]): TrackRecord[] {
+  return rows
+    .map((row, index) => ({ row, index }))
+    .filter(({ row }) => row.fixture_date !== null)
+    .sort((a, b) => (a.row.fixture_date ?? "").localeCompare(b.row.fixture_date ?? "") || a.index - b.index)
+    .filter(({ row }, index, sorted) => index === sorted.findIndex((item) => fixtureKey(item.row) === fixtureKey(row)))
+    .map(({ row }) => row);
+}
+
+function fixturePositions(rows: TrackRecord[]): Map<string, number> {
+  return new Map(orderedFixtures(rows).map((row, index) => [fixtureKey(row), index]));
+}
+
 export function runningLogLoss(rows: TrackRecord[], modelKey: string): TrackRecordPoint[] {
+  const positions = fixturePositions(rows);
   const scored = rows
     .filter((row) => row.model_key === modelKey && validLogLoss(row))
-    .sort((a, b) => (a.fixture_date ?? "").localeCompare(b.fixture_date ?? ""));
+    .sort((a, b) => positions.get(fixtureKey(a))! - positions.get(fixtureKey(b))!);
   let total = 0;
   return scored.map((row, index) => {
     const loss = typeof row.log_loss === "number" && Number.isFinite(row.log_loss) ? row.log_loss : 0;
     total += loss;
-    return { row, average: total / (index + 1) };
+    return { row, average: total / (index + 1), position: positions.get(fixtureKey(row)) ?? index };
   });
 }
 
@@ -63,17 +83,18 @@ export function trackRecordSeries(rows: TrackRecord[]): TrackRecordSeries[] {
 }
 
 export function correctPicksSeries(rows: TrackRecord[]): CorrectPicksSeries[] {
+  const positions = fixturePositions(rows);
   return trackedModels.map(({ key: modelKey }) => {
     const scored = rows
       .filter((row) => row.model_key === modelKey)
       .filter((row) => row.fixture_date !== null)
-      .sort((a, b) => (a.fixture_date ?? "").localeCompare(b.fixture_date ?? ""));
+      .sort((a, b) => positions.get(fixtureKey(a))! - positions.get(fixtureKey(b))!);
     let correct = 0;
     return {
       modelKey,
       points: scored.map((row) => {
         if (row.correct === true) correct += 1;
-        return { row, correct };
+        return { row, correct, position: positions.get(fixtureKey(row)) ?? 0 };
       }),
     };
   });

@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Card from "@/components/Card";
 import ModelTabs from "@/components/ModelTabs";
 import TrackRecordPlayback from "@/components/TrackRecordPlayback";
+import TrackRecordTable from "@/components/TrackRecordTable";
 import { getTrackRecord } from "@/lib/data";
-import { probabilityColour } from "@/lib/colour";
-import { formatDateOnly } from "@/lib/format";
-import { modelColour, modelLabel, trackedModels } from "@/lib/trackRecord";
+import { modelColour, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -21,44 +20,6 @@ async function loadTrackRecord(): Promise<TrackRecord[] | { error: string }> {
   } catch (err) {
     return { error: err instanceof Error ? err.message : String(err) };
   }
-}
-
-function percent(value: number | null): string {
-  return typeof value === "number" && Number.isFinite(value)
-    ? `${Math.round(value * 100)}%`
-    : "unavailable";
-}
-
-function outcomeColour(outcome: TrackRecord["result"]): string {
-  return outcome === "H" ? "text-better" : outcome === "A" ? "text-worse" : outcome === "D" ? "text-draw" : "text-muted";
-}
-
-function outcomeTint(outcome: TrackRecord["result"]): string {
-  return outcome === "H" ? "bg-better-soft" : outcome === "A" ? "bg-worse-soft" : outcome === "D" ? "bg-draw-soft" : "bg-tint";
-}
-
-function outcomeTreatment(outcome: TrackRecord["result"]): string {
-  return `${outcomeColour(outcome)} ${outcomeTint(outcome)}`;
-}
-
-function probabilityCells(row: TrackRecord) {
-  return (
-    <>
-      <span className={probabilityColour("home", row.p_home, row.p_draw, row.p_away)}>H {percent(row.p_home)}</span>{" "}
-      · <span className={probabilityColour("draw", row.p_home, row.p_draw, row.p_away)}>D {percent(row.p_draw)}</span>{" "}
-      · <span className={probabilityColour("away", row.p_home, row.p_draw, row.p_away)}>A {percent(row.p_away)}</span>
-    </>
-  );
-}
-
-function outcomeLabel(outcome: TrackRecord["result"]): string {
-  return outcome === "H" ? "Home" : outcome === "D" ? "Draw" : outcome === "A" ? "Away" : "unavailable";
-}
-
-function score(row: TrackRecord): string {
-  return typeof row.home_goals === "number" && typeof row.away_goals === "number"
-    ? `${row.home_goals}-${row.away_goals}`
-    : "score unavailable";
 }
 
 function logLoss(value: number | null): string {
@@ -138,43 +99,7 @@ export default async function TrackRecordPage() {
 
             <TrackRecordPlayback rows={result} />
 
-           <Card className="mt-8 p-0" variant="white">
-             <div className="overflow-x-auto">
-               <table className="w-full min-w-[60rem] text-left text-sm">
-                 <caption className="sr-only">Scored prediction matches, newest first</caption>
-                 <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted">
-                   <tr>
-                     <th className="px-4 py-3">Date</th>
-                     <th className="px-4 py-3">Match</th>
-                     <th className="px-4 py-3">Model</th>
-                     <th className="px-4 py-3">Probabilities</th>
-                     <th className="px-4 py-3">Predicted</th>
-                     <th className="px-4 py-3">Actual</th>
-                     <th className="px-4 py-3">Correct</th>
-                     <th className="px-4 py-3">Log loss</th>
-                   </tr>
-                 </thead>
-                 <tbody className="divide-y divide-border">
-                   {result.map((row, index) => (
-                     <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
-                       <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
-                       <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
-                       <td className="px-4 py-3"><span className={`rounded-card px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>
-                       <td className="whitespace-nowrap px-4 py-3 font-tabular">{probabilityCells(row)}</td>
-                       <td className="px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${outcomeTreatment(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</span></td>
-                       <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${outcomeTreatment(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</span></td>
-                       <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${row.correct === true ? "bg-better-soft text-better" : row.correct === false ? "bg-worse-soft text-worse" : "bg-tint text-muted"}`}>
-                         {row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}
-                       </span>
-                       </td>
-                       <td className="px-4 py-3 font-tabular">{logLoss(row.log_loss)}</td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
-             </div>
-             {result.length === 0 && <p className="p-6 text-muted">No scored matches have been returned yet.</p>}
-           </Card>
+            <TrackRecordTable rows={result} />
 
          </>
       )}
