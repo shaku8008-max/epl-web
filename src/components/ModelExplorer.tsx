@@ -91,7 +91,7 @@ export default function ModelExplorer() {
                <p className="mt-4 border-t border-edge pt-3 text-sm leading-relaxed text-muted">
                 <span className="font-semibold text-ink">Honest limits:</span> None of the models beats the bookmaker. Live records are far too small to judge. This is a learning project, not betting advice. <a href="#goals-evidence" className="font-semibold text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink">See the evidence</a>.
               </p>
-              <LinkButton href={selectedModel.id === "neural-network" ? "/neural" : selectedModel.id === "linear-goals" ? "/goals" : "/lean"} variant="secondary" className="mt-5">
+               <LinkButton href={selectedModel.id === "neural-network" ? "/neural" : selectedModel.id === "linear-goals" ? "/goals" : "/lean"} variant="cta" className="mt-5 w-full sm:w-auto">
                 {selectedModel.id === "neural-network" ? "See Neural network predictions" : selectedModel.id === "linear-goals" ? "See Linear goals predictions" : "See Lean predictions"}
               </LinkButton>
             </div>

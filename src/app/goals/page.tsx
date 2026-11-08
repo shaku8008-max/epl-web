@@ -103,7 +103,7 @@ export default async function GoalsPage(props: PageProps<"/goals">) {
         </div>
         <p className="mt-6 border-t border-border pt-4 text-sm text-muted">{latest.model}, {latest.model_version}. Predicted {formatMelbourne(latest.predicted_at)}</p>
       </Card>
-      <LinkButton href="/track-record" variant="secondary" className="mt-6">See how this model has done</LinkButton>
+       <LinkButton href="/track-record" variant="cta" className="mt-6">See how this model has done</LinkButton>
     </section>
   );
 }

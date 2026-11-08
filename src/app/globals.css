@@ -118,6 +118,15 @@ body {
   }
 }
 
+@keyframes model-stack-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .epl-rise,
   .epl-sequence > *,
@@ -172,6 +181,352 @@ body {
 
   .epl-model-detail-enter {
     animation: none;
+  }
+}
+
+/* The documentation stack is a compact visual index, not a ranked list. The
+   face is counter-skewed so the fan can stay expressive without bending copy. */
+.model-stack {
+  position: relative;
+  flex: 0 0 21rem;
+  min-height: 13.5rem;
+}
+
+.model-stack-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 16.5rem;
+  border: 1px solid var(--color-edge);
+  border-radius: var(--radius-card);
+  background: white;
+  color: var(--color-ink);
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+  transform: translate(0, 0) skew(-5deg);
+  transition: transform 400ms ease-out, opacity 400ms ease-out;
+  will-change: transform;
+}
+
+/* Keep the shared epl-rise hook without animating over each card's fan offset. */
+@media (prefers-reduced-motion: no-preference) {
+  .model-stack-card.epl-rise {
+    animation: model-stack-fade-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+.model-stack-card__face {
+  position: relative;
+  display: block;
+  min-height: 8rem;
+  padding: 1rem;
+  transform: skew(5deg);
+}
+
+.model-stack-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 1.5rem;
+  white-space: nowrap;
+}
+
+.model-stack-card__dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: 0 0 0.625rem;
+  border-radius: 9999px;
+}
+
+.model-stack-card__rule {
+  display: block;
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.model-stack-card__record {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.model-stack-card__veil {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: calc(var(--radius-card) - 1px);
+  background: rgb(255 255 255 / 0.58);
+  pointer-events: none;
+  transition: opacity 400ms ease-out;
+}
+
+.model-stack-card--back {
+  z-index: 1;
+  transform: translate(0, 0) skew(-5deg);
+}
+
+.model-stack-card--middle {
+  z-index: 2;
+  transform: translate(2rem, 2.5rem) skew(-5deg);
+}
+
+.model-stack-card--front {
+  z-index: 3;
+  transform: translate(4rem, 5rem) skew(-5deg);
+}
+
+.model-stack-card:focus-visible {
+  outline-color: var(--color-edge);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .model-stack-card:is(:hover, :focus-visible) {
+    z-index: 4;
+    transform: translate(var(--stack-x, 0), calc(var(--stack-y, 0) - var(--stack-lift, 1rem))) skew(-5deg);
+  }
+
+  .model-stack-card--back:is(:hover, :focus-visible) {
+    --stack-x: 0;
+    --stack-y: 0;
+    --stack-lift: 2.5rem;
+  }
+
+  .model-stack-card--middle:is(:hover, :focus-visible) {
+    --stack-x: 2rem;
+    --stack-y: 2.5rem;
+    --stack-lift: 1.5rem;
+  }
+
+  .model-stack-card--front:is(:hover, :focus-visible) {
+    --stack-x: 4rem;
+    --stack-y: 5rem;
+    --stack-lift: 1rem;
+  }
+
+  .model-stack-card:is(:hover, :focus-visible) .model-stack-card__veil {
+    opacity: 0;
+  }
+}
+
+/* Touch has no hover reveal, so spread the cards far enough to read in place. */
+@media (hover: none), (pointer: coarse) {
+  .model-stack {
+    min-height: 21rem;
+  }
+
+  .model-stack-card--middle {
+    transform: translate(2rem, 6.5rem) skew(-5deg);
+  }
+
+  .model-stack-card--front {
+    transform: translate(4rem, 13rem) skew(-5deg);
+  }
+
+  .model-stack-card__veil {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .model-stack-card,
+  .model-stack-card__veil {
+    transition: none;
+  }
+}
+
+/* CTA: the in-flow dot slot fixes the label start; the pseudo-element fills the
+   pill from that same slot without moving surrounding content. */
+.cta {
+  --cta-px: 1.5rem;
+  --cta-dot-x: calc(var(--cta-px) + 0.25rem);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cta::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: var(--color-accent);
+  clip-path: circle(0.25rem at var(--cta-dot-x) 50%);
+  content: "";
+  pointer-events: none;
+  transition: clip-path 300ms ease-out;
+}
+
+.cta-content {
+  z-index: 1;
+  display: inline-grid;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-items: start;
+}
+
+.cta-label,
+.cta-reveal {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  transition: transform 300ms ease-out, opacity 300ms ease-out;
+}
+
+.cta-label::after {
+  width: 0.125rem;
+  flex: 0 0 0.125rem;
+  content: "";
+}
+
+.cta-dot-slot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: 0 0 0.5rem;
+}
+
+.cta-label > span {
+  min-width: 0;
+}
+
+.cta-reveal > span {
+  min-width: 0;
+}
+
+.cta-reveal {
+  opacity: 0;
+  transform: translateX(-0.5rem);
+}
+
+.cta-arrow {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: 0 0 auto;
+}
+
+/* The outlook tab uses the CTA reveal but keeps its tab-sized padding. */
+.cta-tab {
+  --cta-px: 0.75rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:not(:disabled):is(:hover, :focus-visible) {
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible)::before {
+    clip-path: circle(250% at var(--cta-dot-x) 50%);
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible) .cta-label {
+    opacity: 0;
+    transform: translateX(0.5rem);
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible) .cta-reveal {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.epl-nav-scroll {
+  scrollbar-width: none;
+}
+
+.epl-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch devices start in the useful filled state because there is no hover. */
+@media (hover: none), (pointer: coarse) {
+  .cta {
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .cta::before,
+  .cta-label,
+  .cta-reveal {
+    transition: none;
+  }
+
+  .cta::before {
+    clip-path: none;
+  }
+
+  .cta-label {
+    display: none;
+  }
+
+  .cta-content {
+    justify-items: center;
+  }
+
+  .cta-reveal {
+    justify-content: center;
+    opacity: 1;
+    transform: none;
+  }
+
+}
+
+/* Reduced motion keeps the same state change, but removes all interpolation. */
+@media (prefers-reduced-motion: reduce) {
+  .cta::before,
+  .cta-label,
+  .cta-reveal {
+    transition: none;
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible) {
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible)::before {
+    clip-path: circle(250% at var(--cta-dot-x) 50%);
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible) .cta-label {
+    display: none;
+  }
+
+  .cta:not(:disabled):is(:hover, :focus-visible) .cta-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The inactive outlook tab stays unselected on touch, even with reduced motion. */
+@media (hover: none), (pointer: coarse) {
+  .cta-tab {
+    background: white;
+    color: var(--color-ink);
+  }
+
+  .cta-tab::before,
+  .cta-tab .cta-label {
+    display: none;
+  }
+
+  .cta-tab::before {
+    clip-path: none;
+  }
+
+  .cta-tab .cta-reveal {
+    justify-content: center;
+    opacity: 1;
+    transform: none;
   }
 }
 

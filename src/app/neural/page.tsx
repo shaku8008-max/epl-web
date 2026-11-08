@@ -69,7 +69,7 @@ export default async function NeuralPage(props: PageProps<"/neural">) {
           <p className="font-semibold">Neural predictions are unavailable right now</p>
           <p className="mt-1 text-sm text-muted">{result.error}</p>
        </Card>
-       <LinkButton href="/track-record" variant="secondary" className="mt-6">See how this model has done</LinkButton>
+       <LinkButton href="/track-record" variant="cta" className="mt-6">See how this model has done</LinkButton>
      </section>
     );
   }

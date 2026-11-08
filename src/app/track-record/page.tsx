@@ -94,7 +94,7 @@ export default async function TrackRecordPage() {
             ))}
             </div>
 
-            <LinkButton href="/lean" variant="secondary" className="mt-5">Try a matchup</LinkButton>
+             <LinkButton href="/lean" variant="cta" className="mt-5">Try a matchup</LinkButton>
 
            <p className="mt-4 text-sm text-muted">
              Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.

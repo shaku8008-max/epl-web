@@ -3,6 +3,12 @@ import Link from "next/link";
 import Card from "@/components/Card";
 import ModelExplorer from "@/components/ModelExplorer";
 import LinkButton from "@/components/LinkButton";
+import ModelStack, { type ModelStackItem } from "@/components/ModelStack";
+import { getTrackRecord } from "@/lib/data";
+import { trackedModels } from "@/lib/trackRecord";
+import type { TrackRecord } from "@/lib/types";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -10,7 +16,37 @@ export const metadata: Metadata = {
     "A plain-English guide to the data, models, predictions and limits behind EPL Predictor.",
 };
 
-export default function DocumentationPage() {
+async function loadTrackRecord(): Promise<TrackRecord[] | null> {
+  try {
+    return await getTrackRecord();
+  } catch {
+    return null;
+  }
+}
+
+export default async function DocumentationPage() {
+  const trackRecord = await loadTrackRecord();
+  const modelStack: ModelStackItem[] = trackedModels.map((model) => {
+    const rows = trackRecord?.filter((row) => row.model_key === model.key) ?? [];
+    const hasData = trackRecord !== null;
+    const correct = rows.filter((row) => row.correct === true).length;
+    const line = !hasData
+      ? "Record unavailable"
+      : rows.length === 0
+        ? "Collecting, 0 matches scored"
+        : `${correct} of ${rows.length} correct (${Math.round((correct / rows.length) * 100)}%)`;
+
+    return {
+      modelKey: model.key,
+      name: model.label,
+      href: model.key === "lean" ? "/lean" : model.key === "nn" ? "/neural" : "/goals",
+      line,
+      ariaLabel: !hasData
+        ? `${model.label}: record unavailable. Open the ${model.label} page`
+        : `${model.label}: ${line}. Open the ${model.label} page`,
+    };
+  });
+
   return (
     <article className="max-w-3xl">
       <header className="border-b border-edge pb-8">
@@ -48,6 +84,12 @@ export default function DocumentationPage() {
           <h2 id="the-models" className="font-heading text-2xl font-semibold">
             The models
           </h2>
+          <div className="hidden items-center gap-8 md:flex">
+            <ModelStack models={modelStack} />
+            <p className="max-w-[28rem] text-muted">
+              Live record so far for the three models tracked against real results. Small samples swing a lot, so treat these as a snapshot.
+            </p>
+          </div>
           <ModelExplorer />
         </section>
 
@@ -207,8 +249,8 @@ export default function DocumentationPage() {
         </section>
       </div>
       <div className="flex flex-wrap gap-3 border-t border-edge py-8">
-        <LinkButton href="/track-record">See the track record</LinkButton>
-        <LinkButton href="/lean" variant="secondary">Explore the models</LinkButton>
+         <LinkButton href="/track-record" variant="cta">See the track record</LinkButton>
+         <LinkButton href="/lean" variant="cta">Explore the models</LinkButton>
       </div>
     </article>
   );

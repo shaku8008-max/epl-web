@@ -65,11 +65,11 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
         <SelectFilter label="Actual" value={actual} onChange={(value) => setActual(value as Filter)} options={outcomeOptions} />
         <SelectFilter label="Correct" value={correct} onChange={setCorrect} options={[{ value: "all", label: "All" }, { value: "correct", label: "Correct" }, { value: "incorrect", label: "Incorrect" }]} />
         <span className="pb-2 text-sm font-semibold text-muted">Showing {filteredRows.length} of {rows.length} scored matches</span>
-        {active && <button type="button" onClick={clear} className="min-h-11 rounded-button border border-edge bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-ink">Clear filters</button>}
+         {active && <button type="button" onClick={clear} className="min-h-11 rounded-full border border-edge bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-ink">Clear filters</button>}
       </div>
       <p className="mt-3 text-sm text-muted">Filters change the table only; charts and win rates always use every scored match.</p>
     </div>
-    {filteredRows.length === 0 ? <div className="p-6 text-muted">{active ? <><p>No scored matches match these filters</p><button type="button" onClick={clear} className="mt-3 min-h-11 rounded-card border border-border bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint">Clear filters</button></> : "No scored matches have been returned yet."}</div> : <div className="overflow-x-auto">
+     {filteredRows.length === 0 ? <div className="p-6 text-muted">{active ? <><p>No scored matches match these filters</p><button type="button" onClick={clear} className="mt-3 min-h-11 rounded-full border border-border bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint">Clear filters</button></> : "No scored matches have been returned yet."}</div> : <div className="overflow-x-auto">
       <table className="w-full min-w-[60rem] text-left text-sm">
         <caption className="sr-only">Scored prediction matches, newest first</caption>
         <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted"><tr>{["Date", "Match", "Model", "Probabilities", "Predicted", "Actual", "Correct", "Log loss"].map((heading) => <th key={heading} className="px-4 py-3">{heading}</th>)}</tr></thead>

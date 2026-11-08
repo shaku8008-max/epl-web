@@ -18,7 +18,7 @@ export default function Tabs() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Main" className="flex min-w-0 shrink items-center gap-0.5 overflow-x-auto">
+    <nav aria-label="Main" className="epl-nav-scroll flex min-w-0 shrink items-center gap-1.5 overflow-x-auto px-1.5 py-1.5 sm:px-0 sm:py-0">
       {tabs.map((tab) => {
         // Predict owns the model pages; the other tabs match their URL prefix.
         const active =
@@ -36,9 +36,9 @@ export default function Tabs() {
             href={tab.href}
             aria-current={active ? "page" : undefined}
             className={`shrink-0 ${
-              active
-                 ? `inline-flex min-h-12 items-center rounded-button bg-accent px-1.5 py-1.5 text-sm text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-bold"}`
-                 : `inline-flex min-h-12 items-center rounded-button px-1.5 py-1.5 text-sm text-muted transition-colors hover:bg-tint hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-semibold"}`
+                 active
+                  ? `inline-flex min-h-12 items-center rounded-full border border-edge bg-accent px-1.5 py-1.5 text-sm text-white transition-colors duration-300 ease-out motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-bold"}`
+                  : `inline-flex min-h-12 items-center rounded-full border border-edge bg-white px-1.5 py-1.5 text-sm text-ink transition-colors duration-300 ease-out motion-reduce:transition-none hover:bg-accent hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-semibold"}`
             }`}
           >
             {tab.label}

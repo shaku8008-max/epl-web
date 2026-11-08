@@ -207,7 +207,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
           </p>
         )}
 
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" variant="cta" disabled={pending}>
           {pending ? "Adding…" : "Add bet"}
         </Button>
       </form>

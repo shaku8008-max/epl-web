@@ -12,7 +12,7 @@ export default function NotFound() {
         That page does not exist. The predictions are still here though.
       </p>
       <Card className="mt-8">
-        <LinkButton href="/track-record">Back to track record</LinkButton>
+        <LinkButton href="/track-record" variant="cta">Back to track record</LinkButton>
       </Card>
     </section>
   );

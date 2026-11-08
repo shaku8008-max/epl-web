@@ -49,7 +49,7 @@ export default function TeamPicker({
         onClick={onSwap}
         aria-label="Swap home and away teams"
         title="Swap home and away teams"
-        className="!h-12 !min-h-12 !min-w-12 !w-12 !shrink-0 !rounded-button !border-edge !bg-white !p-0 !text-ink justify-self-center self-center sm:self-end"
+        className="!h-12 !min-h-12 !min-w-12 !w-12 !shrink-0 !rounded-full !border-edge !bg-white !p-0 !text-ink justify-self-center self-center sm:self-end"
       >
         <svg
           aria-hidden="true"

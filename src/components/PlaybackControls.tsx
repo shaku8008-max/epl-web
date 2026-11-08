@@ -22,7 +22,7 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
         <button
           type="button"
           onClick={timeline.playPause}
-          className="inline-flex min-h-11 items-center rounded-button border border-edge bg-accent px-4 py-2 text-sm font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="inline-flex min-h-11 items-center rounded-full border border-edge bg-accent px-4 py-2 text-sm font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           aria-label={playing ? "Pause playback" : "Play playback"}
         >
           {playing ? "Pause" : "Play"}
@@ -30,7 +30,7 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
         <button
           type="button"
           onClick={timeline.restart}
-          className="inline-flex min-h-11 items-center rounded-button border border-edge bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="inline-flex min-h-11 items-center rounded-full border border-edge bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           Restart
         </button>

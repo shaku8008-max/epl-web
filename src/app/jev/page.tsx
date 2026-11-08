@@ -65,7 +65,7 @@ export default async function JevPage() {
       <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted">
         Jev is experimental. With few settled matches, no verdict is possible yet.
       </p>
-      <LinkButton href="/jev/scoreboard" variant="secondary" className="mt-4">View scoreboard</LinkButton>
+       <LinkButton href="/jev/scoreboard" variant="cta" className="mt-4">View scoreboard</LinkButton>
 
       {stale && (
         <div className="mt-6 rounded-card border-l-4 border-open bg-open-soft p-6 text-ink">
