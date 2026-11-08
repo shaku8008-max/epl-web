@@ -1,7 +1,11 @@
-// The two team dropdowns with a swap button between them. Used inside
-// MatchupTool (client bundle) but keeps no state of its own.
+"use client";
+
+// The two searchable team comboboxes with a swap button between them. TeamPicker
+// owns which panel is open; matchup values remain owned by the tool above.
 
 import Button from "@/components/Button";
+import TeamDropdown from "@/components/TeamDropdown";
+import { useState } from "react";
 
 type TeamPickerProps = {
   teams: string[];
@@ -12,9 +16,6 @@ type TeamPickerProps = {
   onSwap: () => void;
 };
 
-const selectClasses =
-  "mt-1 min-h-12 w-full rounded-button border border-edge bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
-
 export default function TeamPicker({
   teams,
   home,
@@ -23,25 +24,32 @@ export default function TeamPicker({
   onAwayChange,
   onSwap,
 }: TeamPickerProps) {
+  const [openSide, setOpenSide] = useState<"home" | "away" | null>(null);
+
   return (
     <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
       <div className="min-w-0">
-        <label htmlFor="home-team" className="flex items-center gap-2 text-base font-medium">
+        <label
+          id="home-team-label"
+          htmlFor="home-team-trigger"
+          className="flex items-center gap-2 text-base font-medium"
+        >
           <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-home" />
           Home team
         </label>
-        <select
-          id="home-team"
+        <TeamDropdown
+          side="home"
+          label="Home team"
+          labelId="home-team-label"
+          triggerId="home-team-trigger"
+          teams={teams}
           value={home}
-          onChange={(e) => onHomeChange(e.target.value)}
-          className={selectClasses}
-        >
-          {teams.map((team) => (
-            <option key={team} value={team}>
-              {team}
-            </option>
-          ))}
-        </select>
+          otherTeam={away}
+          open={openSide === "home"}
+          onOpen={() => setOpenSide("home")}
+          onClose={() => setOpenSide(null)}
+          onChange={onHomeChange}
+        />
       </div>
 
       <Button
@@ -71,18 +79,19 @@ export default function TeamPicker({
           <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-away" />
           Away team
         </label>
-        <select
-          id="away-team"
+        <TeamDropdown
+          side="away"
+          label="Away team"
+          labelId="away-team-label"
+          triggerId="away-team-trigger"
+          teams={teams}
           value={away}
-          onChange={(e) => onAwayChange(e.target.value)}
-          className={selectClasses}
-        >
-          {teams.map((team) => (
-            <option key={team} value={team}>
-              {team}
-            </option>
-          ))}
-        </select>
+          otherTeam={home}
+          open={openSide === "away"}
+          onOpen={() => setOpenSide("away")}
+          onClose={() => setOpenSide(null)}
+          onChange={onAwayChange}
+        />
       </div>
     </div>
   );
