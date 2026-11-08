@@ -2,20 +2,23 @@
 // Clicking a row selects that matchup and scrolls back to the prediction.
 // Used inside MatchupTool (client bundle).
 
+import type { ReactNode } from "react";
 import { nextRoundFixtures } from "@/lib/fixtures";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
 import { probabilityColour } from "@/lib/colour";
-import type { Fixture, Prediction } from "@/lib/types";
+import type { Prediction } from "@/lib/types";
 
-type NextRoundListProps = {
-  predictions: Prediction[];
-  onSelect: (fixture: Fixture) => void;
+type NextRoundListProps<T extends Prediction> = {
+  predictions: T[];
+  onSelect: (fixture: T & { fixture_date: string }) => void;
+  renderExtra?: (fixture: T & { fixture_date: string }) => ReactNode;
 };
 
-export default function NextRoundList({
+export default function NextRoundList<T extends Prediction>({
   predictions,
   onSelect,
-}: NextRoundListProps) {
+  renderExtra,
+}: NextRoundListProps<T>) {
   const fixtures = nextRoundFixtures(predictions);
 
   // Hide the card entirely when there are no upcoming fixtures.
@@ -53,7 +56,14 @@ export default function NextRoundList({
                 <span className="min-w-0">
                   <span className="block break-words font-medium">{f.home} v {f.away}</span>
                   <span className="mt-1 block text-sm text-muted">
-                    {formatFixtureDate(f.fixture_date)}
+                    {renderExtra ? (
+                      <>
+                        <span className="block text-sm text-muted">{formatFixtureDate(f.fixture_date)}</span>
+                        <span className="mt-1 block font-tabular text-xs text-muted">{renderExtra(f)}</span>
+                      </>
+                    ) : (
+                      <span className="block text-sm text-muted">{formatFixtureDate(f.fixture_date)}</span>
+                    )}
                   </span>
                 </span>
                  <span className="text-right font-tabular text-base text-ink">

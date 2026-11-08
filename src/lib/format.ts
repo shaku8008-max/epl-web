@@ -92,6 +92,13 @@ export function formatXg(value: number | null | undefined): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "-";
 }
 
+// Goal-side averages may be missing or negative in the database. Negative
+// values are clamped only for display; the stored prediction is unchanged.
+export function formatExpectedGoals(value: number | null | undefined): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "–";
+  return Math.max(0, value).toFixed(1);
+}
+
 // Describes the expected home-minus-away goal difference without calling
 // toFixed on a nullable database value.
 export function formatExpectedMargin(

@@ -2,7 +2,12 @@
 
 import OutcomeKey from "@/components/OutcomeKey";
 import { probabilityColour } from "@/lib/colour";
-import { formatExpectedDiff, formatFixtureDate, toWholePercentages } from "@/lib/format";
+import {
+  formatExpectedDiff,
+  formatExpectedGoals,
+  formatFixtureDate,
+  toWholePercentages,
+} from "@/lib/format";
 import type { GoalsPrediction } from "@/lib/types";
 
 type GoalsLaterFixturesProps = {
@@ -50,8 +55,13 @@ export default function GoalsLaterFixtures({ fixtures }: GoalsLaterFixturesProps
                         <span className={probabilityColour("away", pct.home, pct.draw, pct.away)}>A {pct.away}%</span>
                       </span>
                     </span>
-                    <span className="self-center whitespace-nowrap text-right font-tabular text-sm text-muted">
-                      {formatExpectedDiff(fixture.expected_diff)} goal diff
+                    <span className="self-center whitespace-nowrap text-right text-sm text-muted">
+                      <span className="block font-tabular">
+                        {formatExpectedGoals(fixture.xg_home)} – {formatExpectedGoals(fixture.xg_away)} xG
+                      </span>
+                      <span className="mt-1 block font-tabular text-xs text-muted">
+                        {formatExpectedDiff(fixture.expected_diff)}
+                      </span>
                     </span>
                   </li>
                 );

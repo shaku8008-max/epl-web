@@ -96,6 +96,7 @@ export default async function GoalsPage(props: PageProps<"/goals">) {
           <p>It predicts the goal difference of a match with a straight-line model, assumes the real difference scatters around that in a bell curve, and reads home-win, draw and away-win chances off the curve.</p>
           <p>It uses the same inputs as the neural network: Elo, last-five and venue form, goal difference trends and rest days. No bookmaker odds and no xG.</p>
           <p>It was trained on Premier League seasons 2005 to 2025.</p>
+          <p>The goals shown for each side come from two extra straight-line models, one for home goals and one for away goals, on the same inputs. They are averages, not predicted scores, and they are not separately tested: the track record scores home, draw and away, not goal totals. The totals can differ a little from the neural network&apos;s.</p>
           <p>On the 2012 to 2023 backtest (4,560 matches) it scored slightly better than a standard win-draw-loss model. On the last two full seasons (760 matches) the difference shrank to within the noise.</p>
           <p>It gives draws a little too little probability, roughly 21 to 22% on average against about 24% of real matches, and it is behind the bookmakers&apos; odds. Its live record has only just started.</p>
         </div>
