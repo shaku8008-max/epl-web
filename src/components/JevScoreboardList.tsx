@@ -70,7 +70,7 @@ export default function JevScoreboardList({
         const score = `${m.homeGoals ?? "-"}-${m.awayGoals ?? "-"}`;
         const best = bestMatchVersion({ plain: m.plain, half: m.half, full: m.full });
         return (
-          <section key={m.key} className="mt-4 first:mt-0 rounded-card border border-border bg-white p-4 sm:p-5">
+          <section key={m.key} className="mt-4 first:mt-0 rounded-card border border-edge bg-white p-4 sm:p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-heading text-2xl font-semibold">
                 {m.home} v {m.away}

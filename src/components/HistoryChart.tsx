@@ -84,7 +84,7 @@ export default function HistoryChart({ series }: HistoryChartProps) {
       </svg>
       {activePoint && (
         <div
-          className={`pointer-events-none absolute top-2 z-10 w-44 rounded-card border border-border bg-white p-3 shadow-sm ${active! < series.length * 0.2 ? "left-0" : active! > series.length * 0.8 ? "right-0" : "-translate-x-1/2"}`}
+           className={`pointer-events-none absolute top-2 z-10 w-44 rounded-button border border-edge bg-white p-3 shadow-sm ${active! < series.length * 0.2 ? "left-0" : active! > series.length * 0.8 ? "right-0" : "-translate-x-1/2"}`}
           style={active! < series.length * 0.2 || active! > series.length * 0.8 ? undefined : { left: `${(x(active!) / WIDTH) * 100}%` }}
         >
           <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: colour[valueColour(activePoint.total)] }}>{activePoint.total > 0 ? "+" : activePoint.total < 0 ? "−" : ""}{aud.format(Math.abs(activePoint.total))}</p>

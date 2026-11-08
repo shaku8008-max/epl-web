@@ -39,12 +39,12 @@ export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecor
           return (
             <span
               key={model.key}
-              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-card border border-border px-3 py-2.5 text-sm ${colours.tint} ${colours.text} sm:px-4`}
+              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-button border border-edge px-3 py-2.5 text-sm ${colours.tint} ${colours.text} sm:px-4`}
             >
               <span className="font-semibold">{modelLabel(model.key)}:</span>
               {modelRows.length === 0 || scored < 0.5
                 ? <span>Collecting</span>
-                : <span className="tabular-nums"><strong className="text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)} correct</strong> <span className="text-lg font-semibold">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
+                 : <span className="tabular-nums"><strong className="block whitespace-nowrap text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)} correct</strong><span className="mt-1 block whitespace-nowrap text-sm font-semibold text-muted">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
             </span>
           );
         })}

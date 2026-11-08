@@ -68,7 +68,7 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
           </p>
         </div>
         <span
-          className={`rounded-card px-3 py-1 text-sm font-semibold ${STATUS_STYLES[entry.status]}`}
+          className={`rounded-button px-3 py-1 text-sm font-semibold ${STATUS_STYLES[entry.status]}`}
         >
           {STATUS_LABELS[entry.status]}
         </span>

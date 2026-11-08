@@ -55,7 +55,7 @@ export default function HistoryList({ series }: HistoryListProps) {
               <div
                 className={`shrink-0 font-semibold font-tabular ${
                   entry.status === "void"
-                    ? "rounded-card border border-border bg-tint px-2 py-1 text-ink"
+                    ? "rounded-button border border-border bg-tint px-2 py-1 text-ink"
                     : ""
                 }`}
                 style={{ color: entry.status === "void" ? "var(--color-ink)" : color }}

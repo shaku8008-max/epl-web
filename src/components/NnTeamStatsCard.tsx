@@ -303,7 +303,7 @@ export default function NnTeamStatsCard({
       </div>
 
       <details className="mt-4 text-sm">
-        <summary className="cursor-pointer rounded-card font-medium text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+        <summary className="cursor-pointer rounded-button font-medium text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
           What do these mean?
         </summary>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">

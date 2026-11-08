@@ -53,7 +53,7 @@ export default function JevScoreboardSummary({
   return (
     <section className="mt-6">
       <h2 className="font-heading text-2xl font-semibold">How much data</h2>
-      <div className="mt-3 rounded-card border border-border bg-tint p-4">
+      <div className="mt-3 rounded-card border border-edge bg-tint p-4">
         <p className="font-heading text-3xl font-bold leading-none font-tabular">{summary.count}</p>
         <p className="mt-2 text-base">finished {summary.count === 1 ? "match" : "matches"}</p>
       </div>
@@ -80,7 +80,7 @@ export default function JevScoreboardSummary({
           return (
             <div
               key={v.key}
-              className={`min-w-0 rounded-card border border-border p-4 ${logTone === "better" ? "bg-better-soft" : "bg-tint"}`}
+              className={`min-w-0 rounded-card border border-edge p-4 ${logTone === "better" ? "bg-better-soft" : "bg-tint"}`}
             >
               <p className="text-base font-semibold">{v.label}</p>
               <dl className="mt-4 space-y-3">
@@ -111,7 +111,7 @@ export default function JevScoreboardSummary({
         {[{ key: "half" as const, label: "Jev half shift" }, { key: "full" as const, label: "Jev full shift" }].map((version) => {
           const score = summary[version.key];
           return (
-            <div key={version.key} className="rounded-card border border-border bg-white p-3">
+            <div key={version.key} className="rounded-card border border-edge bg-white p-3">
               <p className="font-semibold">{version.label}</p>
               <p className="sr-only">{headToHead(score)}</p>
               <div className="mt-2 flex flex-wrap gap-2 text-sm font-semibold">

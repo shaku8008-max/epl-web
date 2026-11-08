@@ -6,7 +6,6 @@
 
 import { useState, useTransition } from "react";
 import Button from "@/components/Button";
-import Card from "@/components/Card";
 import { addEntry } from "@/lib/journal";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
 import type { Fixture } from "@/lib/types";
@@ -16,7 +15,7 @@ type AddBetFormProps = {
 };
 
 const inputClasses =
-  "mt-1 min-h-12 w-full rounded-card border border-border bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "mt-1 min-h-12 w-full rounded-button border border-edge bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 export default function AddBetForm({ fixtures }: AddBetFormProps) {
   const [fixtureKey, setFixtureKey] = useState(
@@ -208,7 +207,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
           </p>
         )}
 
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" variant="cta" disabled={pending}>
           {pending ? "Adding…" : "Add bet"}
         </Button>
       </form>

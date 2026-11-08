@@ -123,7 +123,7 @@ export default function CorrectPicksChart({ rows, series, timeline }: CorrectPic
   return (
     <div
       ref={chartRef}
-      className="relative min-w-0 focus-visible:outline-2 focus-visible:outline-accent"
+      className="relative min-w-0 focus-visible:outline-2 focus-visible:outline-ink"
       tabIndex={0}
       role="img"
       aria-label="Cumulative correct picks compared with random guessing"
@@ -161,8 +161,8 @@ export default function CorrectPicksChart({ rows, series, timeline }: CorrectPic
           {drawableSeries.map((item) => (
             <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
                <polyline pathLength={1} className="epl-chart-line epl-chart-line--draw" points={[[LEFT, y(0)], ...item.points.map((point) => [x(point.position), y(point.correct)])].map(([pointX, pointY]) => `${pointX},${pointY}`).join(" ")} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
-              {item.points.map((point, index) => (
-                 <circle className="epl-chart-point" key={`${item.modelKey}-${fixtureKey(point.row)}`} cx={x(point.position)} cy={y(point.correct)} r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3} fill={modelColour(item.modelKey).line} />
+               {item.points.map((point, index) => (
+                  <circle className="epl-chart-point" key={`${item.modelKey}-${fixtureKey(point.row)}-${index}`} cx={x(point.position)} cy={y(point.correct)} r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3} fill={modelColour(item.modelKey).line} />
               ))}
             </g>
           ))}
@@ -179,10 +179,10 @@ export default function CorrectPicksChart({ rows, series, timeline }: CorrectPic
         <span className="inline-flex items-center gap-1.5"><span className="inline-block w-5 border-t-2 border-dashed border-muted" />Random guessing</span>
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-10 h-4 text-[11px] text-muted" aria-hidden="true">
-        {dateTicks.map((fixture) => { const position = fixtures.indexOf(fixture); return <span key={`${fixture.fixture_date}-${fixture.home}-${fixture.away}`} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${(x(position) / WIDTH) * 100}%` }}>{formatDateOnly(fixture.fixture_date as string)}</span>; })}
+         {dateTicks.map((fixture, index) => { const position = fixtures.indexOf(fixture); return <span key={`${fixtureKey(fixture)}-${index}`} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${(x(position) / WIDTH) * 100}%` }}>{formatDateOnly(fixture.fixture_date as string)}</span>; })}
       </div>
       {activePoint && activeSeries && active && (
-        <div className={`pointer-events-none absolute z-10 rounded-card border border-border bg-white p-3 shadow-sm ${guideX! / WIDTH > 0.65 ? "-translate-x-[calc(100%+0.75rem)]" : "translate-x-3"}`} style={{ left: `${(guideX! / WIDTH) * 100}%`, top: `${(guideY! / HEIGHT) * 100}%`, width: "min(380px, calc(100% - 1rem))", transform: `${guideX! / WIDTH > 0.65 ? "translateX(calc(-100% - 0.75rem))" : "translateX(0.75rem)"} translateY(-50%)` }}>
+         <div className={`pointer-events-none absolute z-10 rounded-button border border-edge bg-white p-3 shadow-sm ${guideX! / WIDTH > 0.65 ? "-translate-x-[calc(100%+0.75rem)]" : "translate-x-3"}`} style={{ left: `${(guideX! / WIDTH) * 100}%`, top: `${(guideY! / HEIGHT) * 100}%`, width: "min(380px, calc(100% - 1rem))", transform: `${guideX! / WIDTH > 0.65 ? "translateX(calc(-100% - 0.75rem))" : "translateX(0.75rem)"} translateY(-50%)` }}>
            <p className="font-heading text-xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>Correct so far: {activePoint.correct} of {activePoint.position + 1} ({Math.round((activePoint.correct / (activePoint.position + 1)) * 100)}%)</p>
            <p className="mt-2 text-xs font-semibold">{modelLabel(active.modelKey)}</p>
            <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>

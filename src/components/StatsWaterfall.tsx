@@ -58,7 +58,7 @@ function stepTextColour(tenths: number): string {
 
 function HoverCard({ value, sentence, colour }: { value: string; sentence: string; colour: string }) {
   return (
-    <div className="pointer-events-none absolute right-0 top-1/2 z-20 w-[min(14rem,calc(100vw-2rem))] -translate-y-1/2 rounded-card border border-border bg-white p-3 shadow-sm">
+    <div className="pointer-events-none absolute right-0 top-1/2 z-20 w-[min(14rem,calc(100vw-2rem))] -translate-y-1/2 rounded-button border border-edge bg-white p-3 shadow-sm">
       <p className={`font-heading text-2xl font-bold leading-none ${colour}`}>{value}</p>
       <p className="mt-2 text-xs leading-snug text-muted">{sentence}</p>
     </div>
@@ -87,7 +87,7 @@ function StepRow({
 
   return (
     <div
-      className={`relative waterfall-step waterfall-row focus-visible:outline-2 focus-visible:outline-accent ${active ? "bg-tint" : ""}`}
+      className={`relative waterfall-step waterfall-row focus-visible:outline-2 focus-visible:outline-ink ${active ? "bg-tint" : ""}`}
       tabIndex={0}
       onPointerEnter={onActivate}
       onPointerDown={onActivate}
@@ -194,7 +194,7 @@ export default function StatsWaterfall({
 
       <div ref={chartRef} className="waterfall-chart mt-6" aria-hidden="true">
         <div
-          className={`relative waterfall-summary waterfall-row focus-visible:outline-2 focus-visible:outline-accent ${activeKey === "average" ? "bg-tint" : ""}`}
+          className={`relative waterfall-summary waterfall-row focus-visible:outline-2 focus-visible:outline-ink ${activeKey === "average" ? "bg-tint" : ""}`}
           tabIndex={0}
           onPointerEnter={() => setActiveKey("average")}
           onPointerDown={() => setActiveKey("average")}
@@ -236,7 +236,7 @@ export default function StatsWaterfall({
         })}
 
         <div
-          className={`relative waterfall-model waterfall-row focus-visible:outline-2 focus-visible:outline-accent ${activeKey === "model" ? "bg-tint" : ""}`}
+          className={`relative waterfall-model waterfall-row focus-visible:outline-2 focus-visible:outline-ink ${activeKey === "model" ? "bg-tint" : ""}`}
           tabIndex={0}
           onPointerEnter={() => setActiveKey("model")}
           onPointerDown={() => setActiveKey("model")}

@@ -3,6 +3,7 @@ import Card from "@/components/Card";
 import ModelTabs from "@/components/ModelTabs";
 import TrackRecordPlayback from "@/components/TrackRecordPlayback";
 import TrackRecordTable from "@/components/TrackRecordTable";
+import LinkButton from "@/components/LinkButton";
 import { getTrackRecord } from "@/lib/data";
 import { modelColour, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
@@ -82,7 +83,7 @@ export default async function TrackRecordPage() {
         </Card>
       ) : (
         <>
-           <div className="epl-sequence mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="epl-sequence mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {trackedModels.map((model) => (
               <SummaryCard
                 key={model.key}
@@ -91,7 +92,9 @@ export default async function TrackRecordPage() {
                 modelKey={model.key}
               />
             ))}
-          </div>
+            </div>
+
+             <LinkButton href="/lean" variant="cta" className="mt-5">Try a matchup</LinkButton>
 
            <p className="mt-4 text-sm text-muted">
              Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.

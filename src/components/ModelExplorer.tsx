@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import LinkButton from "@/components/LinkButton";
 
 type Model = {
   id: string;
@@ -67,11 +68,11 @@ export default function ModelExplorer() {
               aria-expanded={isSelected}
               aria-controls="model-detail-panel"
               onClick={() => setSelected(isSelected ? null : model.id)}
-              className={`rounded-card border p-5 text-left transition-[background-color,border-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isSelected ? "-translate-y-0.5 border-accent bg-tint shadow-sm" : "border-border bg-white hover:-translate-y-0.5 hover:bg-tint"}`}
+               className={`rounded-card border p-5 text-left transition-[background-color,border-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${isSelected ? "-translate-y-0.5 border-edge bg-tint shadow-sm" : "border-edge bg-white hover:-translate-y-0.5 hover:bg-tint"}`}
             >
               <span className="block font-heading text-xl font-semibold">{model.name}</span>
               <span className="mt-2 block text-base leading-relaxed text-muted">{model.description}</span>
-              <span className="mt-4 block text-sm font-semibold text-accent">{isSelected ? "Close details" : "Read more"}</span>
+               <span className="mt-4 block text-sm font-semibold text-ink">{isSelected ? "Close details" : "Read more"}</span>
             </button>
           );
         })}
@@ -84,12 +85,15 @@ export default function ModelExplorer() {
       >
         <div className="min-h-0 overflow-hidden">
           {selectedModel && (
-            <div key={selectedModel.id} className="mt-3 rounded-card border border-accent/30 bg-tint p-5 epl-model-detail-enter sm:p-6">
+             <div key={selectedModel.id} className="mt-3 rounded-card border border-edge bg-tint p-5 epl-model-detail-enter sm:p-6">
               <h3 className="font-heading text-xl font-semibold">{selectedModel.name}</h3>
               <p className="mt-2 leading-relaxed text-muted">{selectedModel.detail}</p>
-              <p className="mt-4 border-t border-border pt-3 text-sm leading-relaxed text-muted">
-                <span className="font-semibold text-ink">Honest limits:</span> None of the models beats the bookmaker. Live records are far too small to judge. This is a learning project, not betting advice. <a href="#goals-evidence" className="font-semibold text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark">See the evidence</a>.
+               <p className="mt-4 border-t border-edge pt-3 text-sm leading-relaxed text-muted">
+                <span className="font-semibold text-ink">Honest limits:</span> None of the models beats the bookmaker. Live records are far too small to judge. This is a learning project, not betting advice. <a href="#goals-evidence" className="font-semibold text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink">See the evidence</a>.
               </p>
+               <LinkButton href={selectedModel.id === "neural-network" ? "/neural" : selectedModel.id === "linear-goals" ? "/goals" : "/lean"} variant="cta" className="mt-5 w-full sm:w-auto">
+                {selectedModel.id === "neural-network" ? "See Neural network predictions" : selectedModel.id === "linear-goals" ? "See Linear goals predictions" : "See Lean predictions"}
+              </LinkButton>
             </div>
           )}
         </div>

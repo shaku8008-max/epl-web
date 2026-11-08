@@ -3,7 +3,7 @@
 // jev_predictions table with the anon key only.
 
 import type { Metadata } from "next";
-import Link from "next/link";
+import LinkButton from "@/components/LinkButton";
 import JevScoreboardList from "@/components/JevScoreboardList";
 import JevScoreboardSummary from "@/components/JevScoreboardSummary";
 import { getJevSettledPredictions } from "@/lib/data";
@@ -39,12 +39,7 @@ export default async function JevScoreboardPage() {
     return (
       <section>
         <p className="text-sm">
-          <Link
-            href="/jev"
-            className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Back to Jev
-          </Link>
+          <LinkButton href="/jev" variant="secondary">Back to Jev</LinkButton>
         </p>
         <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">
           Jev scoreboard
@@ -62,12 +57,7 @@ export default async function JevScoreboardPage() {
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <p className="text-sm">
-        <Link
-          href="/jev"
-          className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          Back to Jev
-        </Link>
+        <LinkButton href="/jev" variant="secondary">Back to Jev</LinkButton>
       </p>
       <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">
         Jev scoreboard

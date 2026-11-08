@@ -3,8 +3,11 @@ import { Archivo, DM_Mono } from "next/font/google";
 import "./globals.css";
 import PitchIcon from "@/components/PitchIcon";
 import Tabs from "@/components/Tabs";
-import { getLatestRun } from "@/lib/data";
+import ModelStack, { type ModelStackItem } from "@/components/ModelStack";
+import { getLatestRun, getTrackRecord } from "@/lib/data";
 import { formatMelbourne } from "@/lib/format";
+import { trackedModels } from "@/lib/trackRecord";
+import type { TrackRecord } from "@/lib/types";
 
 // Load fonts with next/font (no external stylesheet). Archivo is shared by
 // headings and body copy; DM Mono is reserved for compact data values.
@@ -35,10 +38,36 @@ export const viewport: Viewport = {
   themeColor: "#FFFFFF",
 };
 
+async function loadTrackRecord(): Promise<TrackRecord[] | null> {
+  try {
+    return await getTrackRecord();
+  } catch {
+    return null;
+  }
+}
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Footer data. getLatestRun() returns null instead of throwing, so a failed
   // query cannot take down every page (see /status for troubleshooting).
   const run = await getLatestRun();
+  const trackRecord = await loadTrackRecord();
+  const modelStack: ModelStackItem[] = trackedModels.map((model) => {
+    const rows = trackRecord?.filter((row) => row.model_key === model.key) ?? [];
+    const correct = rows.filter((row) => row.correct === true).length;
+    const line =
+      trackRecord === null
+        ? "Record unavailable"
+        : rows.length === 0
+          ? "Collecting, 0 matches scored"
+          : `${correct} of ${rows.length} correct (${Math.round((correct / rows.length) * 100)}%)`;
+
+    return {
+      modelKey: model.key,
+      name: model.label,
+      href: model.key === "lean" ? "/lean" : model.key === "nn" ? "/neural" : "/goals",
+      line,
+    };
+  });
 
   return (
     <html
@@ -46,10 +75,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${archivo.variable} ${dmMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-dvh flex-col bg-surface font-body text-ink">
-        <header className="border-b border-border bg-white text-ink">
-          <div className="mx-auto flex min-h-16 w-full max-w-4xl items-center justify-between gap-2 px-3 py-2 sm:px-6">
-            <div className="flex min-w-0 shrink items-center gap-1.5">
-              <PitchIcon className="h-6 w-6 shrink-0 text-accent" />
+        <ModelStack models={modelStack} />
+        <header className="border-b border-edge bg-white text-ink">
+          <div className="mx-auto flex min-h-16 w-full max-w-4xl flex-col items-stretch gap-0 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6">
+            <div className="flex min-w-0 shrink items-center gap-1.5 px-1.5 py-1 sm:px-0 sm:py-0">
+              <PitchIcon className="h-6 w-6 shrink-0 text-ink" />
               <span className="whitespace-nowrap font-heading text-xl font-bold tracking-tight sm:text-2xl">
                 EPL Predictor
               </span>
@@ -62,7 +92,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
 
-        <footer className="border-t border-border bg-tint">
+        <footer className="border-t border-edge bg-tint">
           <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-6 text-base text-muted sm:px-6">
             <p>
               <span className="font-medium text-ink">Data as of:</span>{" "}

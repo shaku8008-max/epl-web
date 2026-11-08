@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Card from "@/components/Card";
 import ModelExplorer from "@/components/ModelExplorer";
+import LinkButton from "@/components/LinkButton";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -12,8 +13,8 @@ export const metadata: Metadata = {
 export default function DocumentationPage() {
   return (
     <article className="max-w-3xl">
-      <header className="border-b border-border pb-8">
-        <p className="font-tabular text-sm text-accent">A plain-English guide</p>
+      <header className="border-b border-edge pb-8">
+         <p className="font-tabular text-sm text-ink">A plain-English guide</p>
         <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight text-primary sm:text-5xl">
           How it works
         </h1>
@@ -38,8 +39,8 @@ export default function DocumentationPage() {
           </h2>
           <p className="mt-3 leading-relaxed text-muted">
             The site uses past results and bookmaker odds from{" "}
-            <a className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="https://www.football-data.co.uk/" target="_blank" rel="noreferrer">football-data.co.uk</a>, fixtures and injury news from the official Fantasy Premier League data, and expected goals (xG) from{" "}
-            <a className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="https://understat.com/" target="_blank" rel="noreferrer">Understat</a>. xG is an estimate of how likely a shot was to become a goal, based on things such as its position and situation.
+            <a className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="https://www.football-data.co.uk/" target="_blank" rel="noreferrer">football-data.co.uk</a>, fixtures and injury news from the official Fantasy Premier League data, and expected goals (xG) from{" "}
+            <a className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="https://understat.com/" target="_blank" rel="noreferrer">Understat</a>. xG is an estimate of how likely a shot was to become a goal, based on things such as its position and situation.
           </p>
         </section>
 
@@ -56,7 +57,7 @@ export default function DocumentationPage() {
           </h2>
           <div className="mt-3 space-y-4 leading-relaxed text-muted">
             <p>
-              The <Link className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="/goals">goals model</Link> is a linear margin model. It predicts the expected goal difference, then converts that margin into home-win, draw and away-win probabilities. The live version is V1, the linear version, and it runs daily at about 05:57 UTC.
+              The <Link className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="/goals">goals model</Link> is a linear margin model. It predicts the expected goal difference, then converts that margin into home-win, draw and away-win probabilities. The live version is V1, the linear version, and it runs daily at about 05:57 UTC.
             </p>
             <p>
               A Poisson version, V2, tested slightly better, but it is not built or live. V1 appears on the goals page and in the track record.
@@ -74,7 +75,7 @@ export default function DocumentationPage() {
           <p className="mt-3 leading-relaxed text-muted">
             Log loss measures the quality of probability predictions: it rewards a high chance for what happened and penalises confident mistakes, so lower is better. The development check covered 4,560 matches from 2012-2023; the hold-out check covered 760 matches from 2024 and 2025.
           </p>
-          <div className="mt-5 overflow-x-auto rounded-card border border-border bg-white">
+          <div className="mt-5 overflow-x-auto rounded-card border border-edge bg-white">
             <table className="w-full min-w-[26rem] text-left text-sm">
               <caption className="sr-only">Development and hold-out mean log loss</caption>
               <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted">
@@ -127,7 +128,7 @@ export default function DocumentationPage() {
             Season outlook
           </h2>
           <p className="mt-3 leading-relaxed text-muted">
-            The <Link className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="/neural/outlook">season outlook</Link> plays out 10,000 possible seasons using the Neural network&apos;s expected goals, then shows how often each team finishes in each position. The finish-chance bars show those percentages at a glance. Ties are settled first by goal difference, then by goals scored.
+            The <Link className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="/neural/outlook">season outlook</Link> plays out 10,000 possible seasons using the Neural network&apos;s expected goals, then shows how often each team finishes in each position. The finish-chance bars show those percentages at a glance. Ties are settled first by goal difference, then by goals scored.
           </p>
         </section>
 
@@ -136,7 +137,7 @@ export default function DocumentationPage() {
             Track record
           </h2>
           <p className="mt-3 leading-relaxed text-muted">
-            The <Link className="font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-dark" href="/track-record">track record</Link> uses log loss: a score that rewards a model for giving a high chance to what happened and penalises it for being confidently wrong, so lower is better. The honesty rule is simple: only predictions made before the match day count.
+            The <Link className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="/track-record">track record</Link> uses log loss: a score that rewards a model for giving a high chance to what happened and penalises it for being confidently wrong, so lower is better. The honesty rule is simple: only predictions made before the match day count.
           </p>
         </section>
 
@@ -172,7 +173,7 @@ export default function DocumentationPage() {
               <li>This is a learning project, not betting advice.</li>
             </ul>
 
-            <div className="mt-6 overflow-hidden rounded-card border border-border bg-white">
+            <div className="mt-6 overflow-hidden rounded-card border border-edge bg-white">
               <table className="w-full text-left text-sm">
                 <caption className="sr-only">Backtest log loss comparison</caption>
                 <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted">
@@ -204,6 +205,10 @@ export default function DocumentationPage() {
             <p className="mt-3 text-sm text-muted">Lower log loss is better. These figures are from the 760-match test, not the small live record.</p>
           </Card>
         </section>
+      </div>
+      <div className="flex flex-wrap gap-3 border-t border-edge py-8">
+         <LinkButton href="/track-record" variant="cta">See the track record</LinkButton>
+         <LinkButton href="/lean" variant="cta">Explore the models</LinkButton>
       </div>
     </article>
   );

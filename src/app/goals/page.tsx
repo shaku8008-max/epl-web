@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Card from "@/components/Card";
 import GoalsMatchupTool from "@/components/GoalsMatchupTool";
 import ModelTabs from "@/components/ModelTabs";
+import LinkButton from "@/components/LinkButton";
 import { getGoalsPredictions, getNnTeamStats } from "@/lib/data";
 import { nextRoundFixtures, resolveInitialPair, upcomingFixtures } from "@/lib/fixtures";
 import { formatMelbourne } from "@/lib/format";
@@ -102,6 +103,7 @@ export default async function GoalsPage(props: PageProps<"/goals">) {
         </div>
         <p className="mt-6 border-t border-border pt-4 text-sm text-muted">{latest.model}, {latest.model_version}. Predicted {formatMelbourne(latest.predicted_at)}</p>
       </Card>
+       <LinkButton href="/track-record" variant="cta" className="mt-6">See how this model has done</LinkButton>
     </section>
   );
 }

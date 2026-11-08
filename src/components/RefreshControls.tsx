@@ -194,7 +194,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
   if (phase.name === "refreshing") {
     return (
       <div className="mt-4" role="status">
-        <Button disabled>
+         <Button disabled>
           <span
             aria-hidden="true"
             className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
@@ -219,7 +219,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
         <p className="mt-3">
           <Link
             href="/track-record"
-            className="font-medium text-accent underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="font-medium text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           >
             View the new predictions
           </Link>
@@ -274,7 +274,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
     });
     return (
       <div className="mt-4">
-        <Button disabled>Refresh data</Button>
+         <Button variant="cta" disabled>Refresh data</Button>
         <p className="mt-3 text-base text-muted">
           Data was updated recently. You can refresh again at {timeOnly}{" "}
           (Melbourne time).
@@ -285,7 +285,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
 
   return (
     <div className="mt-4">
-      <Button onClick={startRefresh}>Refresh data</Button>
+       <Button variant="cta" onClick={startRefresh}>Refresh data</Button>
       <p className="mt-3 text-base text-muted">
         Fetches the latest results and recomputes every prediction. Takes about
         two minutes.

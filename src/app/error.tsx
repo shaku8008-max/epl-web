@@ -25,7 +25,7 @@ export default function AppError({ error, reset }: AppErrorProps) {
           {error.message || "An unexpected error occurred."}
         </p>
         <div className="mt-4">
-          <Button type="button" onClick={reset}>
+          <Button type="button" variant="cta" onClick={reset}>
             Try again
           </Button>
         </div>
