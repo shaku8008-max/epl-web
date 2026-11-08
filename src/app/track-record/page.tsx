@@ -4,14 +4,14 @@ import ModelTabs from "@/components/ModelTabs";
 import TrackRecordChart from "@/components/TrackRecordChart";
 import { getTrackRecord } from "@/lib/data";
 import { formatDateOnly } from "@/lib/format";
-import { trackRecordSeries } from "@/lib/trackRecord";
+import { modelLabel, trackedModels, trackRecordSeries } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Track record",
-  description: "The live Premier League prediction record for both models.",
+  description: "The live Premier League prediction record for all three models.",
 };
 
 async function loadTrackRecord(): Promise<TrackRecord[] | { error: string }> {
@@ -20,10 +20,6 @@ async function loadTrackRecord(): Promise<TrackRecord[] | { error: string }> {
   } catch (err) {
     return { error: err instanceof Error ? err.message : String(err) };
   }
-}
-
-function modelName(modelKey: string): string {
-  return modelKey === "nn" ? "Neural network" : "Lean";
 }
 
 function percent(value: number | null): string {
@@ -96,7 +92,7 @@ export default async function TrackRecordPage() {
       <ModelTabs />
       <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Track record</h1>
       <p className="mt-3 max-w-2xl text-lg leading-relaxed">
-        How the Lean and Neural network predictions have performed in live matches.
+        How the Lean, Neural network and Linear goals predictions have performed in live matches.
       </p>
 
       {"error" in result ? (
@@ -106,9 +102,14 @@ export default async function TrackRecordPage() {
         </Card>
       ) : (
         <>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <SummaryCard rows={result.filter((row) => row.model_key === "lean")} label="Lean" />
-            <SummaryCard rows={result.filter((row) => row.model_key === "nn")} label="Neural network" />
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {trackedModels.map((model) => (
+              <SummaryCard
+                key={model.key}
+                rows={result.filter((row) => row.model_key === model.key)}
+                label={model.label}
+              />
+            ))}
           </div>
 
           <p className="mt-4 text-sm text-muted">
@@ -141,7 +142,7 @@ export default async function TrackRecordPage() {
                     <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} className="transition-colors hover:bg-tint focus-within:bg-tint">
                       <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
                       <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
-                      <td className="px-4 py-3">{modelName(row.model_key)}</td>
+                      <td className="px-4 py-3">{modelLabel(row.model_key)}</td>
                       <td className="whitespace-nowrap px-4 py-3 font-tabular">{probabilityLine(row)}</td>
                       <td className="px-4 py-3">{outcomeLabel(row.predicted_result)}</td>
                       <td className="whitespace-nowrap px-4 py-3">{outcomeLabel(row.result)} ({score(row)})</td>
@@ -168,6 +169,8 @@ export default async function TrackRecordPage() {
           <li>A prediction counts only if it was stored before the end of match day. This is an approximation; some earlier rounds are excluded because their stored predictions may have been overwritten after the matches.</li>
           <li>Lean and the Neural network are statistically tied on the 760-match backtest.</li>
           <li>The Neural network history started Nov 6, so it has no scored matches yet.</li>
+          <li>The Linear goals history started Nov 8, so it has few or no scored matches yet.</li>
+          <li>The three models started on different dates, so they have not all been scored on the same matches. Compare their averages with care.</li>
         </ul>
       </Card>
     </section>

@@ -13,7 +13,7 @@ site never runs a model.
 | `/neural` | Neural network predictions, expected goals, comparison with Lean, stats, waterfall, next fixtures |
 | `/neural/outlook` | Season outlook from 10,000 simulated seasons (table, finish-chance bars, caveats) |
 | `/goals` | Linear goal-difference predictions, probabilities, expected margin, stats and next fixtures |
-| `/track-record` | Live record of both models, log loss chart, scored matches, caveats |
+| `/track-record` | Live record of all three models, log loss chart, scored matches, caveats |
 | `/jev` | News-adjusted predictions (experiment) |
 | `/jev/scoreboard` | Does Jev's shift beat the plain model on finished matches |
 | `/journal`, `/journal/history` | Private bet journal with summary cards and a profit/loss area chart |
@@ -63,7 +63,8 @@ model's public prediction tables; `/goals` currently reads only
 `goals_predictions`.
 
 `track_record` is a view (`security_invoker = true`) that joins
-`prediction_history` and `nn_prediction_history` to `results` on
+`prediction_history`, `nn_prediction_history` and `goals_prediction_history` to
+`results` on
 `(home, away, fixture_date)`, keeps rows with
 `predicted_at < (fixture_date + 1)::timestamptz`, and adds `predicted_result`,
 `correct` and per-match `log_loss`. Re-create it from the SQL kept in the

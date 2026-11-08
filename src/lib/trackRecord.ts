@@ -1,5 +1,15 @@
 import type { TrackRecord } from "@/lib/types";
 
+export const trackedModels = [
+  { key: "lean", label: "Lean" },
+  { key: "nn", label: "Neural network" },
+  { key: "goals", label: "Linear goals" },
+] as const;
+
+export function modelLabel(key: string): string {
+  return trackedModels.find((model) => model.key === key)?.label ?? key;
+}
+
 export type TrackRecordPoint = {
   row: TrackRecord;
   average: number;
@@ -27,8 +37,8 @@ export function runningLogLoss(rows: TrackRecord[], modelKey: string): TrackReco
 }
 
 export function trackRecordSeries(rows: TrackRecord[]): TrackRecordSeries[] {
-  return ["lean", "nn"]
-    .map((modelKey) => ({ modelKey, points: runningLogLoss(rows, modelKey) }))
+  return trackedModels
+    .map(({ key: modelKey }) => ({ modelKey, points: runningLogLoss(rows, modelKey) }))
     .filter((series) => series.points.length >= 2);
 }
 

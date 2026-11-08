@@ -118,7 +118,7 @@ export type Run = {
 
 // View `track_record`: one row per prediction that has been scored.
 export type TrackRecord = {
-  model_key: "lean" | "nn" | string;
+  model_key: "lean" | "nn" | "goals" | string;
   model: string | null;
   model_version: string | null;
   home: string | null;

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { formatDateOnly } from "@/lib/format";
 import {
+  modelLabel,
   nearestTrackRecordPoint,
   type TrackRecordPoint,
   type TrackRecordSeries,
@@ -21,11 +22,13 @@ const RANDOM_LOG_LOSS = 1.0986;
 const lineColours: Record<string, string> = {
   lean: "var(--color-accent)",
   nn: "var(--color-better)",
+  goals: "var(--color-worse)",
 };
-
-function modelName(modelKey: string): string {
-  return modelKey === "nn" ? "Neural network" : "Lean";
-}
+const lineDashes: Record<string, string | undefined> = {
+  lean: undefined,
+  nn: undefined,
+  goals: "8 5",
+};
 
 function resultName(result: TrackRecordPoint["row"]["result"]): string {
   return result === "H" ? "Home" : result === "D" ? "Draw" : result === "A" ? "Away" : "Result unavailable";
@@ -132,7 +135,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
           const points = item.points.map((point, index) => `${x(index, item.points.length)},${y(point.average)}`).join(" ");
           return (
             <g key={item.modelKey}>
-              <polyline points={points} fill="none" stroke={lineColours[item.modelKey] ?? "var(--color-muted)"} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+              <polyline points={points} fill="none" stroke={lineColours[item.modelKey] ?? "var(--color-muted)"} strokeWidth={2.5} strokeDasharray={lineDashes[item.modelKey]} strokeLinejoin="round" strokeLinecap="round" />
               {item.points.map((point, index) => (
                 <circle
                   key={`${item.modelKey}-${point.row.fixture_date ?? index}`}
@@ -150,8 +153,18 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted" aria-hidden="true">
         {series.map((item) => (
           <span key={item.modelKey} className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: lineColours[item.modelKey] ?? "var(--color-muted)" }} />
-            {modelName(item.modelKey)}
+            <span
+              className="inline-block h-0.5 w-5"
+              style={{
+                backgroundColor: lineDashes[item.modelKey]
+                  ? "transparent"
+                  : lineColours[item.modelKey] ?? "var(--color-muted)",
+                borderTop: lineDashes[item.modelKey]
+                  ? `2px dashed ${lineColours[item.modelKey] ?? "var(--color-muted)"}`
+                  : undefined,
+              }}
+            />
+            {modelLabel(item.modelKey)}
           </span>
         ))}
       </div>
@@ -165,7 +178,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
           </p>
           <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>
           <p className="text-xs text-muted">{pointDate(activePoint)}</p>
-          <p className="text-xs text-muted">{modelName(active.modelKey)} · {resultName(activePoint.row.result)}</p>
+          <p className="text-xs text-muted">{modelLabel(active.modelKey)} · {resultName(activePoint.row.result)}</p>
           <p className="text-xs text-muted">{activePoint.row.correct === true ? "✓ Correct" : activePoint.row.correct === false ? "✕ Incorrect" : "Correctness unavailable"}</p>
           <p className="text-xs text-muted">Match log loss: {activePoint.row.log_loss === null ? "unavailable" : activePoint.row.log_loss.toFixed(3)}</p>
         </div>
