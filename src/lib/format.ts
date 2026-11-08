@@ -92,6 +92,29 @@ export function formatXg(value: number | null | undefined): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "-";
 }
 
+// Describes the expected home-minus-away goal difference without calling
+// toFixed on a nullable database value.
+export function formatExpectedMargin(
+  value: number | null | undefined,
+  home: string,
+  away: string
+): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return "Expected margin: –";
+  }
+  const sign = value > 0 ? "+" : "";
+  const signed = `${sign}${value.toFixed(1)}`;
+  if (Math.abs(value) < 0.05) return `Expected margin: roughly level (${signed} goals)`;
+  const team = value > 0 ? home : away;
+  return `Expected margin: ${team} by ${Math.abs(value).toFixed(1)} goals (${signed})`;
+}
+
+// Short signed form for dense fixture lists.
+export function formatExpectedDiff(value: number | null | undefined): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "–";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
+}
+
 // Formats a timestamptz ISO string, e.g. "Mon 12 Oct, 4:17 pm".
 export function formatMelbourne(iso: string): string {
   const date = new Date(iso);

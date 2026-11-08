@@ -1,6 +1,7 @@
 import { getSupabaseClient } from "@/lib/supabase";
 import type {
   JevPrediction,
+  GoalsPrediction,
   NnPrediction,
   NnTeamStats,
   Prediction,
@@ -56,6 +57,15 @@ export async function getNnPredictions(): Promise<NnPrediction[]> {
   const { data, error } = await supabase.from("nn_predictions").select("*");
   if (error) throw new Error(`nn_predictions: ${error.message}`);
   return (data ?? []) as NnPrediction[];
+}
+
+// All linear goal-difference prediction rows, including the expected home
+// minus away goal difference.
+export async function getGoalsPredictions(): Promise<GoalsPrediction[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase.from("goals_predictions").select("*");
+  if (error) throw new Error(`goals_predictions: ${error.message}`);
+  return (data ?? []) as GoalsPrediction[];
 }
 
 // All 20 full team_stats rows (one per team), ordered alphabetically by team.

@@ -9,6 +9,7 @@ const models = [
   { href: "/", label: "Lean" },
   { href: "/neural", label: "Neural network" },
   { href: "/neural/outlook", label: "Season outlook" },
+  { href: "/goals", label: "Linear goals" },
   { href: "/track-record", label: "Track record" },
 ];
 

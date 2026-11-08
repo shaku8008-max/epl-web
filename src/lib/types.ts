@@ -24,6 +24,12 @@ export type NnPrediction = Prediction & {
   xg_away: number | null;
 };
 
+// Table `goals_predictions`: a straight-line goal-difference model for each
+// ordered team pair. The expected difference is home goals minus away goals.
+export type GoalsPrediction = Prediction & {
+  expected_diff: number | null;
+};
+
 // A prediction row that is a real upcoming fixture (fixture_date is set).
 export type Fixture = Prediction & { fixture_date: string };
 

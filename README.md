@@ -12,6 +12,7 @@ site never runs a model.
 | `/` | Predict (Lean model): team picker, probabilities, team stats, waterfall, next round |
 | `/neural` | Neural network predictions, expected goals, comparison with Lean, stats, waterfall, next fixtures |
 | `/neural/outlook` | Season outlook from 10,000 simulated seasons (table, finish-chance bars, caveats) |
+| `/goals` | Linear goal-difference predictions, probabilities, expected margin, stats and next fixtures |
 | `/track-record` | Live record of both models, log loss chart, scored matches, caveats |
 | `/jev` | News-adjusted predictions (experiment) |
 | `/jev/scoreboard` | Does Jev's shift beat the plain model on finished matches |
@@ -19,7 +20,7 @@ site never runs a model.
 | `/refresh` | Triggers the predictor workflow on GitHub Actions and polls for new data |
 | `/status` | Supabase troubleshooting, not indexed |
 
-The model row (Lean, Neural network, Track record, Season outlook) is
+The model row (Lean, Neural network, Season outlook, Linear goals, Track record) is
 `src/components/ModelTabs.tsx`; the main nav is `src/components/Tabs.tsx`.
 
 ## Setup
@@ -53,9 +54,13 @@ On Vercel the same names go under Project Settings -> Environment Variables.
 ## Data it reads (Supabase)
 
 Public (anon key): `predictions`, `team_stats`, `runs`, `nn_predictions`,
-`nn_team_stats`, `nn_season_outlook`, `jev_predictions`, the `*_explain`
-tables, and the view `track_record`. Private (service key): `journal`,
-`results`.
+`nn_team_stats`, `nn_season_outlook`, `goals_predictions`,
+`goals_prediction_history`, `jev_predictions`, the `*_explain` tables, and the
+view `track_record`. Private (service key): `journal`, `results`.
+
+`goals_predictions` and `goals_prediction_history` are the linear goal-difference
+model's public prediction tables; `/goals` currently reads only
+`goals_predictions`.
 
 `track_record` is a view (`security_invoker = true`) that joins
 `prediction_history` and `nn_prediction_history` to `results` on
