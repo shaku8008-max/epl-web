@@ -20,6 +20,16 @@ export type TrackRecordSeries = {
   points: TrackRecordPoint[];
 };
 
+export type CorrectPicksPoint = {
+  row: TrackRecord;
+  correct: number;
+};
+
+export type CorrectPicksSeries = {
+  modelKey: string;
+  points: CorrectPicksPoint[];
+};
+
 function validLogLoss(row: TrackRecord): row is TrackRecord & { log_loss: number } {
   return typeof row.log_loss === "number" && Number.isFinite(row.log_loss);
 }
@@ -40,6 +50,23 @@ export function trackRecordSeries(rows: TrackRecord[]): TrackRecordSeries[] {
   return trackedModels
     .map(({ key: modelKey }) => ({ modelKey, points: runningLogLoss(rows, modelKey) }))
     .filter((series) => series.points.length >= 2);
+}
+
+export function correctPicksSeries(rows: TrackRecord[]): CorrectPicksSeries[] {
+  return trackedModels.map(({ key: modelKey }) => {
+    const scored = rows
+      .filter((row) => row.model_key === modelKey)
+      .filter((row) => row.fixture_date !== null)
+      .sort((a, b) => (a.fixture_date ?? "").localeCompare(b.fixture_date ?? ""));
+    let correct = 0;
+    return {
+      modelKey,
+      points: scored.map((row) => {
+        if (row.correct === true) correct += 1;
+        return { row, correct };
+      }),
+    };
+  });
 }
 
 export function nearestTrackRecordPoint(points: TrackRecordPoint[], position: number): number {

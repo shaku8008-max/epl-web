@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Card from "@/components/Card";
+import CorrectPicksChart from "@/components/CorrectPicksChart";
 import ModelTabs from "@/components/ModelTabs";
 import TrackRecordChart from "@/components/TrackRecordChart";
 import { getTrackRecord } from "@/lib/data";
+import { probabilityColour } from "@/lib/colour";
 import { formatDateOnly } from "@/lib/format";
-import { modelLabel, trackedModels, trackRecordSeries } from "@/lib/trackRecord";
+import { correctPicksSeries, modelLabel, trackedModels, trackRecordSeries } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -28,8 +30,22 @@ function percent(value: number | null): string {
     : "unavailable";
 }
 
-function probabilityLine(row: TrackRecord): string {
-  return `H ${percent(row.p_home)} · D ${percent(row.p_draw)} · A ${percent(row.p_away)}`;
+function outcomeColour(outcome: TrackRecord["result"]): string {
+  return outcome === "H" ? "text-better" : outcome === "A" ? "text-worse" : outcome === "D" ? "text-draw" : "text-muted";
+}
+
+function modelColour(modelKey: string): string {
+  return modelKey === "lean" ? "text-accent" : modelKey === "nn" ? "text-better" : modelKey === "goals" ? "text-worse" : "text-muted";
+}
+
+function probabilityCells(row: TrackRecord) {
+  return (
+    <>
+      <span className={probabilityColour("home", row.p_home, row.p_draw, row.p_away)}>H {percent(row.p_home)}</span>{" "}
+      · <span className={probabilityColour("draw", row.p_home, row.p_draw, row.p_away)}>D {percent(row.p_draw)}</span>{" "}
+      · <span className={probabilityColour("away", row.p_home, row.p_draw, row.p_away)}>A {percent(row.p_away)}</span>
+    </>
+  );
 }
 
 function outcomeLabel(outcome: TrackRecord["result"]): string {
@@ -112,53 +128,59 @@ export default async function TrackRecordPage() {
             ))}
           </div>
 
-          <p className="mt-4 text-sm text-muted">
-            Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.
-          </p>
+           <p className="mt-4 text-sm text-muted">
+             Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.
+           </p>
 
-          <Card className="mt-8" variant="white">
-            <h2 className="font-heading text-2xl font-semibold">Log loss over time</h2>
-            <div className="mt-4"><TrackRecordChart series={trackRecordSeries(result)} /></div>
-          </Card>
+           <Card className="mt-8" variant="white">
+             <h2 className="font-heading text-2xl font-semibold">Correct picks over time</h2>
+             <div className="mt-4"><CorrectPicksChart rows={result} series={correctPicksSeries(result)} /></div>
+             <p className="mt-3 text-sm text-muted">Each model line counts only its own scored matches; higher means more correct picks, and the dashed line is the one-in-three guessing benchmark.</p>
+           </Card>
 
-          <Card className="mt-8 p-0" variant="white">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[60rem] text-left text-sm">
-                <caption className="sr-only">Scored prediction matches, newest first</caption>
-                <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted">
-                  <tr>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Match</th>
-                    <th className="px-4 py-3">Model</th>
-                    <th className="px-4 py-3">Probabilities</th>
-                    <th className="px-4 py-3">Predicted</th>
-                    <th className="px-4 py-3">Actual</th>
-                    <th className="px-4 py-3">Correct</th>
-                    <th className="px-4 py-3">Log loss</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {result.map((row, index) => (
-                    <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} className="transition-colors hover:bg-tint focus-within:bg-tint">
-                      <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
-                      <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
-                      <td className="px-4 py-3">{modelLabel(row.model_key)}</td>
-                      <td className="whitespace-nowrap px-4 py-3 font-tabular">{probabilityLine(row)}</td>
-                      <td className="px-4 py-3">{outcomeLabel(row.predicted_result)}</td>
-                      <td className="whitespace-nowrap px-4 py-3">{outcomeLabel(row.result)} ({score(row)})</td>
-                      <td className="whitespace-nowrap px-4 py-3">
-                        {row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}
-                      </td>
-                      <td className="px-4 py-3 font-tabular">{logLoss(row.log_loss)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {result.length === 0 && <p className="p-6 text-muted">No scored matches have been returned yet.</p>}
-          </Card>
+           <Card className="mt-8 p-0" variant="white">
+             <div className="overflow-x-auto">
+               <table className="w-full min-w-[60rem] text-left text-sm">
+                 <caption className="sr-only">Scored prediction matches, newest first</caption>
+                 <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted">
+                   <tr>
+                     <th className="px-4 py-3">Date</th>
+                     <th className="px-4 py-3">Match</th>
+                     <th className="px-4 py-3">Model</th>
+                     <th className="px-4 py-3">Probabilities</th>
+                     <th className="px-4 py-3">Predicted</th>
+                     <th className="px-4 py-3">Actual</th>
+                     <th className="px-4 py-3">Correct</th>
+                     <th className="px-4 py-3">Log loss</th>
+                   </tr>
+                 </thead>
+                 <tbody className="divide-y divide-border">
+                   {result.map((row, index) => (
+                     <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} className="transition-colors hover:bg-tint focus-within:bg-tint">
+                       <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
+                       <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
+                       <td className={`px-4 py-3 font-semibold ${modelColour(row.model_key)}`}>{modelLabel(row.model_key)}</td>
+                       <td className="whitespace-nowrap px-4 py-3 font-tabular">{probabilityCells(row)}</td>
+                       <td className={`px-4 py-3 font-medium ${outcomeColour(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</td>
+                       <td className={`whitespace-nowrap px-4 py-3 font-medium ${outcomeColour(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</td>
+                       <td className={`whitespace-nowrap px-4 py-3 font-medium ${row.correct === true ? "text-better" : row.correct === false ? "text-worse" : "text-muted"}`}>
+                         {row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}
+                       </td>
+                       <td className="px-4 py-3 font-tabular">{logLoss(row.log_loss)}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+             </div>
+             {result.length === 0 && <p className="p-6 text-muted">No scored matches have been returned yet.</p>}
+           </Card>
 
-        </>
+           <Card className="mt-8" variant="white">
+             <h2 className="font-heading text-2xl font-semibold">Log loss over time</h2>
+             <div className="mt-4"><TrackRecordChart series={trackRecordSeries(result)} /></div>
+           </Card>
+
+         </>
       )}
 
       <Card className="mt-8">
