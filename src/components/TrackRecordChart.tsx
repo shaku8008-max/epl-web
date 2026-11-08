@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { formatDateOnly } from "@/lib/format";
 import {
+  modelColour,
   modelLabel,
   nearestTrackRecordPoint,
   type TrackRecordPoint,
@@ -19,11 +20,6 @@ const RIGHT = 18;
 const TOP = 20;
 const BOTTOM = 36;
 const RANDOM_LOG_LOSS = 1.0986;
-const lineColours: Record<string, string> = {
-  lean: "var(--color-accent)",
-  nn: "var(--color-better)",
-  goals: "var(--color-worse)",
-};
 const lineDashes: Record<string, string | undefined> = {
   lean: undefined,
   nn: undefined,
@@ -103,6 +99,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
       tabIndex={0}
       role="img"
       aria-label="Running average log loss over scored matches"
+      onFocus={() => setActive((current) => current ?? { modelKey: series[0].modelKey, index: 0 })}
       onKeyDown={moveKey}
     >
       <svg
@@ -134,15 +131,15 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
         {series.map((item) => {
           const points = item.points.map((point, index) => `${x(index, item.points.length)},${y(point.average)}`).join(" ");
           return (
-            <g key={item.modelKey}>
-              <polyline points={points} fill="none" stroke={lineColours[item.modelKey] ?? "var(--color-muted)"} strokeWidth={2.5} strokeDasharray={lineDashes[item.modelKey]} strokeLinejoin="round" strokeLinecap="round" />
+            <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
+              <polyline className="epl-chart-line epl-chart-line--fade" points={points} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeDasharray={lineDashes[item.modelKey]} strokeLinejoin="round" strokeLinecap="round" />
               {item.points.map((point, index) => (
                 <circle
                   key={`${item.modelKey}-${point.row.fixture_date ?? index}`}
                   cx={x(index, item.points.length)}
                   cy={y(point.average)}
                   r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3}
-                  fill={lineColours[item.modelKey] ?? "var(--color-muted)"}
+                  fill={modelColour(item.modelKey).line}
                 />
               ))}
             </g>
@@ -156,11 +153,11 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
             <span
               className="inline-block h-0.5 w-5"
               style={{
-                backgroundColor: lineDashes[item.modelKey]
-                  ? "transparent"
-                  : lineColours[item.modelKey] ?? "var(--color-muted)",
+                   backgroundColor: lineDashes[item.modelKey]
+                   ? "transparent"
+                   : modelColour(item.modelKey).line,
                 borderTop: lineDashes[item.modelKey]
-                  ? `2px dashed ${lineColours[item.modelKey] ?? "var(--color-muted)"}`
+                   ? `2px dashed ${modelColour(item.modelKey).line}`
                   : undefined,
               }}
             />
@@ -173,7 +170,7 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
           className={`pointer-events-none absolute top-2 z-10 w-48 rounded-card border border-border bg-white p-3 shadow-sm ${active.index < activeSeries.points.length * 0.2 ? "left-0" : active.index > activeSeries.points.length * 0.8 ? "right-0" : "-translate-x-1/2"}`}
           style={active.index < activeSeries.points.length * 0.2 || active.index > activeSeries.points.length * 0.8 ? undefined : { left: `${(guideX! / WIDTH) * 100}%` }}
         >
-          <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: lineColours[active.modelKey] ?? "var(--color-muted)" }}>
+            <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>
             {activePoint.average.toFixed(3)}
           </p>
           <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>

@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Card from "@/components/Card";
 import CorrectPicksChart from "@/components/CorrectPicksChart";
 import ModelTabs from "@/components/ModelTabs";
+import ModelWinRateChips from "@/components/ModelWinRateChips";
 import TrackRecordChart from "@/components/TrackRecordChart";
 import { getTrackRecord } from "@/lib/data";
 import { probabilityColour } from "@/lib/colour";
 import { formatDateOnly } from "@/lib/format";
-import { correctPicksSeries, modelLabel, trackedModels, trackRecordSeries } from "@/lib/trackRecord";
+import { correctPicksSeries, modelColour, modelLabel, trackedModels, trackRecordSeries } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -34,8 +35,12 @@ function outcomeColour(outcome: TrackRecord["result"]): string {
   return outcome === "H" ? "text-better" : outcome === "A" ? "text-worse" : outcome === "D" ? "text-draw" : "text-muted";
 }
 
-function modelColour(modelKey: string): string {
-  return modelKey === "lean" ? "text-accent" : modelKey === "nn" ? "text-better" : modelKey === "goals" ? "text-worse" : "text-muted";
+function outcomeTint(outcome: TrackRecord["result"]): string {
+  return outcome === "H" ? "bg-better-soft" : outcome === "A" ? "bg-worse-soft" : outcome === "D" ? "bg-draw-soft" : "bg-tint";
+}
+
+function outcomeTreatment(outcome: TrackRecord["result"]): string {
+  return `${outcomeColour(outcome)} ${outcomeTint(outcome)}`;
 }
 
 function probabilityCells(row: TrackRecord) {
@@ -62,7 +67,7 @@ function logLoss(value: number | null): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "unavailable";
 }
 
-function SummaryCard({ rows, label }: { rows: TrackRecord[]; label: string }) {
+function SummaryCard({ rows, label, modelKey }: { rows: TrackRecord[]; label: string; modelKey: string }) {
   const correct = rows.filter((row) => row.correct === true).length;
   const averageLogLossRows = rows.filter(
     (row) => typeof row.log_loss === "number" && Number.isFinite(row.log_loss)
@@ -74,7 +79,7 @@ function SummaryCard({ rows, label }: { rows: TrackRecord[]; label: string }) {
       : null;
 
   return (
-    <Card variant="white">
+      <Card variant="white" className={modelColour(modelKey).tint}>
       <h2 className="font-heading text-2xl font-semibold">{label}</h2>
       {rows.length === 0 ? (
         <p className="mt-4 text-muted">Collecting, 0 matches scored</p>
@@ -118,12 +123,13 @@ export default async function TrackRecordPage() {
         </Card>
       ) : (
         <>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+           <div className="epl-sequence mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {trackedModels.map((model) => (
               <SummaryCard
                 key={model.key}
                 rows={result.filter((row) => row.model_key === model.key)}
                 label={model.label}
+                modelKey={model.key}
               />
             ))}
           </div>
@@ -132,8 +138,9 @@ export default async function TrackRecordPage() {
              Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.
            </p>
 
-           <Card className="mt-8" variant="white">
+           <Card className="epl-rise mt-8" variant="white">
              <h2 className="font-heading text-2xl font-semibold">Correct picks over time</h2>
+             <div className="mt-4"><ModelWinRateChips rows={result} /></div>
              <div className="mt-4"><CorrectPicksChart rows={result} series={correctPicksSeries(result)} /></div>
              <p className="mt-3 text-sm text-muted">Each model line counts only its own scored matches; higher means more correct picks, and the dashed line is the one-in-three guessing benchmark.</p>
            </Card>
@@ -156,15 +163,16 @@ export default async function TrackRecordPage() {
                  </thead>
                  <tbody className="divide-y divide-border">
                    {result.map((row, index) => (
-                     <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} className="transition-colors hover:bg-tint focus-within:bg-tint">
+                     <tr key={`${row.model_key}-${row.fixture_date}-${row.home}-${row.away}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
                        <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
                        <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
-                       <td className={`px-4 py-3 font-semibold ${modelColour(row.model_key)}`}>{modelLabel(row.model_key)}</td>
+                       <td className="px-4 py-3"><span className={`rounded-card px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>
                        <td className="whitespace-nowrap px-4 py-3 font-tabular">{probabilityCells(row)}</td>
-                       <td className={`px-4 py-3 font-medium ${outcomeColour(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</td>
-                       <td className={`whitespace-nowrap px-4 py-3 font-medium ${outcomeColour(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</td>
-                       <td className={`whitespace-nowrap px-4 py-3 font-medium ${row.correct === true ? "text-better" : row.correct === false ? "text-worse" : "text-muted"}`}>
+                       <td className="px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${outcomeTreatment(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</span></td>
+                       <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${outcomeTreatment(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</span></td>
+                       <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-card px-2 py-1 font-medium ${row.correct === true ? "bg-better-soft text-better" : row.correct === false ? "bg-worse-soft text-worse" : "bg-tint text-muted"}`}>
                          {row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}
+                       </span>
                        </td>
                        <td className="px-4 py-3 font-tabular">{logLoss(row.log_loss)}</td>
                      </tr>
@@ -175,15 +183,16 @@ export default async function TrackRecordPage() {
              {result.length === 0 && <p className="p-6 text-muted">No scored matches have been returned yet.</p>}
            </Card>
 
-           <Card className="mt-8" variant="white">
+           <Card className="epl-rise mt-8" variant="white">
              <h2 className="font-heading text-2xl font-semibold">Log loss over time</h2>
+             <div className="mt-4"><ModelWinRateChips rows={result} /></div>
              <div className="mt-4"><TrackRecordChart series={trackRecordSeries(result)} /></div>
            </Card>
 
          </>
       )}
 
-      <Card className="mt-8">
+       <Card className="epl-rise mt-8">
         <h2 className="font-heading text-2xl font-semibold">A note about this record</h2>
         <ul className="mt-4 list-disc space-y-3 pl-5 leading-relaxed text-muted">
           <li>The live record is thin, with only a few dozen matches, so accuracy can swing a lot. This is not evidence that either model is better.</li>

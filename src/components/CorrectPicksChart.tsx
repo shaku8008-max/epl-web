@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { formatDateOnly } from "@/lib/format";
 import {
+  modelColour,
   modelLabel,
   type CorrectPicksPoint,
   type CorrectPicksSeries,
@@ -22,12 +23,6 @@ const LEFT = 52;
 const RIGHT = 18;
 const TOP = 20;
 const BOTTOM = 36;
-const lineColours: Record<string, string> = {
-  lean: "var(--color-accent)",
-  nn: "var(--color-better)",
-  goals: "var(--color-worse)",
-};
-
 function pointDate(point: CorrectPicksPoint): string {
   return point.row.fixture_date ? formatDateOnly(point.row.fixture_date) : "Date unavailable";
 }
@@ -135,6 +130,7 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
       tabIndex={0}
       role="img"
       aria-label="Cumulative correct picks compared with random guessing"
+      onFocus={() => setActive((current) => current ?? { modelKey: drawableSeries[0].modelKey, index: 0 })}
       onKeyDown={moveKey}
     >
       <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="h-auto w-full" onPointerMove={setFromPointer} onPointerDown={setFromPointer} onPointerLeave={() => setActive(null)}>
@@ -151,10 +147,10 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
           </>
         )}
         {drawableSeries.map((item) => (
-          <g key={item.modelKey}>
-            <polyline points={item.points.map((point) => `${x(point.row.fixture_date ?? "")},${y(point.correct)}`).join(" ")} fill="none" stroke={lineColours[item.modelKey] ?? "var(--color-muted)"} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+          <g key={item.modelKey} className="epl-chart-series" opacity={active && active.modelKey !== item.modelKey ? 0.28 : 1}>
+            <polyline pathLength={1} className="epl-chart-line epl-chart-line--draw" points={item.points.map((point) => `${x(point.row.fixture_date ?? "")},${y(point.correct)}`).join(" ")} fill="none" stroke={modelColour(item.modelKey).line} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
             {item.points.map((point, index) => (
-              <circle key={`${item.modelKey}-${point.row.fixture_date ?? index}`} cx={x(point.row.fixture_date ?? "")} cy={y(point.correct)} r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3} fill={lineColours[item.modelKey] ?? "var(--color-muted)"} />
+              <circle className="epl-chart-point" key={`${item.modelKey}-${point.row.fixture_date ?? index}`} cx={x(point.row.fixture_date ?? "")} cy={y(point.correct)} r={active?.modelKey === item.modelKey && active.index === index ? 5 : 3} fill={modelColour(item.modelKey).line} />
             ))}
           </g>
         ))}
@@ -163,7 +159,7 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted" aria-hidden="true">
         {drawableSeries.map((item) => (
           <span key={item.modelKey} className="inline-flex items-center gap-1.5">
-            <span className="inline-block h-0.5 w-5" style={{ backgroundColor: lineColours[item.modelKey] ?? "var(--color-muted)" }} />
+            <span className="inline-block h-0.5 w-5" style={{ backgroundColor: modelColour(item.modelKey).line }} />
             {modelLabel(item.modelKey)}
           </span>
         ))}
@@ -171,7 +167,7 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
       </div>
       {activePoint && activeSeries && active && (
         <div className={`pointer-events-none absolute top-2 z-10 w-48 rounded-card border border-border bg-white p-3 shadow-sm ${active.index < activeSeries.points.length * 0.2 ? "left-0" : active.index > activeSeries.points.length * 0.8 ? "right-0" : "-translate-x-1/2"}`} style={active.index < activeSeries.points.length * 0.2 || active.index > activeSeries.points.length * 0.8 ? undefined : { left: `${(guideX! / WIDTH) * 100}%` }}>
-          <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: lineColours[active.modelKey] ?? "var(--color-muted)" }}>{activePoint.correct} correct</p>
+          <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>{activePoint.correct} correct</p>
           <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>
           <p className="text-xs text-muted">{pointDate(activePoint)} · {modelLabel(active.modelKey)}</p>
         </div>

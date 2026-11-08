@@ -68,6 +68,84 @@ body {
   }
 }
 
+@keyframes epl-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes epl-line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes epl-line-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .epl-rise,
+  .epl-sequence > *,
+  .epl-chip-sequence > *,
+  .epl-table-row {
+    animation: epl-rise-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .epl-sequence > :nth-child(2),
+  .epl-chip-sequence > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+
+  .epl-sequence > :nth-child(3),
+  .epl-chip-sequence > :nth-child(3) {
+    animation-delay: 140ms;
+  }
+
+  .epl-chart-line--draw {
+    stroke-dasharray: 1;
+    animation: epl-line-draw 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .epl-chart-line--fade {
+    animation: epl-line-fade 500ms ease-out both;
+  }
+
+  .epl-chart-series,
+  .epl-chart-point {
+    transition: opacity 220ms ease-out, r 220ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .epl-rise,
+  .epl-sequence > *,
+  .epl-chip-sequence > *,
+  .epl-table-row,
+  .epl-chart-line--draw,
+  .epl-chart-line--fade {
+    animation: none;
+  }
+
+  .epl-chart-series,
+  .epl-chart-point {
+    transition: none;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Team stats comparison table (see components/TeamStatsCard.tsx).     */
 /* Built from divs in a CSS grid rather than a <table>: an absolutely  */
