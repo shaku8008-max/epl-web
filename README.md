@@ -9,7 +9,8 @@ site never runs a model.
 
 | Route | What it is |
 |---|---|
-| `/` | Predict (Lean model): team picker, probabilities, team stats, waterfall, next round |
+| `/` | Redirects to the track record |
+| `/lean` | Predict (Lean model): team picker, probabilities, team stats, waterfall, next round |
 | `/neural` | Neural network predictions, expected goals, comparison with Lean, stats, waterfall, next fixtures |
 | `/neural/outlook` | Season outlook from 10,000 simulated seasons (table, finish-chance bars, caveats) |
 | `/goals` | Linear goal-difference predictions, probabilities, expected margin, stats and next fixtures |
@@ -20,7 +21,7 @@ site never runs a model.
 | `/refresh` | Triggers the predictor workflow on GitHub Actions and polls for new data |
 | `/status` | Supabase troubleshooting, not indexed |
 
-The model row (Lean, Neural network, Season outlook, Linear goals, Track record) is
+The model row (Track record, Lean, Neural network, Season outlook, Linear goals) is
 `src/components/ModelTabs.tsx`; the main nav is `src/components/Tabs.tsx`.
 
 ## Setup
@@ -87,7 +88,7 @@ project notes if it is ever dropped.
 
 ## How I ship changes
 
-1. Branch from `main` (`git checkout -b some-name`).
+1. Work directly on `main` for this deployment.
 2. Make the change (usually via an opencode prompt), then `npm run lint` and
    `npm run build`.
 3. Commit with `git add -A src` after checking `git --no-pager status --short`

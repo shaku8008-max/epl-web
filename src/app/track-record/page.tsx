@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Card from "@/components/Card";
-import CorrectPicksChart from "@/components/CorrectPicksChart";
 import ModelTabs from "@/components/ModelTabs";
-import ModelWinRateChips from "@/components/ModelWinRateChips";
-import TrackRecordChart from "@/components/TrackRecordChart";
+import TrackRecordPlayback from "@/components/TrackRecordPlayback";
 import { getTrackRecord } from "@/lib/data";
 import { probabilityColour } from "@/lib/colour";
 import { formatDateOnly } from "@/lib/format";
-import { correctPicksSeries, modelColour, modelLabel, trackedModels, trackRecordSeries } from "@/lib/trackRecord";
+import { modelColour, modelLabel, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -138,12 +136,7 @@ export default async function TrackRecordPage() {
              Random guessing has a log loss of about 1.0986. Lower is better. Log loss rewards confident correct predictions and punishes confident wrong ones.
            </p>
 
-           <Card className="epl-rise mt-8" variant="white">
-             <h2 className="font-heading text-2xl font-semibold">Correct picks over time</h2>
-             <div className="mt-4"><ModelWinRateChips rows={result} /></div>
-             <div className="mt-4"><CorrectPicksChart rows={result} series={correctPicksSeries(result)} /></div>
-             <p className="mt-3 text-sm text-muted">Each model line counts only its own scored matches; higher means more correct picks, and the dashed line is the one-in-three guessing benchmark.</p>
-           </Card>
+            <TrackRecordPlayback rows={result} />
 
            <Card className="mt-8 p-0" variant="white">
              <div className="overflow-x-auto">
@@ -181,12 +174,6 @@ export default async function TrackRecordPage() {
                </table>
              </div>
              {result.length === 0 && <p className="p-6 text-muted">No scored matches have been returned yet.</p>}
-           </Card>
-
-           <Card className="epl-rise mt-8" variant="white">
-             <h2 className="font-heading text-2xl font-semibold">Log loss over time</h2>
-             <div className="mt-4"><ModelWinRateChips rows={result} /></div>
-             <div className="mt-4"><TrackRecordChart series={trackRecordSeries(result)} /></div>
            </Card>
 
          </>

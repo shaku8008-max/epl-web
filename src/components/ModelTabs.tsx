@@ -6,11 +6,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const models = [
-  { href: "/", label: "Lean" },
+  { href: "/track-record", label: "Track record" },
+  { href: "/lean", label: "Lean" },
   { href: "/neural", label: "Neural network" },
   { href: "/neural/outlook", label: "Season outlook" },
   { href: "/goals", label: "Linear goals" },
-  { href: "/track-record", label: "Track record" },
 ];
 
 export default function ModelTabs() {
@@ -21,7 +21,7 @@ export default function ModelTabs() {
       {models.map((model) => {
         // Each model entry owns its exact route; the outlook is not also the
         // parent Neural tab.
-        const active = model.href === "/" ? pathname === "/" : pathname === model.href || (model.href === "/track-record" && pathname.startsWith(model.href));
+        const active = pathname === model.href || (model.href === "/track-record" && pathname.startsWith(model.href));
         return (
           <Link
             key={model.href}

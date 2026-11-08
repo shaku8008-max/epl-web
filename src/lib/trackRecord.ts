@@ -7,9 +7,9 @@ export const trackedModels = [
 ] as const;
 
 export const modelColours: Record<string, { line: string; text: string; tint: string }> = {
-  lean: { line: "var(--color-away)", text: "text-away", tint: "bg-primary-light" },
-  nn: { line: "var(--color-worse)", text: "text-worse", tint: "bg-worse-soft" },
-  goals: { line: "var(--color-open)", text: "text-open", tint: "bg-open-soft" },
+  lean: { line: "var(--color-model-lean)", text: "text-model-lean", tint: "bg-model-lean-soft" },
+  nn: { line: "var(--color-model-nn)", text: "text-model-nn", tint: "bg-model-nn-soft" },
+  goals: { line: "var(--color-model-goals)", text: "text-model-goals", tint: "bg-model-goals-soft" },
 };
 
 export function modelColour(modelKey: string) {

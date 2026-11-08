@@ -167,9 +167,10 @@ export default function CorrectPicksChart({ rows, series }: CorrectPicksChartPro
       </div>
       {activePoint && activeSeries && active && (
         <div className={`pointer-events-none absolute top-2 z-10 w-48 rounded-card border border-border bg-white p-3 shadow-sm ${active.index < activeSeries.points.length * 0.2 ? "left-0" : active.index > activeSeries.points.length * 0.8 ? "right-0" : "-translate-x-1/2"}`} style={active.index < activeSeries.points.length * 0.2 || active.index > activeSeries.points.length * 0.8 ? undefined : { left: `${(guideX! / WIDTH) * 100}%` }}>
-          <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>{activePoint.correct} correct</p>
+          <p className="font-heading text-xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>{activePoint.correct} of {active.index + 1} correct ({Math.round((activePoint.correct / (active.index + 1)) * 100)}%)</p>
+          <p className="mt-2 text-xs font-semibold">{modelLabel(active.modelKey)}</p>
           <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>
-          <p className="text-xs text-muted">{pointDate(activePoint)} · {modelLabel(active.modelKey)}</p>
+          <p className="text-xs text-muted">{pointDate(activePoint)}</p>
         </div>
       )}
       {collecting.length > 0 && (

@@ -23,7 +23,7 @@ const RANDOM_LOG_LOSS = 1.0986;
 const lineDashes: Record<string, string | undefined> = {
   lean: undefined,
   nn: undefined,
-  goals: "8 5",
+  goals: undefined,
 };
 
 function resultName(result: TrackRecordPoint["row"]["result"]): string {
@@ -91,6 +91,9 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
   const activeSeries = active ? series.find((item) => item.modelKey === active.modelKey) : null;
   const activePoint = activeSeries && active ? activeSeries.points[active.index] : null;
   const guideX = activeSeries && active ? x(active.index, activeSeries.points.length) : null;
+  const activeCorrect = activeSeries && active
+    ? activeSeries.points.slice(0, active.index + 1).filter((point) => point.row.correct === true).length
+    : 0;
 
   return (
     <div
@@ -170,12 +173,13 @@ export default function TrackRecordChart({ series }: TrackRecordChartProps) {
           className={`pointer-events-none absolute top-2 z-10 w-48 rounded-card border border-border bg-white p-3 shadow-sm ${active.index < activeSeries.points.length * 0.2 ? "left-0" : active.index > activeSeries.points.length * 0.8 ? "right-0" : "-translate-x-1/2"}`}
           style={active.index < activeSeries.points.length * 0.2 || active.index > activeSeries.points.length * 0.8 ? undefined : { left: `${(guideX! / WIDTH) * 100}%` }}
         >
-            <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>
-            {activePoint.average.toFixed(3)}
-          </p>
-          <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>
-          <p className="text-xs text-muted">{pointDate(activePoint)}</p>
-          <p className="text-xs text-muted">{modelLabel(active.modelKey)} · {resultName(activePoint.row.result)}</p>
+            <p className="font-heading text-xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>
+             {activePoint.average.toFixed(3)}
+            </p>
+           <p className="mt-2 text-xs font-semibold">{modelLabel(active.modelKey)} · {activePoint.row.fixture_date ? pointDate(activePoint) : "Date unavailable"}</p>
+           <p className="mt-2 truncate text-xs font-semibold">{activePoint.row.home ?? "Home unavailable"} v {activePoint.row.away ?? "Away unavailable"}</p>
+           <p className="text-xs text-muted">{resultName(activePoint.row.result)}</p>
+           <p className="text-xs text-muted">{activeCorrect} of {active.index + 1} correct ({Math.round((activeCorrect / (active.index + 1)) * 100)}%)</p>
           <p className="text-xs text-muted">{activePoint.row.correct === true ? "✓ Correct" : activePoint.row.correct === false ? "✕ Incorrect" : "Correctness unavailable"}</p>
           <p className="text-xs text-muted">Match log loss: {activePoint.row.log_loss === null ? "unavailable" : activePoint.row.log_loss.toFixed(3)}</p>
         </div>

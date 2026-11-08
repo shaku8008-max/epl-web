@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabs = [
-  { href: "/", label: "Predict" },
+  { href: "/track-record", label: "Predict" },
   { href: "/jev", label: "Jev" },
   { href: "/journal", label: "Journal" },
   { href: "/refresh", label: "Refresh" },
@@ -20,10 +20,10 @@ export default function Tabs() {
   return (
     <nav aria-label="Main" className="flex min-w-0 shrink items-center gap-0.5 overflow-x-auto">
       {tabs.map((tab) => {
-        // Predict owns both model pages; the other tabs match their URL prefix.
+        // Predict owns the model pages; the other tabs match their URL prefix.
         const active =
-          tab.href === "/"
-            ? pathname === "/" || pathname.startsWith("/neural")
+          tab.href === "/track-record"
+            ? pathname === "/" || pathname.startsWith("/track-record") || pathname === "/lean" || pathname.startsWith("/neural") || pathname.startsWith("/goals")
             : pathname.startsWith(tab.href);
         // Keep utility labels compact at narrow phone widths.
         const utility =

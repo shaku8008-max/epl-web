@@ -13,7 +13,7 @@ export default function NotFound() {
       </p>
       <Card className="mt-8">
         <Link
-          href="/"
+          href="/track-record"
           className="inline-flex min-h-12 items-center justify-center rounded-card border border-accent px-5 py-2 text-base font-semibold text-accent transition-colors hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           Back to Predict

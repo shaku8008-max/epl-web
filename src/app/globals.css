@@ -34,6 +34,14 @@
   --color-out: #b91c1c;
   --color-doubtful: #b45309;
 
+  /* Model colours are intentionally separate from outcome colours. */
+  --color-model-lean: #15803d;
+  --color-model-lean-soft: #e5f5e9;
+  --color-model-nn: #db2777;
+  --color-model-nn-soft: #fce7f3;
+  --color-model-goals: #a16207;
+  --color-model-goals-soft: #fef3c7;
+
   /* Fonts. Archivo carries both display and body text; mono is for data. */
   --font-heading: var(--font-archivo), ui-sans-serif, sans-serif;
   --font-body: var(--font-archivo), ui-sans-serif, sans-serif;
