@@ -102,9 +102,13 @@ export default async function TrackRecordPage() {
 
             <TrackRecordPlayback rows={result} />
 
-            <TrackRecordTable rows={result} />
+             <TrackRecordTable rows={result} />
+             <div className="mt-5">
+               <p className="text-sm text-muted">See where the models disagreed or were nearly toss-ups.</p>
+               <LinkButton href="/close-calls" variant="cta" className="mt-3">See close calls and disagreements</LinkButton>
+             </div>
 
-         </>
+          </>
       )}
 
        <Card className="epl-rise mt-8">
