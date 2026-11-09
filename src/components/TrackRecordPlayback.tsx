@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Card from "@/components/Card";
 import CorrectPicksChart from "@/components/CorrectPicksChart";
 import ModelWinRateChips from "@/components/ModelWinRateChips";
@@ -16,6 +16,8 @@ export default function TrackRecordPlayback({ rows }: { rows: TrackRecord[] }) {
   const correctSeries = useMemo(() => correctPicksSeries(rows), [rows]);
   const lossSeries = useMemo(() => trackRecordSeries(rows), [rows]);
   const hasPlayback = rows.filter((row) => row.fixture_date !== null).length >= 3;
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const toggleModel = (modelKey: string) => setSelectedModel((current) => modelKey === "" ? null : current === modelKey ? null : modelKey);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -29,18 +31,18 @@ export default function TrackRecordPlayback({ rows }: { rows: TrackRecord[] }) {
     <>
       <Card className="epl-rise mt-8" variant="white">
         <h2 className="font-heading text-2xl font-semibold">Correct picks over time</h2>
-        <div className="mt-4"><ModelWinRateChips rows={rows} timeline={timeline} /></div>
+        <div className="mt-4"><ModelWinRateChips rows={rows} timeline={timeline} selectedModel={selectedModel} onToggleModel={toggleModel} /></div>
         {hasPlayback && (
           <PlaybackControls timeline={timeline} />
         )}
-        <div className="mt-4"><CorrectPicksChart rows={rows} series={correctSeries} timeline={timeline} /></div>
+        <div className="mt-8"><CorrectPicksChart rows={rows} series={correctSeries} timeline={timeline} selectedModel={selectedModel} onToggleModel={toggleModel} /></div>
         <p className="mt-3 text-sm text-muted">Each model line counts only its own scored matches; higher means more correct picks, and the dashed line is the one-in-three guessing benchmark.</p>
       </Card>
 
       <Card className="mt-8" variant="white">
         <h2 className="font-heading text-2xl font-semibold">Log loss over time</h2>
-        <div className="mt-4"><ModelWinRateChips rows={rows} /></div>
-        <div className="mt-4"><TrackRecordChart series={lossSeries} /></div>
+        <div className="mt-4"><ModelWinRateChips rows={rows} selectedModel={selectedModel} onToggleModel={toggleModel} /></div>
+        <div className="mt-4"><TrackRecordChart series={lossSeries} selectedModel={selectedModel} onToggleModel={toggleModel} /></div>
       </Card>
     </>
   );

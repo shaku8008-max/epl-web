@@ -21,6 +21,7 @@ type PlaybackSvgLayerProps = {
   lines: PlaybackLine[];
   xAtPosition: (position: number) => number;
   y: (value: number) => number;
+  opacityByModel: Record<string, number>;
 };
 
 function interpolate(points: PlaybackLine["points"], position: number) {
@@ -54,6 +55,7 @@ export default function PlaybackSvgLayer({
   lines,
   xAtPosition,
   y,
+  opacityByModel,
 }: PlaybackSvgLayerProps) {
   const clipRef = useRef<SVGRectElement>(null);
   const markerRef = useRef<SVGGElement>(null);
@@ -62,7 +64,7 @@ export default function PlaybackSvgLayer({
     const update = () => {
       const position = timeline.getPosition();
       const progress = maxPosition === 0 ? 1 : position / maxPosition;
-      clipRef.current?.setAttribute("width", String(Math.max(0, Math.min(plotWidth, progress * plotWidth))));
+      clipRef.current?.setAttribute("width", String(Math.max(0, Math.min(plotWidth + 16, 16 + progress * plotWidth))));
       lines.forEach((line) => {
         const point = interpolate(line.points, position);
         const marker = markerRef.current?.querySelector<SVGCircleElement>(`[data-model="${line.modelKey}"]`);
@@ -74,16 +76,16 @@ export default function PlaybackSvgLayer({
     };
     update();
     return timeline.subscribe(update);
-  }, [lines, maxPosition, plotWidth, timeline, xAtPosition, y]);
+  }, [lines, maxPosition, opacityByModel, plotWidth, timeline, xAtPosition, y]);
 
   return (
     <>
       <clipPath id={clipId}>
-        <rect ref={clipRef} x={left} y={top} width={plotWidth} height={plotHeight} />
+        <rect ref={clipRef} x={left - 8} y={top - 8} width={plotWidth + 16} height={plotHeight + 16} />
       </clipPath>
       <g ref={markerRef} aria-hidden="true">
         {lines.map((line) => (
-          <circle key={line.modelKey} data-model={line.modelKey} r={5} fill="white" stroke={line.colour} strokeWidth={2} />
+          <g key={line.modelKey} opacity={opacityByModel[line.modelKey] ?? 1}><circle data-model={line.modelKey} r={5} fill="white" stroke={line.colour} strokeWidth={2} /></g>
         ))}
       </g>
     </>

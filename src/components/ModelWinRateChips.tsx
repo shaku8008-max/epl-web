@@ -12,7 +12,7 @@ function countAt(rows: TrackRecord[], fixtureIndexes: Map<string, number>, dateI
   }).length;
 }
 
-export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecord[]; timeline?: PlaybackTimeline }) {
+export default function ModelWinRateChips({ rows, timeline, selectedModel, onToggleModel }: { rows: TrackRecord[]; timeline?: PlaybackTimeline; selectedModel: string | null; onToggleModel: (modelKey: string) => void }) {
   const subscribe = timeline?.subscribe ?? (() => () => undefined);
   const snapshot = timeline?.getSnapshot ?? (() => 0);
   useSyncExternalStore(subscribe, snapshot, snapshot);
@@ -37,15 +37,19 @@ export default function ModelWinRateChips({ rows, timeline }: { rows: TrackRecor
           const colours = modelColour(model.key);
 
           return (
-            <span
+            <button
+              type="button"
+              aria-pressed={selectedModel === model.key}
+              onClick={() => onToggleModel(model.key)}
+              onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); onToggleModel(""); } }}
               key={model.key}
-              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-button border border-edge px-3 py-2.5 text-sm ${colours.tint} ${colours.text} sm:px-4`}
+              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-button border px-3 py-2.5 text-left text-sm ${colours.tint} ${colours.text} transition-opacity sm:px-4 ${selectedModel && selectedModel !== model.key ? "opacity-60" : "opacity-100"} ${selectedModel === model.key ? "border-2" : "border-edge"} focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2`}
             >
               <span className="font-semibold">{modelLabel(model.key)}:</span>
               {modelRows.length === 0 || scored < 0.5
                 ? <span>Collecting</span>
                  : <span className="tabular-nums"><strong className="block whitespace-nowrap text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)} correct</strong><span className="mt-1 block whitespace-nowrap text-sm font-semibold text-muted">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
-            </span>
+            </button>
           );
         })}
       </div>
