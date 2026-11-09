@@ -40,8 +40,8 @@
   --color-model-lean-soft: #e5f5e9;
   --color-model-nn: #db2777;
   --color-model-nn-soft: #fce7f3;
-  --color-model-goals: #a16207;
-  --color-model-goals-soft: #fef3c7;
+  --color-model-goals: #0e7490;
+  --color-model-goals-soft: #e0f4f8;
 
   /* Fonts. Archivo carries both display and body text; mono is for data. */
   --font-heading: var(--font-archivo), ui-sans-serif, sans-serif;
@@ -478,7 +478,7 @@ body {
 
   .epl-chart-series,
   .epl-chart-point {
-    transition: opacity 220ms ease-out, r 220ms ease-out;
+    transition: opacity 220ms ease-out, stroke-width 220ms ease-out, r 220ms ease-out;
   }
 
   .epl-model-detail-enter {
