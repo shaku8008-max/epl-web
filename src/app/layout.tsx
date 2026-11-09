@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, DM_Mono } from "next/font/google";
 import "./globals.css";
-import PitchIcon from "@/components/PitchIcon";
+import HomeLogo from "@/components/HomeLogo";
 import Tabs from "@/components/Tabs";
 import ModelStack, { type ModelStackItem } from "@/components/ModelStack";
 import { getLatestRun, getTrackRecord } from "@/lib/data";
@@ -74,16 +74,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="en-AU"
       className={`${archivo.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-dvh flex-col bg-surface font-body text-ink">
+      <body className="flex min-h-dvh flex-col overflow-x-clip bg-surface font-body text-ink">
         <ModelStack models={modelStack} />
         <header className="border-b border-edge bg-white text-ink">
           <div className="mx-auto flex min-h-16 w-full max-w-4xl flex-col items-stretch gap-0 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6">
-            <div className="flex min-w-0 shrink items-center gap-1.5 px-1.5 py-1 sm:px-0 sm:py-0">
-              <PitchIcon className="h-6 w-6 shrink-0 text-ink" />
-              <span className="whitespace-nowrap font-heading text-xl font-bold tracking-tight sm:text-2xl">
-                EPL Predictor
-              </span>
-            </div>
+            <HomeLogo />
             <Tabs />
           </div>
         </header>

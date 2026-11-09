@@ -1,22 +1,20 @@
-// Loading state for the Predict page: tint blocks where the picker and cards
-// will appear, so a slow database response never shows a blank page.
+// Keep the route loading state aligned with the Football Wizard introduction.
 export default function PredictLoading() {
   return (
-    <section
-      aria-busy="true"
-      aria-label="Loading predictions"
-      className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]"
-    >
-      <h1 className="font-heading text-4xl font-bold tracking-tight text-ink lg:text-5xl">Predict</h1>
-      <p className="mt-3 max-w-2xl text-lg">
-        Pick any two Premier League teams to see the home, draw and away
-        probabilities from the model, plus recent stats for both teams.
-      </p>
-      <div className="mt-8 space-y-6">
-        <div className="h-16 animate-pulse rounded-card border border-border bg-tint/70" />
-        <div className="h-56 animate-pulse rounded-card border border-border bg-tint/70" />
-        <div className="h-72 animate-pulse rounded-card border border-border bg-tint/70" />
-      </div>
-    </section>
+    <div className="intro-page" aria-busy="true">
+      <section className="intro-hero intro-hero--loading" aria-labelledby="intro-loading-title">
+        <div className="intro-hero__grid" aria-hidden="true" />
+        <div className="intro-hero__content">
+          <h1 id="intro-loading-title" className="intro-hero__title">Football Wizard</h1>
+          <p className="intro-hero__pitch">Premier League predictions from three models, checked honestly against real results.</p>
+        </div>
+      </section>
+      <section className="intro-panel intro-panel--loading" aria-label="Loading Football Wizard">
+        <div className="intro-panel__inner">
+          <div className="intro-loading-block" />
+          <div className="intro-loading-block intro-loading-block--cards" />
+        </div>
+      </section>
+    </div>
   );
 }

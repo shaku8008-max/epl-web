@@ -23,7 +23,7 @@ export default function Tabs() {
         // Predict owns the model pages; the other tabs match their URL prefix.
         const active =
           tab.href === "/track-record"
-            ? pathname === "/" || pathname.startsWith("/track-record") || pathname === "/lean" || pathname.startsWith("/neural") || pathname.startsWith("/goals")
+            ? pathname.startsWith("/track-record") || pathname === "/lean" || pathname.startsWith("/neural") || pathname.startsWith("/goals")
             : pathname.startsWith(tab.href);
         // Keep utility labels compact at narrow phone widths.
         const utility =

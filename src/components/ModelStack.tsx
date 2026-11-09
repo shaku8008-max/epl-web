@@ -17,6 +17,7 @@ type ModelStackProps = {
 
 export default function ModelStack({ models }: ModelStackProps) {
   const pathname = usePathname();
+  if (pathname === "/") return null;
 
   return (
     <nav
