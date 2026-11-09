@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { CSSProperties } from "react";
 import { modelColour } from "@/lib/trackRecord";
 
 export type ModelStackItem = {
@@ -35,10 +36,11 @@ export default function ModelStack({ models }: ModelStackProps) {
               key={model.modelKey}
               href={model.href}
               aria-current={isCurrent ? "page" : undefined}
-              aria-label={`${model.name}: ${model.line}. Open predictions`}
+              aria-label={`${model.name}: ${model.line}. ${isCurrent ? "Current page" : "Open predictions"}`}
+              style={{ "--model-line": colour.line } as CSSProperties}
               className={`model-stack-card${isCurrent ? " model-stack-card--current" : ""}`}
             >
-              <span className="model-stack-card__face">
+              <span className={`model-stack-card__face ${colour.tint}`}>
                 <span className="model-stack-card__title-row">
                   <span
                     className={`model-stack-card__icon ${colour.tint}`}
@@ -54,7 +56,7 @@ export default function ModelStack({ models }: ModelStackProps) {
                   </span>
                 </span>
                 <span className="model-stack-card__record font-tabular">{model.line}</span>
-                <span className="model-stack-card__open">Open predictions</span>
+                <span className="model-stack-card__open">{isCurrent ? "You are here" : "Open predictions"}</span>
               </span>
             </Link>
           );

@@ -6,6 +6,7 @@ import { formatDateOnly } from "@/lib/format";
 import { fixtureKey, modelColour, modelLabel, trackedModels } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 import Card from "@/components/Card";
+import Dropdown, { type DropdownOption } from "@/components/Dropdown";
 
 type Filter = "all" | "home" | "draw" | "away";
 
@@ -32,23 +33,17 @@ function logLoss(value: number | null): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "unavailable";
 }
 
-function SelectFilter({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
-  return <label className={`flex min-w-[calc(50%-0.5rem)] flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-0 ${value !== "all" ? "text-ink" : "text-muted"}`}>
-    <span>{label}</span>
-    <select value={value} onChange={(event) => onChange(event.target.value)} className={`min-h-11 rounded-button border border-edge bg-white px-3 py-2 font-body text-base font-normal text-ink focus-visible:outline-2 focus-visible:outline-ink ${value !== "all" ? "bg-tint" : ""}`}>
-      {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-    </select>
-  </label>;
-}
-
 export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
   const [model, setModel] = useState("all");
   const [predicted, setPredicted] = useState<Filter>("all");
   const [actual, setActual] = useState<Filter>("all");
   const [correct, setCorrect] = useState("all");
+  const [openFilter, setOpenFilter] = useState<"model" | "predicted" | "actual" | "correct" | null>(null);
   const active = model !== "all" || predicted !== "all" || actual !== "all" || correct !== "all";
   const scoredModels = trackedModels.filter((item) => rows.some((row) => row.model_key === item.key));
-  const outcomeOptions = [{ value: "all", label: "All" }, { value: "home", label: "Home" }, { value: "draw", label: "Draw" }, { value: "away", label: "Away" }];
+  const outcomeOptions: DropdownOption[] = [{ value: "all", label: "All" }, ...(["home", "draw", "away"] as const).map((outcome) => ({ value: outcome, label: outcomeLabel(outcome === "home" ? "H" : outcome === "draw" ? "D" : "A"), badge: <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-tint text-xs font-semibold text-ink">{outcome === "home" ? "H" : outcome === "draw" ? "D" : "A"}</span> }))];
+  const modelOptions: DropdownOption[] = [{ value: "all", label: "All" }, ...scoredModels.map((item) => ({ value: item.key, label: item.label, badge: <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: modelColour(item.key).line }} /> }))];
+  const correctOptions: DropdownOption[] = [{ value: "all", label: "All" }, { value: "correct", label: "Correct" }, { value: "incorrect", label: "Incorrect" }];
   const filteredRows = rows.filter((row) =>
     (model === "all" || row.model_key === model) &&
     (predicted === "all" || row.predicted_result === predicted.toUpperCase().charAt(0)) &&
@@ -56,14 +51,15 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
     (correct === "all" || (correct === "correct" ? row.correct === true : row.correct === false))
   );
   const clear = () => { setModel("all"); setPredicted("all"); setActual("all"); setCorrect("all"); };
+  const filter = (name: "model" | "predicted" | "actual" | "correct", label: string, value: string, options: DropdownOption[], onChange: (value: string) => void) => <label className={`flex min-w-[calc(50%-0.5rem)] flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-0 ${value !== "all" ? "text-ink" : "text-muted"}`}><span>{label}</span><Dropdown label={label} options={options} value={value} onChange={onChange} searchable={false} tinted={value !== "all"} open={openFilter === name} onOpen={() => setOpenFilter(name)} onClose={() => setOpenFilter(null)} /></label>;
 
   return <Card className="mt-8 p-0" variant="white">
     <div className="border-b border-border p-4 sm:p-5">
       <div className="flex flex-wrap items-end gap-3">
-        <SelectFilter label="Model" value={model} onChange={setModel} options={[{ value: "all", label: "All" }, ...scoredModels.map((item) => ({ value: item.key, label: item.label }))]} />
-        <SelectFilter label="Predicted" value={predicted} onChange={(value) => setPredicted(value as Filter)} options={outcomeOptions} />
-        <SelectFilter label="Actual" value={actual} onChange={(value) => setActual(value as Filter)} options={outcomeOptions} />
-        <SelectFilter label="Correct" value={correct} onChange={setCorrect} options={[{ value: "all", label: "All" }, { value: "correct", label: "Correct" }, { value: "incorrect", label: "Incorrect" }]} />
+        {filter("model", "Model", model, modelOptions, setModel)}
+        {filter("predicted", "Predicted", predicted, outcomeOptions, (value) => setPredicted(value as Filter))}
+        {filter("actual", "Actual", actual, outcomeOptions, (value) => setActual(value as Filter))}
+        {filter("correct", "Correct", correct, correctOptions, setCorrect)}
         <span className="pb-2 text-sm font-semibold text-muted">Showing {filteredRows.length} of {rows.length} scored matches</span>
          {active && <button type="button" onClick={clear} className="min-h-11 rounded-full border border-edge bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-ink">Clear filters</button>}
       </div>
