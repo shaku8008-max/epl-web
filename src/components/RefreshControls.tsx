@@ -1,7 +1,7 @@
 "use client";
 
 // Browser-side refresh controls: button, cooldown countdown and the polling
-// loop while a workflow run is active. The server page passes the initial
+// loop while workflow runs are active. The server page passes the initial
 // state once; after that this component talks to GET/POST /api/refresh only
 // (never to GitHub or Supabase directly, and it never sees the token).
 
@@ -14,8 +14,8 @@ import { formatMelbourne } from "@/lib/format";
 
 // Poll the status every 10 seconds while refreshing.
 const POLL_MS = 10 * 1000;
-// Give up after 5 minutes with no newer data.
-const TIMEOUT_MS = 5 * 60 * 1000;
+// Give up after 12 minutes with no newer data.
+const TIMEOUT_MS = 12 * 60 * 1000;
 
 type Phase =
   | { name: "idle" }
@@ -100,7 +100,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
   }, [phase.name, status.runActive, status.nextAllowedAt, cooldownDone]);
 
   // Polling loop while refreshing. Stops when data_as_of moves past the value
-  // seen before dispatch (done), or after 5 minutes (timed out).
+  // seen before dispatch and all workflow runs finish, or after 12 minutes.
   useEffect(() => {
     if (phase.name !== "refreshing") return;
     const seen = phase.seenDataAsOf;
@@ -113,7 +113,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
         if (!res.ok) return;
         const next = (await res.json()) as RefreshStatus;
         setStatus(next);
-        if (next.dataAsOf && next.dataAsOf !== seen) {
+        if (next.dataAsOf && next.dataAsOf !== seen && !next.runActive) {
           stopPolling();
           setPhase({ name: "done", newDataAsOf: next.dataAsOf });
           // Re-render server components (footer "Data as of") in place.
@@ -202,8 +202,9 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
           Refreshing…
         </Button>
         <p className="mt-3 text-base text-muted">
-          Refreshing… this usually takes one to two minutes. You can leave this
-          page; the new data will be here when you come back.
+          {status.dataAsOf && status.dataAsOf !== phase.seenDataAsOf
+            ? "The Lean predictions are updated. Finishing the Neural network and Linear goals…"
+            : "Refreshing… this usually takes three to five minutes. You can leave this page; the new data will be here when you come back."}
         </p>
       </div>
     );
@@ -287,8 +288,9 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
     <div className="mt-4">
        <Button variant="cta" onClick={startRefresh}>Refresh data</Button>
       <p className="mt-3 text-base text-muted">
-        Fetches the latest results and recomputes every prediction. Takes about
-        two minutes.
+        Fetches the latest results and recomputes the predictions for Lean, the
+        Neural network and Linear goals, and updates Jev. Takes about three to
+        five minutes.
       </p>
     </div>
   );

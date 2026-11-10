@@ -18,7 +18,7 @@ site never runs a model.
 | `/jev` | News-adjusted predictions (experiment) |
 | `/jev/scoreboard` | Does Jev's shift beat the plain model on finished matches |
 | `/journal`, `/journal/history` | Private bet journal with summary cards and a profit/loss area chart |
-| `/refresh` | Triggers the predictor workflow on GitHub Actions and polls for new data |
+| `/refresh` | Triggers all three predictor workflows on GitHub Actions and polls for new data |
 | `/status` | Supabase troubleshooting, not indexed |
 
 The model row (Track record, Lean, Neural network, Season outlook, Linear goals) is
@@ -47,7 +47,7 @@ component):
   page, auto-settle).
 - `GITHUB_TOKEN`, `GITHUB_OWNER`, `GITHUB_REPO`, `GITHUB_WORKFLOW`,
   `GITHUB_REF`: used by `src/app/api/refresh/route.ts` and `src/lib/github.ts`
-  to dispatch the predictor workflow. Fine-grained token, Actions read/write
+  to dispatch all three predictor workflows. Fine-grained token, Actions read/write
   on the predictor repo only.
 
 On Vercel the same names go under Project Settings -> Environment Variables.

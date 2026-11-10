@@ -1,5 +1,5 @@
 // Refresh status API. Server code only: reads runs via the Supabase
-// public-key client and checks the workflow via the token helper.
+// public-key client and checks the workflows via the token helper.
 
 import { getLatestRun } from "@/lib/data";
 import { getActiveRun } from "@/lib/github";
@@ -34,7 +34,8 @@ export async function loadRefreshStatus(): Promise<RefreshStatus> {
   };
 }
 
-// GET /api/refresh: current state for the page and its polling loop.
+// GET /api/refresh: current state for the page and its polling loop. runActive
+// means any of the three predictor workflows is queued or in progress.
 export async function GET(): Promise<Response> {
   try {
     const status = await loadRefreshStatus();
@@ -45,9 +46,9 @@ export async function GET(): Promise<Response> {
   }
 }
 
-// POST /api/refresh: 409 if a run is active, 429 if inside the cooldown,
-// otherwise dispatch the workflow and return 202 with the data_as_of seen
-// before dispatching (the client polls until a newer one appears).
+// POST /api/refresh: 409 if any workflow run is active, 429 if inside the
+// cooldown, otherwise dispatch all three workflows and return 202 with the
+// data_as_of seen before dispatching (the client polls until a newer one appears).
 export async function POST(): Promise<Response> {
   try {
     const status = await loadRefreshStatus();

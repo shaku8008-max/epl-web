@@ -1,4 +1,4 @@
-// Server-only GitHub helper: triggers the predictor workflow and checks
+// Server-only GitHub helper: triggers the predictor workflows and checks
 // whether a workflow run is active. Runs on the server only (route handlers
 // import it; no client component ever does). The guard below throws if this
 // file is ever bundled into the browser, where `window` exists.
@@ -59,10 +59,18 @@ function githubError(action: string, status: number): Error {
   return new Error(`GitHub ${action} failed (status ${status}).`);
 }
 
-// Starts the predictor workflow via workflow dispatch. Any 2xx counts as
-// success; anything else throws the safe error above.
-export async function dispatchWorkflow(): Promise<void> {
-  const { token, owner, repo, workflow, ref } = readConfig();
+// The first workflow comes from the env var for backwards compatibility.
+function predictorWorkflows(workflow: string): string[] {
+  return [...new Set([workflow, "predict_nn.yml", "predict_goals.yml"])]
+}
+
+async function dispatchSingleWorkflow(
+  token: string,
+  owner: string,
+  repo: string,
+  workflow: string,
+  ref: string,
+): Promise<void> {
   const url =
     `https://api.github.com/repos/${owner}/${repo}` +
     `/actions/workflows/${workflow}/dispatches`;
@@ -79,24 +87,49 @@ export async function dispatchWorkflow(): Promise<void> {
       body: JSON.stringify({ ref }),
     });
   } catch {
-    throw new Error("Could not reach GitHub. Check your connection and try again.");
+    throw new Error(`${workflow} (could not reach GitHub)`);
   }
-  if (!res.ok) throw githubError("refresh", res.status);
+  if (!res.ok) throw new Error(`${workflow} (status ${res.status})`);
 }
 
-// Whether a workflow run is currently queued or in progress. Checks both
-// statuses with two small requests (per_page=1 keeps them cheap) because the
-// runs endpoint filters to a single status per request.
+// Starts all predictor workflows via workflow dispatch. Each dispatch runs
+// independently so one failure does not prevent the others from starting.
+export async function dispatchWorkflow(): Promise<void> {
+  const { token, owner, repo, workflow, ref } = readConfig();
+  const workflows = predictorWorkflows(workflow);
+  const results = await Promise.allSettled(
+    workflows.map((item) => dispatchSingleWorkflow(token, owner, repo, item, ref)),
+  );
+  const failures = results.flatMap((result, index) =>
+    result.status === "rejected"
+      ? [result.reason instanceof Error ? result.reason.message : `${workflows[index]} (could not reach GitHub)`]
+      : [],
+  );
+  if (failures.length > 0) {
+    throw new Error(
+      `Started ${workflows.length - failures.length} of ${workflows.length} workflows. ` +
+        `Could not start: ${failures.join(", ")}.`,
+    );
+  }
+}
+
+// Whether any predictor workflow run is currently queued or in progress.
+// The repository endpoint handles each status with one request, then runs are
+// filtered by their exact workflow path.
 export async function getActiveRun(): Promise<ActiveRun> {
   const { token, owner, repo, workflow } = readConfig();
+  const workflows = predictorWorkflows(workflow);
   const base =
     `https://api.github.com/repos/${owner}/${repo}` +
-    `/actions/workflows/${workflow}/runs`;
+    `/actions/runs`;
 
-  async function earliestStart(status: "queued" | "in_progress"): Promise<string | null> {
+  async function runsForStatus(status: "queued" | "in_progress"): Promise<{
+    path?: string;
+    run_started_at?: string | null;
+  }[]> {
     let res: Response;
     try {
-      res = await fetch(`${base}?status=${status}&per_page=1`, {
+      res = await fetch(`${base}?status=${status}&per_page=30`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/vnd.github+json",
@@ -108,15 +141,20 @@ export async function getActiveRun(): Promise<ActiveRun> {
     }
     if (!res.ok) throw githubError("status check", res.status);
     const json = (await res.json()) as {
-      workflow_runs?: { run_started_at?: string }[];
+      workflow_runs?: { path?: string; run_started_at?: string | null }[];
     };
-    return json.workflow_runs?.[0]?.run_started_at ?? null;
+    return json.workflow_runs ?? [];
   }
 
   const [queued, inProgress] = await Promise.all([
-    earliestStart("queued"),
-    earliestStart("in_progress"),
+    runsForStatus("queued"),
+    runsForStatus("in_progress"),
   ]);
-  const startedAt = [queued, inProgress].filter((s) => s !== null).sort()[0] ?? null;
-  return { active: startedAt !== null, startedAt };
+  const paths = new Set(workflows.map((item) => `.github/workflows/${item}`));
+  const activeRuns = [...queued, ...inProgress].filter((run) => run.path && paths.has(run.path));
+  const startedAt = activeRuns
+    .map((run) => run.run_started_at)
+    .filter((value): value is string => value !== null && value !== undefined)
+    .sort()[0] ?? null;
+  return { active: activeRuns.length > 0, startedAt };
 }
