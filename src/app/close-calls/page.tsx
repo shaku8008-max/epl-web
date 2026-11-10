@@ -65,9 +65,9 @@ function ModelMark({ modelKey }: { modelKey: string }) {
 
 function ModelPredictionRow({ comparison, modelKey }: { comparison: FixtureComparison; modelKey: string }) {
   const model = comparison.models.find((item) => item.modelKey === modelKey);
-  return <div className="grid gap-1 border-t border-border py-3 sm:grid-cols-[minmax(10rem,1fr)_minmax(8rem,auto)_auto] sm:items-center sm:gap-4">
+  return <div className="grid gap-1 border-t border-border py-3 sm:grid-cols-[minmax(9rem,1fr)_5rem_14rem_5.5rem] sm:items-center sm:gap-4">
     <ModelMark modelKey={modelKey} />
-    {model ? <><span className={`font-semibold ${outcomeClass(model.pick)}`}>{outcomeLabel(model.pick)}</span><span className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:justify-end">{probabilityLine(model)}{model.gap <= CLOSE_CALL_GAP && <span className="text-sm font-semibold text-muted">{gapLabel(model.gap)}</span>}</span></> : <span className="text-sm text-muted sm:col-span-2">not available</span>}
+    {model ? <><span className={`font-semibold ${outcomeClass(model.pick)}`}>{outcomeLabel(model.pick)}</span><span>{probabilityLine(model)}</span><span className="text-sm font-semibold text-muted sm:text-right">{model.gap <= CLOSE_CALL_GAP ? gapLabel(model.gap) : null}</span></> : <span className="text-sm text-muted sm:col-span-3">not available</span>}
   </div>;
 }
 
