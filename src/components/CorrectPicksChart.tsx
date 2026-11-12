@@ -238,7 +238,7 @@ export default function CorrectPicksChart({ rows, series, timeline, selectedMode
             key={v.modelKey}
             aria-pressed={selectedModel === v.modelKey}
             onClick={() => onToggleModel(v.modelKey)}
-            className={`inline-flex items-center gap-1.5 rounded-button px-1 py-1 focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2 ${selectedModel && selectedModel !== v.modelKey ? "opacity-60" : ""}`}
+             className={`inline-flex cursor-pointer items-center gap-1.5 rounded-button border border-transparent px-1 py-1 transition-[background-color,border-color,opacity] hover:border-primary hover:bg-tint motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-ink ${selectedModel && selectedModel !== v.modelKey ? "opacity-60" : ""}`}
           >
             <span className="inline-block h-0.5 w-5" style={{ backgroundColor: modelColour(v.modelKey).line }} />
             {modelLabel(v.modelKey)}

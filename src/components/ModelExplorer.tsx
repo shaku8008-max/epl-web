@@ -85,7 +85,7 @@ export default function ModelExplorer() {
       >
         <div className="min-h-0 overflow-hidden">
           {selectedModel && (
-             <div key={selectedModel.id} className="mt-3 rounded-card border border-edge bg-tint p-5 epl-model-detail-enter sm:p-6">
+             <div key={selectedModel.id} className="mt-3 rounded-card border border-edge bg-tint p-5 epl-model-detail-enter epl-popover-enter--top sm:p-6">
               <h3 className="font-heading text-xl font-semibold">{selectedModel.name}</h3>
               <p className="mt-2 leading-relaxed text-muted">{selectedModel.detail}</p>
                <p className="mt-4 border-t border-edge pt-3 text-sm leading-relaxed text-muted">

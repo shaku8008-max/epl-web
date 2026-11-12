@@ -58,7 +58,7 @@ function stepTextColour(tenths: number): string {
 
 function HoverCard({ value, sentence, colour }: { value: string; sentence: string; colour: string }) {
   return (
-    <div className="pointer-events-none absolute right-0 top-1/2 z-20 w-[min(14rem,calc(100vw-2rem))] -translate-y-1/2 rounded-button border border-edge bg-white p-3 shadow-sm">
+     <div className="epl-popover-enter epl-popover-enter--left pointer-events-none absolute right-0 top-1/2 z-20 w-[min(14rem,calc(100vw-2rem))] -translate-y-1/2 rounded-button border border-edge bg-white p-3 shadow-sm">
       <p className={`font-heading text-2xl font-bold leading-none ${colour}`}>{value}</p>
       <p className="mt-2 text-xs leading-snug text-muted">{sentence}</p>
     </div>

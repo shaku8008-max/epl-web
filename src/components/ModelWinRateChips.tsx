@@ -43,7 +43,7 @@ export default function ModelWinRateChips({ rows, timeline, selectedModel, onTog
               onClick={() => onToggleModel(model.key)}
               onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); onToggleModel(""); } }}
               key={model.key}
-              className={`inline-flex min-h-14 max-w-full flex-wrap items-baseline gap-x-1 rounded-button border px-3 py-2.5 text-left text-sm ${colours.tint} ${colours.text} transition-opacity sm:px-4 ${selectedModel && selectedModel !== model.key ? "opacity-60" : "opacity-100"} ${selectedModel === model.key ? "border-2" : "border-edge"} focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2`}
+              className={`inline-flex min-h-14 max-w-full cursor-pointer flex-wrap items-baseline gap-x-1 rounded-button border px-3 py-2.5 text-left text-sm ${colours.tint} ${colours.text} transition-[opacity,border-color,box-shadow] hover:border-primary hover:shadow-sm motion-reduce:transition-none sm:px-4 ${selectedModel && selectedModel !== model.key ? "opacity-60" : "opacity-100"} ${selectedModel === model.key ? "border-2" : "border-edge"} focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-ink`}
             >
               <span className="font-semibold">{modelLabel(model.key)}:</span>
               {modelRows.length === 0 || scored < 0.5
@@ -53,7 +53,7 @@ export default function ModelWinRateChips({ rows, timeline, selectedModel, onTog
           );
         })}
       </div>
-      <p className="mt-2 text-sm text-muted">Small samples swing a lot, so treat these percentages as a snapshot.</p>
+       <p className="mt-2 text-sm text-muted">Select a model to highlight it. Small samples swing a lot, so treat these percentages as a snapshot.</p>
     </div>
   );
 }

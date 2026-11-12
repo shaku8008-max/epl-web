@@ -169,7 +169,7 @@ export default function Dropdown({
         <span id={`${baseId}-value`} className="min-w-0 flex-1 truncate">{selectedOption?.label ?? value}</span>
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-5 w-5 shrink-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${open ? "rotate-180" : ""}`}><path d="m6 9 6 6 6-6" /></svg>
       </button>
-      {open && <div className={`epl-team-dropdown-enter absolute left-0 top-full z-30 mt-2 w-max min-w-[max(100%,12rem)] max-w-[calc(100vw-2rem)] origin-top rounded-card border border-edge bg-white p-2 shadow-sm ${panelClassName ?? ""}`}>
+       <div aria-hidden={!open} inert={!open} className={`epl-team-dropdown ${open ? "epl-team-dropdown--open" : ""} absolute left-0 top-full z-30 mt-2 w-max min-w-[max(100%,12rem)] max-w-[calc(100vw-2rem)] origin-top rounded-card border border-edge bg-white p-2 shadow-sm ${panelClassName ?? ""}`}>
         {searchable && <>
           <input ref={searchRef} id={searchId} type="text" role="combobox" value={search} placeholder={`Search ${label.toLowerCase()}`} autoComplete="off" aria-label={`Search ${label.toLowerCase()}`} aria-controls={listboxId} aria-expanded="true" aria-activedescendant={activeValue ? `${baseId}-option-${options.findIndex((option) => option.value === activeValue)}` : undefined} onChange={(event) => { setSearch(event.target.value); const query = event.target.value.toLowerCase(); const next = options.find((option) => !option.disabled && `${option.label} ${option.searchText ?? ""}`.toLowerCase().includes(query)); setActiveValue(next?.value ?? ""); }} onKeyDown={handleKeyDown} className="min-h-11 w-full rounded-button border border-border bg-white px-3 text-base text-ink outline-none placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" />
           <div className="my-2 border-t border-border" />
@@ -185,7 +185,7 @@ export default function Dropdown({
             </div>;
           }) : <div role="status" className="px-2 py-3 text-base text-muted">{emptyMessage}</div>}
         </div>
-      </div>}
+       </div>
     </div>
   );
 }

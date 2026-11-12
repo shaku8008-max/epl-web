@@ -40,7 +40,7 @@ export default function FinishChances({ probabilities, team }: FinishChancesProp
         ))}
       </div>
       {active !== null && (
-        <div className={`pointer-events-none absolute bottom-full z-10 mb-2 w-28 rounded-button border border-edge bg-white p-2 shadow-sm ${active < 3 ? "left-0" : active > 16 ? "right-0" : "-translate-x-1/2"}`} style={active >= 3 && active <= 16 ? { left: `${((active + 0.5) / 20) * 100}%` } : undefined}>
+         <div className={`epl-popover-enter epl-popover-enter--bottom pointer-events-none absolute bottom-full z-10 mb-2 w-28 rounded-button border border-edge bg-white p-2 shadow-sm ${active < 3 ? "left-0" : active > 16 ? "right-0" : "-translate-x-1/2"}`} style={active >= 3 && active <= 16 ? { left: `${((active + 0.5) / 20) * 100}%` } : undefined}>
           <p className="font-tabular text-sm font-semibold">{ordinal(active + 1)}: {(probabilities[active] * 100).toFixed(1)}%</p>
         </div>
       )}

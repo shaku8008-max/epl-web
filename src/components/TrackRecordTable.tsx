@@ -38,6 +38,7 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
   const [predicted, setPredicted] = useState<Filter>("all");
   const [actual, setActual] = useState<Filter>("all");
   const [correct, setCorrect] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(15);
   const [openFilter, setOpenFilter] = useState<"model" | "predicted" | "actual" | "correct" | null>(null);
   const active = model !== "all" || predicted !== "all" || actual !== "all" || correct !== "all";
   const scoredModels = trackedModels.filter((item) => rows.some((row) => row.model_key === item.key));
@@ -50,17 +51,20 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
     (actual === "all" || row.result === actual.toUpperCase().charAt(0)) &&
     (correct === "all" || (correct === "correct" ? row.correct === true : row.correct === false))
   );
-  const clear = () => { setModel("all"); setPredicted("all"); setActual("all"); setCorrect("all"); };
+  const recentRows = [...filteredRows].sort((a, b) => (b.fixture_date ?? "").localeCompare(a.fixture_date ?? ""));
+  const visibleRows = recentRows.slice(0, visibleCount);
+  const changeFilter = <T,>(change: (value: T) => void) => (value: T) => { change(value); setVisibleCount(15); };
+  const clear = () => { setModel("all"); setPredicted("all"); setActual("all"); setCorrect("all"); setVisibleCount(15); };
   const filter = (name: "model" | "predicted" | "actual" | "correct", label: string, value: string, options: DropdownOption[], onChange: (value: string) => void) => <label className={`flex min-w-[calc(50%-0.5rem)] flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-0 ${value !== "all" ? "text-ink" : "text-muted"}`}><span>{label}</span><Dropdown label={label} options={options} value={value} onChange={onChange} searchable={false} tinted={value !== "all"} open={openFilter === name} onOpen={() => setOpenFilter(name)} onClose={() => setOpenFilter(null)} /></label>;
 
   return <Card className="mt-8 p-0" variant="white">
     <div className="border-b border-border p-4 sm:p-5">
       <div className="flex flex-wrap items-end gap-3">
-        {filter("model", "Model", model, modelOptions, setModel)}
-        {filter("predicted", "Predicted", predicted, outcomeOptions, (value) => setPredicted(value as Filter))}
-        {filter("actual", "Actual", actual, outcomeOptions, (value) => setActual(value as Filter))}
-        {filter("correct", "Correct", correct, correctOptions, setCorrect)}
-        <span className="pb-2 text-sm font-semibold text-muted">Showing {filteredRows.length} of {rows.length} scored matches</span>
+         {filter("model", "Model", model, modelOptions, changeFilter(setModel))}
+         {filter("predicted", "Predicted", predicted, outcomeOptions, changeFilter((value) => setPredicted(value as Filter)))}
+         {filter("actual", "Actual", actual, outcomeOptions, changeFilter((value) => setActual(value as Filter)))}
+         {filter("correct", "Correct", correct, correctOptions, changeFilter(setCorrect))}
+       <span className="pb-2 text-sm font-semibold text-muted">Showing <span className="tabular">{visibleRows.length}</span> of <span className="tabular">{filteredRows.length}</span> scored matches</span>
          {active && <button type="button" onClick={clear} className="min-h-11 rounded-full border border-edge bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-ink">Clear filters</button>}
       </div>
       <p className="mt-3 text-sm text-muted">Filters change the table only; charts and win rates always use every scored match.</p>
@@ -69,7 +73,7 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
       <table className="w-full min-w-[60rem] text-left text-sm">
         <caption className="sr-only">Scored prediction matches, newest first</caption>
         <thead className="border-b border-border bg-tint text-xs uppercase tracking-wide text-muted"><tr>{["Date", "Match", "Model", "Probabilities", "Predicted", "Actual", "Correct", "Log loss"].map((heading) => <th key={heading} className="px-4 py-3">{heading}</th>)}</tr></thead>
-       <tbody className="divide-y divide-border">{filteredRows.map((row, index) => <tr key={`${row.model_key}-${fixtureKey(row)}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
+       <tbody className="divide-y divide-border">{visibleRows.map((row, index) => <tr key={`${row.model_key}-${fixtureKey(row)}-${index}`} tabIndex={0} style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }} className="epl-table-row transition-colors hover:bg-tint focus-within:bg-tint">
           <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
           <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
           <td className="px-4 py-3"><span className={`rounded-button px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>
@@ -79,7 +83,11 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
           <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${row.correct === true ? "bg-better-soft text-better" : row.correct === false ? "bg-worse-soft text-worse" : "bg-tint text-muted"}`}>{row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}</span></td>
           <td className="px-4 py-3 tabular">{logLoss(row.log_loss)}</td>
         </tr>)}</tbody>
-      </table>
-    </div>}
-  </Card>;
+       </table>
+     </div>}
+     {filteredRows.length > visibleRows.length && <div className="flex flex-wrap items-center gap-4 border-t border-border p-4 sm:p-5">
+       <button type="button" onClick={() => setVisibleCount((count) => count + 15)} className="min-h-11 rounded-full border border-edge bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Show 15 more</button>
+       <button type="button" onClick={() => setVisibleCount(filteredRows.length)} className="text-sm font-semibold text-ink underline underline-offset-2 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Show all (<span className="tabular">{filteredRows.length}</span>)</button>
+     </div>}
+   </Card>;
 }
