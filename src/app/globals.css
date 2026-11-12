@@ -47,6 +47,14 @@
   --color-model-goals: oklch(0.520 0.094 223.1);
   --color-model-goals-soft: oklch(0.954 0.022 211.0);
 
+  /* Performance tiers are deliberately separate from model and outcome colours. */
+  --color-perf-best: oklch(0.300 0.090 145.0);
+  --color-perf-best-end: oklch(0.250 0.075 145.0);
+  --color-perf-mid: oklch(0.940 0.035 145.0);
+  --color-perf-mid-end: oklch(0.880 0.050 145.0);
+  --color-perf-low: oklch(0.960 0.012 260.0);
+  --color-perf-low-end: oklch(0.910 0.016 260.0);
+
   /* Fonts. Archivo carries both display and body text; mono is for data. */
   --font-heading: var(--font-archivo), ui-sans-serif, sans-serif;
   --font-body: var(--font-archivo), ui-sans-serif, sans-serif;
@@ -531,6 +539,30 @@ li {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes performance-tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .performance-tile {
+    animation: performance-tile-in 200ms ease-out both;
+    animation-delay: var(--performance-tile-delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .performance-tile {
+    animation: none;
   }
 }
 

@@ -20,6 +20,20 @@ export function modelLabel(key: string): string {
   return trackedModels.find((model) => model.key === key)?.label ?? key;
 }
 
+export type PerformanceTier = 1 | 2 | 3;
+
+// Dense-rank comparable values so ties share a tier; null values are not ranked.
+export function performanceTiers(values: readonly (number | null)[], lowerIsBetter = false): PerformanceTier[] {
+  const comparable = values.filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  if (comparable.length < 2) return values.map(() => 3);
+
+  const distinct = [...new Set(comparable)].sort((a, b) => (lowerIsBetter ? a - b : b - a));
+  return values.map((value) => {
+    if (typeof value !== "number" || !Number.isFinite(value)) return 3;
+    return Math.min(3, (distinct.indexOf(value) + 1)) as PerformanceTier;
+  });
+}
+
 // Win rate is correct / scored for that model, using the same track-record rows
 // as the live record lines (scored = rows, correct = rows with correct === true).
 // Models with scored matches sort by win rate descending, then scored matches

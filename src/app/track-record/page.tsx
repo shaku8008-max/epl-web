@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import type { CSSProperties, ReactNode } from "react";
 import Card from "@/components/Card";
 import ModelTabs from "@/components/ModelTabs";
 import TrackRecordPlayback from "@/components/TrackRecordPlayback";
 import TrackRecordTable from "@/components/TrackRecordTable";
 import LinkButton from "@/components/LinkButton";
 import { getTrackRecord } from "@/lib/data";
-import { modelColour, trackedModels } from "@/lib/trackRecord";
+import { modelColour, performanceTiers, trackedModels, type PerformanceTier } from "@/lib/trackRecord";
 import type { TrackRecord } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +28,20 @@ function logLoss(value: number | null): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "unavailable";
 }
 
-function SummaryCard({ rows, label, modelKey }: { rows: TrackRecord[]; label: string; modelKey: string }) {
+type SummaryStats = {
+  scored: number;
+  correct: number;
+  correctPercentage: number | null;
+  averageLogLoss: number | null;
+};
+
+type SummaryTiers = {
+  scored: PerformanceTier;
+  correct: PerformanceTier;
+  averageLogLoss: PerformanceTier;
+};
+
+function summaryStats(rows: TrackRecord[]): SummaryStats {
   const correct = rows.filter((row) => row.correct === true).length;
   const averageLogLossRows = rows.filter(
     (row) => typeof row.log_loss === "number" && Number.isFinite(row.log_loss)
@@ -37,28 +51,74 @@ function SummaryCard({ rows, label, modelKey }: { rows: TrackRecord[]; label: st
       ? averageLogLossRows.reduce((total, row) => total + (row.log_loss as number), 0) /
         averageLogLossRows.length
       : null;
+  return {
+    scored: rows.length,
+    correct,
+    correctPercentage: rows.length > 0 ? correct / rows.length : null,
+    averageLogLoss,
+  };
+}
+
+const tierClasses: Record<PerformanceTier, string> = {
+  1: "bg-gradient-to-b from-perf-best to-perf-best-end text-white",
+  2: "bg-gradient-to-b from-perf-mid to-perf-mid-end text-ink",
+  3: "bg-gradient-to-b from-perf-low to-perf-low-end text-ink",
+};
+
+function SummaryCard({
+  rows,
+  label,
+  modelKey,
+  stats,
+  tiers,
+}: {
+  rows: TrackRecord[];
+  label: string;
+  modelKey: string;
+  stats: SummaryStats;
+  tiers: SummaryTiers;
+}) {
+  const statTile = (
+    label: string,
+    value: ReactNode,
+    tier: PerformanceTier,
+    tag: string | null,
+    delay: number,
+  ) => (
+    <div
+      className={`performance-tile rounded-button p-4 ${tierClasses[tier]}`}
+      style={{ "--performance-tile-delay": `${delay}ms` } as CSSProperties}
+    >
+      <dt className="text-base">{label}</dt>
+      <dd className="mt-1 font-tabular text-3xl font-semibold leading-tight">
+        {value}
+        {tag && <span className="ml-2 align-middle font-body text-xs uppercase tracking-wide">{tag}</span>}
+      </dd>
+    </div>
+  );
 
   return (
-      <Card variant="white" className={modelColour(modelKey).tint}>
-      <h2 className="font-heading text-2xl font-semibold">{label}</h2>
+    <Card variant="white" className={modelColour(modelKey).tint}>
+      <h2 className="font-heading text-3xl font-semibold">{label}</h2>
       {rows.length === 0 ? (
         <p className="mt-4 text-muted">Collecting, 0 matches scored</p>
       ) : (
-        <dl className="mt-4 grid grid-cols-3 divide-x divide-border">
-          <div className="pr-3">
-            <dt className="text-sm text-muted">Scored</dt>
-            <dd className="mt-1 font-tabular text-xl font-semibold">{rows.length}</dd>
-          </div>
-          <div className="px-3">
-            <dt className="text-sm text-muted">Correct</dt>
-            <dd className="mt-1 font-tabular text-xl font-semibold">
-              {correct} ({Math.round((correct / rows.length) * 100)}%)
-            </dd>
-          </div>
-          <div className="pl-3">
-            <dt className="text-sm text-muted">Avg log loss</dt>
-            <dd className="mt-1 font-tabular text-xl font-semibold">{logLoss(averageLogLoss)}</dd>
-          </div>
+        <dl className="mt-4 grid gap-3">
+          {statTile("Scored", stats.scored, tiers.scored, tiers.scored === 1 ? "Highest" : null, 0)}
+          {statTile(
+            "Correct",
+            <>{stats.correct} <span className="text-xl">({Math.round((stats.correctPercentage ?? 0) * 100)}%)</span></>,
+            tiers.correct,
+            tiers.correct === 1 ? "Highest" : null,
+            60,
+          )}
+          {statTile(
+            "Avg log loss",
+            logLoss(stats.averageLogLoss),
+            tiers.averageLogLoss,
+            tiers.averageLogLoss === 1 ? "Lowest" : null,
+            120,
+          )}
         </dl>
       )}
     </Card>
@@ -68,6 +128,28 @@ function SummaryCard({ rows, label, modelKey }: { rows: TrackRecord[]; label: st
 export default async function TrackRecordPage() {
   const result = await loadTrackRecord();
 
+  if ("error" in result) {
+    return (
+      <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
+        <ModelTabs />
+        <h1 className="font-heading text-4xl font-bold tracking-tight text-primary lg:text-5xl">Track record</h1>
+        <p className="mt-3 max-w-2xl text-lg leading-relaxed">
+          How the Lean, Neural network and Linear goals predictions have performed in live matches.
+        </p>
+        <Card className="mt-8">
+          <p className="font-semibold">The live track record is unavailable right now</p>
+          <p className="mt-1 text-sm text-muted">{result.error}</p>
+        </Card>
+      </section>
+    );
+  }
+
+  const modelRows = trackedModels.map((model) => result.filter((row) => row.model_key === model.key));
+  const stats = modelRows.map(summaryStats);
+  const scoredTiers = performanceTiers(stats.map((item) => (item.scored > 0 ? item.scored : null)));
+  const correctTiers = performanceTiers(stats.map((item) => item.correctPercentage));
+  const logLossTiers = performanceTiers(stats.map((item) => item.averageLogLoss), true);
+
   return (
     <section className="lg:w-[min(80rem,calc(100vw_-_2rem))] lg:ml-[calc((100%_-_min(80rem,calc(100vw_-_2rem)))/2)]">
       <ModelTabs />
@@ -76,23 +158,21 @@ export default async function TrackRecordPage() {
         How the Lean, Neural network and Linear goals predictions have performed in live matches.
       </p>
 
-      {"error" in result ? (
-        <Card className="mt-8">
-          <p className="font-semibold">The live track record is unavailable right now</p>
-          <p className="mt-1 text-sm text-muted">{result.error}</p>
-        </Card>
-      ) : (
-        <>
+      <>
             <div className="epl-sequence mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {trackedModels.map((model) => (
+            {trackedModels.map((model, index) => (
               <SummaryCard
                 key={model.key}
-                rows={result.filter((row) => row.model_key === model.key)}
+                rows={modelRows[index]}
                 label={model.label}
                 modelKey={model.key}
+                stats={stats[index]}
+                tiers={{ scored: scoredTiers[index], correct: correctTiers[index], averageLogLoss: logLossTiers[index] }}
               />
             ))}
             </div>
+
+            <p className="mt-4 text-sm text-muted">Greener means ahead of the other models on that stat. Avg log loss is better when lower. Small samples can change quickly.</p>
 
              <LinkButton href="/lean" variant="cta" className="mt-5">Try a matchup</LinkButton>
 
@@ -108,8 +188,7 @@ export default async function TrackRecordPage() {
                <LinkButton href="/close-calls" variant="cta" className="mt-3">See close calls and disagreements</LinkButton>
              </div>
 
-          </>
-      )}
+      </>
 
        <Card className="epl-rise mt-8">
         <h2 className="font-heading text-2xl font-semibold">A note about this record</h2>
