@@ -6,13 +6,15 @@
 
 import { useState, useTransition } from "react";
 import Button from "@/components/Button";
-import { deleteEntry, settleEntry } from "@/lib/journal";
 import { formatFixtureDate } from "@/lib/format";
 import type { JournalEntry as JournalEntryType } from "@/lib/types";
 
 type JournalEntryProps = {
-  entry: JournalEntryType;
+  entry: JournalEntryType & { pending?: boolean };
   modelProb: number | null;
+  error?: string;
+  onSettle: (status: JournalEntryType["status"]) => Promise<void>;
+  onDelete: () => Promise<void>;
 };
 
 const aud = new Intl.NumberFormat("en-AU", {
@@ -34,7 +36,7 @@ const STATUS_LABELS: Record<JournalEntryType["status"], string> = {
   void: "Void",
 };
 
-export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
+export default function JournalEntry({ entry, modelProb, error: entryError, onSettle, onDelete }: JournalEntryProps) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +59,7 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
   }
 
   return (
-    <div className="border-y border-border py-6">
+    <div className={`journal-entry border-y border-border py-6${entry.pending ? " opacity-60" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-heading text-2xl font-semibold">
@@ -68,9 +70,9 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
           </p>
         </div>
         <span
-          className={`rounded-button px-3 py-1 text-sm font-semibold ${STATUS_STYLES[entry.status]}`}
+          className={`rounded-button px-3 py-1 text-sm font-semibold ${entry.pending ? "bg-tint text-muted" : STATUS_STYLES[entry.status]}`}
         >
-          {STATUS_LABELS[entry.status]}
+          {entry.pending ? "Saving" : STATUS_LABELS[entry.status]}
         </span>
       </div>
 
@@ -97,9 +99,9 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
 
       {entry.notes && <p className="mt-3 text-base text-muted">{entry.notes}</p>}
 
-      {error && (
+      {(error || entryError) && (
         <p role="alert" className="mt-3 text-base font-semibold text-out">
-          {error}
+          {error ?? entryError}
         </p>
       )}
 
@@ -108,22 +110,22 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
           <>
             <Button
               variant="secondary"
-              disabled={pending}
-              onClick={() => run(() => settleEntry(entry.id, "won"))}
+              disabled={pending || entry.pending}
+              onClick={() => run(() => onSettle("won"))}
             >
               Won
             </Button>
             <Button
               variant="secondary"
-              disabled={pending}
-              onClick={() => run(() => settleEntry(entry.id, "lost"))}
+              disabled={pending || entry.pending}
+              onClick={() => run(() => onSettle("lost"))}
             >
               Lost
             </Button>
             <Button
               variant="secondary"
-              disabled={pending}
-              onClick={() => run(() => settleEntry(entry.id, "void"))}
+              disabled={pending || entry.pending}
+              onClick={() => run(() => onSettle("void"))}
             >
               Void
             </Button>
@@ -131,16 +133,16 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
         ) : (
           <Button
             variant="secondary"
-            disabled={pending}
-            onClick={() => run(() => settleEntry(entry.id, "open"))}
+            disabled={pending || entry.pending}
+            onClick={() => run(() => onSettle("open"))}
           >
             Reopen
           </Button>
         )}
         <Button
           variant="secondary"
-          disabled={pending}
-          onClick={() => run(() => deleteEntry(entry.id))}
+          disabled={pending || entry.pending}
+          onClick={() => run(onDelete)}
         >
           Delete
         </Button>

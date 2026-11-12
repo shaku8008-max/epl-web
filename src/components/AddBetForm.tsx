@@ -6,18 +6,28 @@
 
 import { useState, useTransition } from "react";
 import Button from "@/components/Button";
-import { addEntry } from "@/lib/journal";
 import { formatFixtureDate, toWholePercentages } from "@/lib/format";
 import type { Fixture } from "@/lib/types";
 
+export type AddBetInput = {
+  home: string;
+  away: string;
+  fixtureDate: string;
+  pick: "H" | "D" | "A";
+  stake: number;
+  odds: number;
+  notes: string | null;
+};
+
 type AddBetFormProps = {
   fixtures: Fixture[];
+  onAdd: (input: AddBetInput) => Promise<void>;
 };
 
 const inputClasses =
   "mt-1 min-h-12 w-full rounded-button border border-edge bg-white px-3 py-2 text-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
-export default function AddBetForm({ fixtures }: AddBetFormProps) {
+export default function AddBetForm({ fixtures, onAdd }: AddBetFormProps) {
   const [fixtureKey, setFixtureKey] = useState(
     fixtures[0] ? `${fixtures[0].home}|${fixtures[0].away}` : ""
   );
@@ -67,9 +77,10 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
       return;
     }
 
+    const typedValues = { stake, odds, notes };
     startTransition(async () => {
       try {
-        await addEntry({
+        const input: AddBetInput = {
           home: selected.home,
           away: selected.away,
           fixtureDate: selected.fixture_date,
@@ -77,12 +88,17 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
           stake: stakeNum,
           odds: oddsNum,
           notes: notes || null,
-        });
+        };
+        const save = onAdd(input);
         setStake("");
         setOdds("");
         setNotes("");
+        await save;
         setSuccess(true);
       } catch (err) {
+        setStake(typedValues.stake);
+        setOdds(typedValues.odds);
+        setNotes(typedValues.notes);
         setError(err instanceof Error ? err.message : String(err));
       }
     });

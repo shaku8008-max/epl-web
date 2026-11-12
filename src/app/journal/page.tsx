@@ -4,8 +4,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import AddBetForm from "@/components/AddBetForm";
-import JournalEntry from "@/components/JournalEntry";
+import JournalBook from "@/components/JournalBook";
 import JournalSummary from "@/components/JournalSummary";
 import HistoryChart from "@/components/HistoryChart";
 import { getPredictions } from "@/lib/data";
@@ -44,7 +43,7 @@ async function loadJournalPage(): Promise<
   | {
       entries: JournalEntryType[];
       fixtures: Fixture[];
-      modelProbs: Map<number, number | null>;
+      modelProbs: Record<number, number | null>;
     }
   | { error: string }
 > {
@@ -59,11 +58,10 @@ async function loadJournalPage(): Promise<
     const lookup = new Map<string, Prediction>();
     for (const row of predictions) lookup.set(`${row.home}|${row.away}`, row);
 
-    const modelProbs = new Map<number, number | null>();
+    const modelProbs: Record<number, number | null> = {};
     for (const entry of entries) {
-      modelProbs.set(
-        entry.id,
-        modelProbFor(lookup.get(`${entry.home}|${entry.away}`), entry.pick)
+      modelProbs[entry.id] = modelProbFor(
+        lookup.get(`${entry.home}|${entry.away}`), entry.pick
       );
     }
 
@@ -125,27 +123,7 @@ export default async function JournalPage() {
         <div className="mt-4"><HistoryChart series={series} /></div>
       </div>
 
-      <div className="mt-6">
-        <AddBetForm fixtures={fixtures} />
-      </div>
-
-      <div className="mt-6">
-        {entries.length === 0 ? (
-          <div className="border-y border-border py-6">
-            <p className="text-muted">
-              No bets yet. Add one above to start tracking the model.
-            </p>
-          </div>
-        ) : (
-          entries.map((entry) => (
-            <JournalEntry
-              key={entry.id}
-              entry={entry}
-              modelProb={modelProbs.get(entry.id) ?? null}
-            />
-          ))
-        )}
-      </div>
+      <JournalBook entries={entries} fixtures={fixtures} modelProbs={modelProbs} />
     </section>
   );
 }
