@@ -5,6 +5,7 @@
 // the site stays server-rendered.
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ViewTransition } from "react";
 
 const tabs = [
   { href: "/track-record", label: "Predict" },
@@ -37,11 +38,19 @@ export default function Tabs() {
             aria-current={active ? "page" : undefined}
             className={`shrink-0 ${
                  active
-                  ? `inline-flex min-h-12 items-center rounded-full border border-edge bg-accent px-1.5 py-1.5 text-sm text-white transition-colors duration-300 ease-out motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-bold"}`
-                  : `inline-flex min-h-12 items-center rounded-full border border-edge bg-white px-1.5 py-1.5 text-sm text-ink transition-colors duration-300 ease-out motion-reduce:transition-none hover:bg-accent hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-semibold"}`
-            }`}
+                   ? `relative isolate inline-flex min-h-12 items-center rounded-full border border-edge bg-white px-1.5 py-1.5 text-sm text-white transition-colors duration-300 ease-out motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-bold"}`
+                   : `inline-flex min-h-12 items-center rounded-full border border-edge bg-white px-1.5 py-1.5 text-sm text-ink transition-colors duration-300 ease-out motion-reduce:transition-none hover:bg-accent hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-3 sm:text-base ${utility ? "font-medium sm:px-2 sm:text-sm" : "font-semibold"}`
+             }`}
           >
-            {tab.label}
+            {active && (
+              <ViewTransition name="nav-active" share="morph" default="none">
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 z-0 rounded-full bg-accent"
+                />
+              </ViewTransition>
+            )}
+            <span className="relative z-10">{tab.label}</span>
           </Link>
         );
       })}

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, DM_Mono } from "next/font/google";
+import { ViewTransition } from "react";
 import "./globals.css";
 import HomeLogo from "@/components/HomeLogo";
 import Tabs from "@/components/Tabs";
@@ -85,7 +86,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </header>
 
         <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
-          {children}
+          <ViewTransition name="page-content" share="auto" enter="auto" default="none">
+            {children}
+          </ViewTransition>
         </main>
 
         <footer className="site-footer border-t border-edge bg-tint">

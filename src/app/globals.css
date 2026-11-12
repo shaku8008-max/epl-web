@@ -65,6 +65,69 @@ body {
   font-size: 18px;
 }
 
+/* Keep the persistent shell anchored while route content crossfades. */
+::view-transition-group(site-header),
+::view-transition-group(site-footer),
+::view-transition-group(model-stack) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header),
+::view-transition-old(site-footer),
+::view-transition-old(model-stack) {
+  display: none;
+}
+
+::view-transition-new(site-header),
+::view-transition-new(site-footer),
+::view-transition-new(model-stack) {
+  animation: none;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(page-content) {
+  animation: 200ms ease-out both page-content-fade;
+}
+
+::view-transition-old(page-content) {
+  animation: 200ms ease-out both page-content-fade reverse;
+}
+
+::view-transition-new(page-content) {
+  animation: 200ms ease-out both page-content-fade;
+}
+
+::view-transition-old(.morph),
+::view-transition-new(.morph),
+::view-transition-group(.morph) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-out;
+}
+
+@keyframes page-content-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition,
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 .journal-entry {
   animation: journal-entry-in 200ms ease-out;
 }
@@ -99,6 +162,7 @@ li {
 
 .site-header {
   padding-top: env(safe-area-inset-top);
+  view-transition-name: site-header;
 }
 
 .site-header > div {
@@ -108,6 +172,7 @@ li {
 
 .site-footer {
   padding-bottom: env(safe-area-inset-bottom);
+  view-transition-name: site-footer;
 }
 
 @media (min-width: 640px) {
@@ -621,6 +686,10 @@ li {
   letter-spacing: 0.05em;
   line-height: 1.25;
   text-transform: uppercase;
+}
+
+.model-stack {
+  view-transition-name: model-stack;
 }
 
 .model-stack-card {
