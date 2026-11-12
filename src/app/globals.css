@@ -5,43 +5,47 @@
    --font-* generates font-heading / font-body; --radius-card and
    --radius-button generate rounded-card and rounded-button. */
 @theme {
+  /* OKLCH makes palette tweaks easier to reason about: L = lightness,
+     C = chroma (colour strength), and H = hue angle. Soft tints share the
+     hue of their base colour with high L and low C. */
   /* Accent now means ink; button hover goes lighter, not darker. */
-  --color-primary: #1b2433;
-  --color-primary-light: #edf1f7;
-  --color-accent: #1b2433;
-  --color-accent-dark: #323d50;
+  --color-primary: oklch(0.259 0.031 260.4);
+  --color-primary-light: oklch(0.957 0.009 258.3);
+  --color-accent: oklch(0.259 0.031 260.4);
+  /* Ink with lightness raised about 0.1. */
+  --color-accent-dark: oklch(0.358 0.036 261.2);
 
   /* Surfaces, borders and text. */
-  --color-surface: #f6f8fb;
-  --color-tint: #edf1f7;
-  --color-border: #d9e0ea;
-  --color-edge: #1b2433;
-  --color-rule-strong: #aeb9ca;
-  --color-ink: #1b2433;
-  --color-muted: #536174;
+  --color-surface: oklch(0.978 0.005 258.3);
+  --color-tint: oklch(0.957 0.009 258.3);
+  --color-border: oklch(0.904 0.016 257.2);
+  --color-edge: oklch(0.259 0.031 260.4);
+  --color-rule-strong: oklch(0.783 0.027 259.0);
+  --color-ink: oklch(0.259 0.031 260.4);
+  --color-muted: oklch(0.488 0.035 256.1);
 
   /* Outcome colours: home win / draw / away win. Always shown together with a
      text label, so colour is never the only signal. */
-  --color-home: #1f6b4f;
-  --color-draw: #63727a;
-  --color-away: #24527e;
-  --color-better: #1f6b4f;
-  --color-worse: #b91c1c;
-  --color-better-soft: #e5f3ec;
-  --color-worse-soft: #fbe9e8;
-  --color-draw-soft: #edf1f2;
-  --color-open: #80652a;
-  --color-open-soft: #f5efe1;
-  --color-out: #b91c1c;
-  --color-doubtful: #b45309;
+  --color-home: oklch(0.474 0.087 164.5);
+  --color-draw: oklch(0.542 0.022 231.0);
+  --color-away: oklch(0.429 0.089 249.8);
+  --color-better: oklch(0.474 0.087 164.5);
+  --color-worse: oklch(0.505 0.190 27.5);
+  --color-better-soft: oklch(0.952 0.017 164.7);
+  --color-worse-soft: oklch(0.948 0.020 21.4);
+  --color-draw-soft: oklch(0.955 0.004 214.3);
+  --color-open: oklch(0.521 0.084 84.3);
+  --color-open-soft: oklch(0.953 0.020 87.5);
+  --color-out: oklch(0.505 0.190 27.5);
+  --color-doubtful: oklch(0.556 0.146 48.9);
 
   /* Model colours are intentionally separate from outcome colours. */
-  --color-model-lean: #15803d;
-  --color-model-lean-soft: #e5f5e9;
-  --color-model-nn: #db2777;
-  --color-model-nn-soft: #fce7f3;
-  --color-model-goals: #0e7490;
-  --color-model-goals-soft: #e0f4f8;
+  --color-model-lean: oklch(0.527 0.137 150.1);
+  --color-model-lean-soft: oklch(0.955 0.023 153.5);
+  --color-model-nn: oklch(0.592 0.218 0.6);
+  --color-model-nn-soft: oklch(0.948 0.028 342.3);
+  --color-model-goals: oklch(0.520 0.094 223.1);
+  --color-model-goals-soft: oklch(0.954 0.022 211.0);
 
   /* Fonts. Archivo carries both display and body text; mono is for data. */
   --font-heading: var(--font-archivo), ui-sans-serif, sans-serif;
@@ -140,8 +144,8 @@ li {
   z-index: -1;
   inset: -28% -18% -20%;
   background-image:
-    repeating-linear-gradient(90deg, rgb(27 36 51 / 0.12) 0 1px, transparent 1px 3.25rem),
-    repeating-linear-gradient(0deg, rgb(27 36 51 / 0.12) 0 1px, transparent 1px 3.25rem);
+    repeating-linear-gradient(90deg, oklch(from var(--color-ink) l c h / 0.12) 0 1px, transparent 1px 3.25rem),
+    repeating-linear-gradient(0deg, oklch(from var(--color-ink) l c h / 0.12) 0 1px, transparent 1px 3.25rem);
   transform: perspective(38rem) rotateX(60deg);
   transform-origin: center bottom;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 19%, black 78%, transparent 100%);
@@ -679,7 +683,7 @@ li {
 
 .model-stack-card--current {
   border-width: 2px;
-  box-shadow: 0 1px 3px rgb(27 36 51 / 0.14);
+  box-shadow: 0 1px 3px oklch(from var(--color-ink) l c h / 0.14);
 }
 
 .model-stack-card--current::before {
@@ -696,7 +700,7 @@ li {
 
 .model-stack-card:is(:hover, :focus-visible) {
   transform: translateX(0.25rem);
-  box-shadow: 0 1px 3px rgb(27 36 51 / 0.14);
+  box-shadow: 0 1px 3px oklch(from var(--color-ink) l c h / 0.14);
 }
 
 .model-stack__note {
