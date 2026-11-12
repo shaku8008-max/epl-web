@@ -87,7 +87,7 @@ export default function HistoryChart({ series }: HistoryChartProps) {
            className={`pointer-events-none absolute top-2 z-10 w-44 rounded-button border border-edge bg-white p-3 shadow-sm ${active! < series.length * 0.2 ? "left-0" : active! > series.length * 0.8 ? "right-0" : "-translate-x-1/2"}`}
           style={active! < series.length * 0.2 || active! > series.length * 0.8 ? undefined : { left: `${(x(active!) / WIDTH) * 100}%` }}
         >
-          <p className="font-heading text-2xl font-bold leading-none tabular-nums" style={{ color: colour[valueColour(activePoint.total)] }}>{activePoint.total > 0 ? "+" : activePoint.total < 0 ? "−" : ""}{aud.format(Math.abs(activePoint.total))}</p>
+          <p className="font-heading text-2xl font-bold leading-none tabular" style={{ color: colour[valueColour(activePoint.total)] }}>{activePoint.total > 0 ? "+" : activePoint.total < 0 ? "−" : ""}{aud.format(Math.abs(activePoint.total))}</p>
           <p className="mt-2 truncate text-xs font-semibold">{activePoint.entry.home} v {activePoint.entry.away}</p>
           <p className="text-xs text-muted">{activePoint.entry.settled_at ? formatMelbourne(activePoint.entry.settled_at) : "Date unavailable"}</p>
           <p className="text-xs text-muted">Bet: {activePoint.profit > 0 ? "+" : activePoint.profit < 0 ? "−" : ""}{aud.format(Math.abs(activePoint.profit))}</p>

@@ -38,7 +38,7 @@ export default function TeamDropdown({
       value: team,
       label: team,
       searchText: teamCode(team),
-      badge: <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-tint text-xs font-semibold tracking-wide text-ink">{teamCode(team)}</span>,
+      badge: <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-tint pl-[0.1em] text-xs font-semibold tracking-wide text-ink">{teamCode(team)}</span>,
       disabled: team === otherTeam && team !== value,
       tag: team === otherTeam && team !== value ? (side === "home" ? "Playing away" : "Playing home") : undefined,
     }))}

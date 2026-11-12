@@ -140,7 +140,7 @@ export default function AddBetForm({ fixtures }: AddBetFormProps) {
                   {o.label}
                 </span>
                 {o.value !== undefined && (
-                  <span className="text-muted tabular-nums">{o.value}%</span>
+                  <span className="text-muted tabular">{o.value}%</span>
                 )}
               </label>
             ))}

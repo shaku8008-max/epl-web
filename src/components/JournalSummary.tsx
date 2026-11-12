@@ -28,7 +28,7 @@ function StatCard({ label, value, colour, caption }: {
   return (
     <div className={`rounded-card border border-edge border-l-4 ${styles.border} ${styles.bg} p-4 sm:p-5`}>
       <dt className="text-sm font-medium text-muted">{label}</dt>
-      <dd className={`mt-2 font-heading text-4xl font-bold leading-none tracking-tight tabular-nums sm:text-5xl ${styles.text}`}>
+      <dd className={`mt-2 font-heading text-4xl font-bold leading-none tabular tracking-tight sm:text-5xl ${styles.text}`}>
         {value}
       </dd>
       {caption && <p className="mt-2 text-xs leading-snug text-muted">{caption}</p>}
@@ -75,7 +75,7 @@ export default function JournalSummary({ entries }: JournalSummaryProps) {
       </dl>
       <div className="mt-4 flex flex-wrap gap-2" aria-label="Bet counts">
         {counts.map(([label, count, styles]) => (
-          <span key={label} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${styles}`}>
+           <span key={label} className={`rounded-full px-2.5 py-1 tabular text-xs font-semibold ${styles}`}>
             {count} {label}
           </span>
         ))}

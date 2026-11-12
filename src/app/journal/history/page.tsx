@@ -56,7 +56,7 @@ export default async function HistoryPage() {
             Cumulative profit / loss
           </h2>
           <span
-            className={`text-2xl font-semibold tabular-nums ${
+            className={`text-2xl font-semibold tabular ${
               total > 0 ? "text-better" : total < 0 ? "text-worse" : "text-draw"
             }`}
           >

@@ -34,7 +34,7 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
         >
           Restart
         </button>
-        <span className="ml-auto text-sm font-semibold text-ink">
+        <span className="ml-auto tabular text-sm font-semibold text-ink">
           {date ? formatDateOnly(date) : "Latest"}
         </span>
       </div>
@@ -51,7 +51,7 @@ export default function PlaybackControls({ timeline }: PlaybackControlsProps) {
            aria-valuetext={`Match ${Math.min(position + 1, total)} of ${total}${date ? `, ${formatDateOnly(date)}` : ""}`}
         />
       </label>
-      <div className="mt-1 flex justify-between text-xs text-muted">
+      <div className="mt-1 flex justify-between tabular text-xs text-muted">
         <span>Beginning</span>
         <span>Match {Math.min(position + 1, total)} of {total}</span>
       </div>

@@ -61,6 +61,37 @@ body {
   font-size: 18px;
 }
 
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+.site-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+.site-header > div {
+  padding-right: max(0.75rem, env(safe-area-inset-right));
+  padding-left: max(0.75rem, env(safe-area-inset-left));
+}
+
+.site-footer {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (min-width: 640px) {
+  .site-header > div {
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+  }
+}
+
 /* Intro page: the full-bleed curtain keeps the hero independent of main's
    centred reading column without changing the width of any other route. */
 .intro-page {
@@ -387,6 +418,10 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Fade-in for swapped text on the Predict page (see lib/animate.ts).
    Mount-keyed spans fade in over the same space: no layout shift. */
 @keyframes epl-fade-in {
@@ -520,7 +555,7 @@ body {
   margin: 0 0 0.5rem 0.25rem;
   color: var(--color-muted);
   font-size: 0.75rem;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.05em;
   line-height: 1.25;
   text-transform: uppercase;
 }

@@ -48,7 +48,7 @@ export default function ModelWinRateChips({ rows, timeline, selectedModel, onTog
               <span className="font-semibold">{modelLabel(model.key)}:</span>
               {modelRows.length === 0 || scored < 0.5
                 ? <span>Collecting</span>
-                 : <span className="tabular-nums"><strong className="block whitespace-nowrap text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)} correct</strong><span className="mt-1 block whitespace-nowrap text-sm font-semibold text-muted">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
+                 : <span className="tabular"><strong className="block whitespace-nowrap text-xl font-bold leading-none">{displayCount(correct)} of {displayCount(scored)} correct</strong><span className="mt-1 block whitespace-nowrap text-sm font-semibold text-muted">({isInterpolating ? ((correct / scored) * 100).toFixed(1) : Math.round((correct / scored) * 100)}%)</span></span>}
             </button>
           );
         })}

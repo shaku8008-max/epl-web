@@ -259,7 +259,7 @@ export default function CorrectPicksChart({ rows, series, timeline, selectedMode
             transform: `${gx! / W > 0.65 ? "translateX(calc(-100% - 0.75rem))" : "translateX(0.75rem)"} translateY(-50%)`,
           }}
         >
-          <p className="font-heading text-xl font-bold leading-none tabular-nums" style={{ color: modelColour(active.modelKey).line }}>
+          <p className="font-heading text-xl font-bold leading-none tabular" style={{ color: modelColour(active.modelKey).line }}>
             Correct so far: {p.correct} of {p.position + 1} ({Math.round((p.correct / (p.position + 1)) * 100)}%)
           </p>
           <p className="mt-2 text-xs font-semibold">{modelLabel(active.modelKey)}</p>

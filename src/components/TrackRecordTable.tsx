@@ -73,11 +73,11 @@ export default function TrackRecordTable({ rows }: { rows: TrackRecord[] }) {
           <td className="whitespace-nowrap px-4 py-3">{row.fixture_date ? formatDateOnly(row.fixture_date) : "unavailable"}</td>
           <td className="min-w-40 px-4 py-3">{row.home ?? "Home unavailable"} v {row.away ?? "Away unavailable"}</td>
           <td className="px-4 py-3"><span className={`rounded-button px-2 py-1 font-semibold ${modelColour(row.model_key).text} ${modelColour(row.model_key).tint}`}>{modelLabel(row.model_key)}</span></td>
-          <td className="whitespace-nowrap px-4 py-3 tabular-nums">{probabilityCells(row)}</td>
+          <td className="whitespace-nowrap px-4 py-3 tabular">{probabilityCells(row)}</td>
           <td className="px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${outcomeTreatment(row.predicted_result)}`}>{outcomeLabel(row.predicted_result)}</span></td>
           <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${outcomeTreatment(row.result)}`}>{outcomeLabel(row.result)} ({score(row)})</span></td>
           <td className="whitespace-nowrap px-4 py-3"><span className={`rounded-button px-2 py-1 font-medium ${row.correct === true ? "bg-better-soft text-better" : row.correct === false ? "bg-worse-soft text-worse" : "bg-tint text-muted"}`}>{row.correct === true ? "✓ Yes" : row.correct === false ? "✕ No" : "— unavailable"}</span></td>
-          <td className="px-4 py-3 tabular-nums">{logLoss(row.log_loss)}</td>
+          <td className="px-4 py-3 tabular">{logLoss(row.log_loss)}</td>
         </tr>)}</tbody>
       </table>
     </div>}

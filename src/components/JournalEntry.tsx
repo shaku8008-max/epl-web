@@ -81,15 +81,15 @@ export default function JournalEntry({ entry, modelProb }: JournalEntryProps) {
         </div>
         <div>
           <dt className="text-muted">Stake</dt>
-          <dd className="font-medium tabular-nums">{aud.format(entry.stake)}</dd>
+           <dd className="font-medium tabular">{aud.format(entry.stake)}</dd>
         </div>
         <div>
           <dt className="text-muted">Odds</dt>
-          <dd className="font-medium tabular-nums">{entry.odds.toFixed(2)}</dd>
+           <dd className="font-medium tabular">{entry.odds.toFixed(2)}</dd>
         </div>
         <div>
           <dt className="text-muted">Model said</dt>
-          <dd className="font-medium tabular-nums">
+           <dd className="font-medium tabular">
             {modelProb === null ? "-" : `${modelProb}%`}
           </dd>
         </div>

@@ -28,7 +28,7 @@ export default function DocumentationPage() {
           <h2 id="what-this-site-does" className="font-heading text-2xl font-semibold">
             What this site does
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             EPL Predictor estimates the chances of a home win, draw or away win for upcoming Premier League matches. The predictions are updated daily as new results, fixtures and team information become available.
           </p>
         </section>
@@ -37,7 +37,7 @@ export default function DocumentationPage() {
           <h2 id="where-data-comes-from" className="font-heading text-2xl font-semibold">
             Where the data comes from
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             The site uses past results and bookmaker odds from{" "}
             <a className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="https://www.football-data.co.uk/" target="_blank" rel="noreferrer">football-data.co.uk</a>, fixtures and injury news from the official Fantasy Premier League data, and expected goals (xG) from{" "}
             <a className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="https://understat.com/" target="_blank" rel="noreferrer">Understat</a>. xG is an estimate of how likely a shot was to become a goal, based on things such as its position and situation.
@@ -55,7 +55,7 @@ export default function DocumentationPage() {
           <h2 id="goals-model" className="font-heading text-2xl font-semibold">
             The linear goals model
           </h2>
-          <div className="mt-3 space-y-4 leading-relaxed text-muted">
+          <div className="mt-3 max-w-[68ch] space-y-4 leading-relaxed text-muted">
             <p>
               The <Link className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="/goals">goals model</Link> is a linear margin model. It predicts the expected goal difference, then converts that margin into home-win, draw and away-win probabilities. The live version is V1, the linear version, and it runs daily at about 05:57 UTC.
             </p>
@@ -72,7 +72,7 @@ export default function DocumentationPage() {
           <h2 id="goals-evidence" className="font-heading text-2xl font-semibold">
             What the checks found
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             Log loss measures the quality of probability predictions: it rewards a high chance for what happened and penalises confident mistakes, so lower is better. The development check covered 4,560 matches from 2012-2023; the hold-out check covered 760 matches from 2024 and 2025.
           </p>
           <div className="mt-5 overflow-x-auto rounded-card border border-edge bg-white">
@@ -104,7 +104,7 @@ export default function DocumentationPage() {
               </tbody>
             </table>
           </div>
-          <div className="mt-4 space-y-3 leading-relaxed text-muted">
+          <div className="mt-4 max-w-[68ch] space-y-3 leading-relaxed text-muted">
             <p>
               V2 passed the pre-written hold-out rule&apos;s +0.003 threshold, but its interval touched zero. V1 was inconclusive under that rule. It shipped because I chose to ship it, not because the check confirmed that it is better.
             </p>
@@ -118,7 +118,7 @@ export default function DocumentationPage() {
           <h2 id="read-the-numbers" className="font-heading text-2xl font-semibold">
             How to read the numbers
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             Percentages are chances, not certainties: the highest of home, draw and away is colour-coded, but a 60% chance still loses 4 times in 10. The waterfall shows which factors push the estimate toward the home or away team. On team stats, “better” and “worse” colours compare the two teams for that particular measure; they do not mean a team is simply good or bad overall.
           </p>
         </section>
@@ -127,7 +127,7 @@ export default function DocumentationPage() {
           <h2 id="season-outlook" className="font-heading text-2xl font-semibold">
             Season outlook
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             The <Link className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="/neural/outlook">season outlook</Link> plays out 10,000 possible seasons using the Neural network&apos;s expected goals, then shows how often each team finishes in each position. The finish-chance bars show those percentages at a glance. Ties are settled first by goal difference, then by goals scored.
           </p>
         </section>
@@ -136,7 +136,7 @@ export default function DocumentationPage() {
           <h2 id="track-record" className="font-heading text-2xl font-semibold">
             Track record
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             The <Link className="font-medium text-ink underline decoration-ink/40 underline-offset-2 hover:decoration-ink" href="/track-record">track record</Link> uses log loss: a score that rewards a model for giving a high chance to what happened and penalises it for being confidently wrong, so lower is better. The honesty rule is simple: only predictions made before the match day count.
           </p>
         </section>
@@ -145,7 +145,7 @@ export default function DocumentationPage() {
           <h2 id="jev" className="font-heading text-2xl font-semibold">
             Jev
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="mt-3 max-w-[68ch] leading-relaxed text-muted">
             Jev is an experimental layer that reads team news, including injuries and doubtful players, and nudges the model&apos;s probabilities. It is shown separately from the main models and has its own scoreboard, so it can be judged on its own.
           </p>
         </section>
@@ -154,7 +154,7 @@ export default function DocumentationPage() {
           <h2 id="what-did-not-help" className="font-heading text-2xl font-semibold">
             What we tried that did not help
           </h2>
-          <ul className="mt-4 list-disc space-y-3 pl-5 leading-relaxed text-muted">
+          <ul className="mt-4 max-w-[68ch] list-disc space-y-3 pl-5 leading-relaxed text-muted">
             <li>
               Splitting each season into early, middle and late periods, about 1,520 matches each, found no detectable phase effect. The bookmaker&apos;s lead was largest early (+0.0214) and smaller late (+0.0137), but the 95% interval for the difference ran from -0.0069 to +0.0222. The test was too coarse to rule out a small effect; this is not proof that the effect is zero.
             </li>
@@ -166,7 +166,7 @@ export default function DocumentationPage() {
             <h2 id="honest-limits" className="font-heading text-2xl font-semibold">
               Honest limits
             </h2>
-            <ul className="mt-4 list-disc space-y-3 pl-5 leading-relaxed text-muted">
+            <ul className="mt-4 max-w-[68ch] list-disc space-y-3 pl-5 leading-relaxed text-muted">
               <li>The live records are far too small to judge anything: Lean has 26 scored matches and the goals model has none yet.</li>
               <li>The xG data source has been unavailable since late October. The site keeps the last saved copy and retries daily. Tests on past seasons found no measurable difference from stale or missing xG, but you should know this limitation exists.</li>
               <li>The season outlook assumes team strength stays at today&apos;s values and ignores injuries and model error, so extreme percentages are probably overconfident.</li>

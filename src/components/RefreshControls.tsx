@@ -201,7 +201,7 @@ export default function RefreshControls({ initial }: RefreshControlsProps) {
           />
           Refreshing…
         </Button>
-        <p className="mt-3 text-base text-muted">
+        <p className="mt-3 tabular text-base text-muted">
           {status.dataAsOf && status.dataAsOf !== phase.seenDataAsOf
             ? "The Lean predictions are updated. Finishing the Neural network and Linear goals…"
             : "Refreshing… this usually takes three to five minutes. You can leave this page; the new data will be here when you come back."}

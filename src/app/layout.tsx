@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#FFFFFF",
+  viewportFit: "cover",
 };
 
 async function loadTrackRecord(): Promise<TrackRecord[] | null> {
@@ -76,7 +77,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-dvh flex-col overflow-x-clip bg-surface font-body text-ink">
         <ModelStack models={modelStack} />
-        <header className="border-b border-edge bg-white text-ink">
+        <header className="site-header border-b border-edge bg-white text-ink">
           <div className="mx-auto flex min-h-16 w-full max-w-4xl flex-col items-stretch gap-0 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6">
             <HomeLogo />
             <Tabs />
@@ -87,9 +88,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
 
-        <footer className="border-t border-edge bg-tint">
+        <footer className="site-footer border-t border-edge bg-tint">
           <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-6 text-base text-muted sm:px-6">
-            <p>
+            <p className="tabular">
               <span className="font-medium text-ink">Data as of:</span>{" "}
               {run
                 ? `${formatMelbourne(run.data_as_of)} · model ${run.model_version}`
